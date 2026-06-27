@@ -1,0 +1,73 @@
+aid: incode
+name: Incode
+review:
+  question: Does Incode expose a documented public WebSocket API?
+  answer: false
+  date: '2026-06-25'
+  reviewer: API Evangelist
+  asyncapiSpecCreated: false
+  asyncapiScopeNote: |
+    No AsyncAPI document was created. The Incode Omni platform is a request/
+    response REST API. Asynchronous result delivery is handled by HTTP webhooks
+    (server-to-server POST callbacks to a customer-configured URL), not by a
+    WebSocket or SSE streaming surface. Webhooks are modeled as a REST-style
+    callback API in the apis.yml, not as an AsyncAPI streaming channel.
+findings:
+  summary: |
+    Incode does not publish a documented public WebSocket API. The Incode Omni
+    API exposes only REST (HTTPS) endpoints under
+    https://demo-api.incodesmile.com (demo) and https://api.incodesmile.com
+    (production). Onboarding modules are invoked synchronously; results that
+    are not returned inline are retrieved by polling the GET results endpoints
+    or by receiving HTTP webhook notifications (e.g. ONBOARDING_FINISHED). No
+    realtime, bidirectional WebSocket (ws:// or wss://) endpoint is documented
+    for onboarding, biometrics, or results.
+  transports:
+    - protocol: REST
+      scheme: https
+      baseURL: https://demo-api.incodesmile.com
+      documented: true
+    - protocol: Webhook
+      scheme: https
+      note: Server-to-server HTTP POST callbacks to a customer-configured URL on onboarding status changes. Outbound HTTP, not WebSocket.
+      documented: true
+    - protocol: WebSocket
+      scheme: wss
+      documented: false
+      note: No WebSocket endpoint is documented in Incode's developer reference for onboarding, biometrics, government validation, watchlist, or results as of the review date.
+  endpointsConfirmedRest:
+    - POST https://demo-api.incodesmile.com/omni/start
+    - POST https://demo-api.incodesmile.com/omni/add/front-id/v2
+    - POST https://demo-api.incodesmile.com/omni/add/back-id/v2
+    - POST https://demo-api.incodesmile.com/omni/process/id
+    - POST https://demo-api.incodesmile.com/omni/add/face/third-party
+    - POST https://demo-api.incodesmile.com/omni/process/face
+    - POST https://demo-api.incodesmile.com/omni/process/government-validation
+    - POST https://demo-api.incodesmile.com/omni/process/global-watchlist
+    - POST https://demo-api.incodesmile.com/omni/watchlist-result
+    - GET  https://demo-api.incodesmile.com/omni/updated-watchlist-result
+    - GET  https://demo-api.incodesmile.com/omni/finish-status
+    - GET  https://demo-api.incodesmile.com/omni/get/score
+    - GET  https://demo-api.incodesmile.com/omni/get/ocr-data
+    - GET  https://demo-api.incodesmile.com/omni/get/images
+sources:
+  - url: https://developer.incode.com/reference/introduction
+    type: APIReference
+    note: Documents REST authentication (x-api-key, X-Incode-Hardware-Id) and tiered rate limits; no WebSocket mentioned.
+  - url: https://developer.incode.com/docs/api-onboarding-start-session
+    type: Documentation
+    note: POST /omni/start over HTTPS returns a session token; REST.
+  - url: https://developer.incode.com/docs/onboarding-status-webhook
+    type: Documentation
+    note: Asynchronous status delivery is via HTTP webhook POST callbacks, not WebSocket.
+  - url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+    type: Documentation
+    note: Results are fetched via GET endpoints by interview ID; REST.
+actions:
+  asyncapiPath: null
+  apisYmlUpdated: true
+  reason: |
+    No WebSocket protocol surface exists, and asynchronous delivery is HTTP
+    webhook callbacks rather than a streaming channel, so no AsyncAPI document
+    was authored. The webhooks surface is captured as a REST callback API in
+    apis.yml.

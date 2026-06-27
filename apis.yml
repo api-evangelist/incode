@@ -1,0 +1,191 @@
+aid: incode
+url: https://raw.githubusercontent.com/api-evangelist/incode/refs/heads/main/apis.yml
+name: Incode
+kind: company
+description: Incode is an AI-powered identity verification and biometric authentication
+  platform. The Incode Omni API runs configurable onboarding sessions that capture and
+  validate government IDs, perform face match and passive liveness, run government-database
+  and watchlist/AML checks, and return scores, OCR data, and images via REST.
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+tags:
+- Identity Verification
+- Biometrics
+- KYC
+- Liveness
+- Onboarding
+created: '2026-06-25'
+modified: '2026-06-25'
+specificationVersion: '0.19'
+apis:
+- aid: incode:incode-onboarding-sessions-api
+  name: Incode Onboarding Sessions API
+  tags:
+  - Onboarding
+  - Sessions
+  - KYC
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  properties:
+  - url: https://developer.incode.com/docs/onboarding-integration
+    type: Documentation
+  - url: https://developer.incode.com/docs/api-onboarding-start-session
+    type: APIReference
+  - url: openapi/incode-openapi.yml
+    type: OpenAPI
+  - url: collections/incode.postman_collection.json
+    type: PostmanCollection
+  - url: collections/incode.opencollection.json
+    type: OpenCollection
+  description: Creates and manages back-end onboarding sessions via POST /omni/start,
+    returning a session token used to authorize all subsequent Omni module calls, and
+    reports completion via GET /omni/finish-status.
+- aid: incode:incode-id-verification-api
+  name: Incode ID Verification API
+  tags:
+  - ID Verification
+  - Document Capture
+  - OCR
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://developer.incode.com/docs/api-onboarding-id-validation
+  baseURL: https://demo-api.incodesmile.com
+  properties:
+  - url: https://developer.incode.com/docs/api-onboarding-id-validation
+    type: Documentation
+  - url: https://developer.incode.com/reference/processid
+    type: APIReference
+  - url: openapi/incode-openapi.yml
+    type: OpenAPI
+  - url: collections/incode.postman_collection.json
+    type: PostmanCollection
+  - url: collections/incode.opencollection.json
+    type: OpenCollection
+  description: Captures and validates government IDs through POST /omni/add/front-id/v2,
+    POST /omni/add/back-id/v2, and POST /omni/process/id, extracting OCR data and
+    document authenticity scores from base64-encoded images.
+- aid: incode:incode-face-liveness-api
+  name: Incode Face and Liveness API
+  tags:
+  - Face Match
+  - Liveness
+  - Biometrics
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://developer.incode.com/docs/api-onboarding-face-validation
+  baseURL: https://demo-api.incodesmile.com
+  properties:
+  - url: https://developer.incode.com/docs/api-onboarding-face-validation
+    type: Documentation
+  - url: https://developer.incode.com/reference/processface
+    type: APIReference
+  - url: openapi/incode-openapi.yml
+    type: OpenAPI
+  - url: collections/incode.postman_collection.json
+    type: PostmanCollection
+  - url: collections/incode.opencollection.json
+    type: OpenCollection
+  description: Adds a selfie and runs passive liveness via POST /omni/add/face/third-party,
+    then compares it against the ID portrait for face match via POST /omni/process/face.
+- aid: incode:incode-government-validation-api
+  name: Incode Government Validation API
+  tags:
+  - Government Validation
+  - KYC
+  - Compliance
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://developer.incode.com/docs/government-verification
+  baseURL: https://demo-api.incodesmile.com
+  properties:
+  - url: https://developer.incode.com/docs/government-verification
+    type: Documentation
+  - url: https://developer.incode.com/reference/processgovernmentvalidation
+    type: APIReference
+  - url: openapi/incode-openapi.yml
+    type: OpenAPI
+  - url: collections/incode.postman_collection.json
+    type: PostmanCollection
+  - url: collections/incode.opencollection.json
+    type: OpenCollection
+  description: Validates captured ID data against government databases (e.g. Mexico INE,
+    Peru RENIEC) via POST /omni/process/government-validation, with optional fallback
+    and selfie-to-government-image comparison.
+- aid: incode:incode-watchlist-aml-api
+  name: Incode Watchlist and AML API
+  tags:
+  - Watchlist
+  - AML
+  - Sanctions
+  - PEP
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://developer.incode.com/docs/global-watchlist
+  baseURL: https://demo-api.incodesmile.com
+  properties:
+  - url: https://developer.incode.com/docs/global-watchlist
+    type: Documentation
+  - url: openapi/incode-openapi.yml
+    type: OpenAPI
+  - url: collections/incode.postman_collection.json
+    type: PostmanCollection
+  - url: collections/incode.opencollection.json
+    type: OpenCollection
+  description: Screens individuals against global sanctions, PEP, and warning lists via
+    POST /omni/process/global-watchlist and POST /omni/watchlist-result, with ongoing
+    monitoring through GET /omni/updated-watchlist-result.
+- aid: incode:incode-results-api
+  name: Incode Results API
+  tags:
+  - Results
+  - Scores
+  - OCR
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  baseURL: https://demo-api.incodesmile.com
+  properties:
+  - url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+    type: Documentation
+  - url: https://developer.incode.com/docs/fetch-scores
+    type: APIReference
+  - url: openapi/incode-openapi.yml
+    type: OpenAPI
+  - url: collections/incode.postman_collection.json
+    type: PostmanCollection
+  - url: collections/incode.opencollection.json
+    type: OpenCollection
+  description: Retrieves onboarding results for a completed session by interview ID via
+    GET /omni/get/score, GET /omni/get/ocr-data, and GET /omni/get/images.
+- aid: incode:incode-webhooks-api
+  name: Incode Webhooks API
+  tags:
+  - Webhooks
+  - Events
+  - Notifications
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://developer.incode.com/docs/onboarding-status-webhook
+  baseURL: https://demo-api.incodesmile.com
+  properties:
+  - url: https://developer.incode.com/docs/onboarding-status-webhook
+    type: Documentation
+  - url: https://developer.incode.com/docs/webhooks
+    type: APIReference
+  - url: openapi/incode-openapi.yml
+    type: OpenAPI
+  description: Pushes onboarding status changes to a configured back-end URL; the
+    ONBOARDING_FINISHED event signals that scores and data are ready to fetch, with a
+    one-time retry on non-200 responses.
+common:
+- type: GitHubOrganization
+  url: https://github.com/Incode-Technologies-Example-Repos
+- type: LinkedIn
+  url: https://www.linkedin.com/company/incodetech
+- type: Website
+  url: https://incode.com
+- type: Documentation
+  url: https://developer.incode.com/docs
+- type: Plans
+  url: plans/incode-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/incode-rate-limits.yml
+- type: FinOps
+  url: finops/incode-finops.yml
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

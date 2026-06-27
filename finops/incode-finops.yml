@@ -1,0 +1,104 @@
+specification: FinOps Framework
+specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
+provider: Incode
+providerId: incode
+created: '2026-06-25'
+modified: '2026-06-25'
+reconciled: false
+tags:
+- Identity Verification
+- Biometrics
+- KYC
+- Liveness
+- Onboarding
+- FinOps
+- Cost Management
+- FOCUS
+description: >-
+  FinOps view of Incode Omni spend. Incode pricing is sales-led and not
+  publicly published; cost is typically driven by the number of onboarding
+  sessions / verifications and which modules each session executes (ID
+  verification, face match and liveness, government validation, watchlist/AML).
+  The meters below model the natural cost drivers of the platform; per-unit
+  rates must be obtained from Incode and are not reconciled in this artifact.
+notes: >-
+  Per-verification and per-module rates are not public; reconcile against an
+  Incode contract or quote.
+sources:
+- https://incode.com/platform
+- https://developer.incode.com/docs
+- https://focus.finops.org/focus-specification/v1-3/
+alignedWith:
+  framework: FinOps Foundation Framework
+  frameworkUrl: https://www.finops.org/framework/
+  dataSpec: FOCUS
+  dataSpecVersion: '1.3'
+  dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
+publisherName: Incode
+serviceCategory: Identity and Compliance
+billingModel:
+  pricingCategory: Subscription-Based
+  billingFrequency: Monthly
+  billingCurrency: USD
+  chargeCategories:
+  - Usage
+  - Purchase
+  - Adjustment
+focusColumns:
+  ServiceName: Incode Omni
+  ServiceCategory: Identity and Compliance
+  ProviderName: Incode
+  PublisherName: Incode
+  InvoiceIssuerName: Incode
+  BillingCurrency: USD
+  ChargeCategory: Usage
+  PricingCategory: Subscription-Based
+meters:
+- name: onboarding_sessions
+  description: Onboarding sessions started via POST /omni/start.
+  unit: sessions
+  aggregation: sum
+  dimensions:
+  - account
+  - flow
+- name: id_verifications
+  description: Government ID capture and validation runs (process/id).
+  unit: verifications
+  aggregation: sum
+  dimensions:
+  - account
+  - flow
+- name: face_liveness_checks
+  description: Selfie liveness and face match runs (add/face, process/face).
+  unit: checks
+  aggregation: sum
+  dimensions:
+  - account
+  - flow
+- name: government_validations
+  description: Government-database validations (process/government-validation).
+  unit: validations
+  aggregation: sum
+  dimensions:
+  - account
+  - country
+- name: watchlist_screenings
+  description: Watchlist / AML screenings (process/global-watchlist, watchlist-result).
+  unit: screenings
+  aggregation: sum
+  dimensions:
+  - account
+  - watchlistType
+principles:
+- name: Visibility
+  description: Track sessions and per-module executions per Flow to understand verification cost drivers.
+- name: Allocation
+  description: Map Flow configurations and API keys to teams, products, or cost centers.
+- name: Optimization
+  description: Configure Flows to run only the modules required for each use case; avoid redundant module executions.
+- name: Accountability
+  description: Assign owners per Flow / integration; review verification volume against the contracted commitment.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

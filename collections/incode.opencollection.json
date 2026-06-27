@@ -1,0 +1,168 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Incode Omni API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{apiKey}}",
+      "in": "header"
+    }
+  },
+  "items": [
+    {
+      "info": { "name": "Onboarding Sessions", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "Start an onboarding session.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://demo-api.incodesmile.com/omni/start",
+            "body": { "type": "json", "data": "{\n  \"countryCode\": \"ALL\",\n  \"configurationId\": \"{{configurationId}}\",\n  \"externalCustomerId\": \"\"\n}" }
+          },
+          "docs": "Creates a new onboarding session from a Flow configuration and returns a session token."
+        },
+        {
+          "info": { "name": "Get onboarding completion status.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://demo-api.incodesmile.com/omni/finish-status"
+          },
+          "docs": "Returns the completion status of the onboarding session."
+        }
+      ]
+    },
+    {
+      "info": { "name": "ID Verification", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "Add the front of an ID document.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://demo-api.incodesmile.com/omni/add/front-id/v2",
+            "body": { "type": "json", "data": "{\n  \"base64Image\": \"\"\n}" }
+          },
+          "docs": "Uploads a base64-encoded image of the front of a government ID."
+        },
+        {
+          "info": { "name": "Add the back of an ID document.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://demo-api.incodesmile.com/omni/add/back-id/v2",
+            "body": { "type": "json", "data": "{\n  \"base64Image\": \"\"\n}" }
+          },
+          "docs": "Uploads a base64-encoded image of the back of a government ID."
+        },
+        {
+          "info": { "name": "Process the captured ID.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://demo-api.incodesmile.com/omni/process/id",
+            "body": { "type": "json", "data": "{}" }
+          },
+          "docs": "Runs document validation and OCR on the captured ID images."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Face and Liveness", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "Add a selfie image and run liveness.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://demo-api.incodesmile.com/omni/add/face/third-party?imageType=selfie",
+            "body": { "type": "json", "data": "{\n  \"base64Image\": \"\"\n}" }
+          },
+          "docs": "Uploads a base64-encoded selfie; passive liveness is evaluated on upload."
+        },
+        {
+          "info": { "name": "Run face match.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://demo-api.incodesmile.com/omni/process/face?imageType=selfie",
+            "body": { "type": "json", "data": "{}" }
+          },
+          "docs": "Compares the session selfie against the face on the captured ID."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Government Validation", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "Validate ID data against a government database.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://demo-api.incodesmile.com/omni/process/government-validation",
+            "body": { "type": "json", "data": "{\n  \"fallbackEnabled\": false\n}" }
+          },
+          "docs": "Validates captured ID data against the applicable government source (e.g. INE, RENIEC)."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Watchlist and AML", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "Run a global watchlist screening.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://demo-api.incodesmile.com/omni/process/global-watchlist",
+            "body": { "type": "json", "data": "{}" }
+          },
+          "docs": "Screens the subject against global sanctions, PEP, and warning lists."
+        },
+        {
+          "info": { "name": "Query watchlist data without persistence.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://demo-api.incodesmile.com/omni/watchlist-result",
+            "body": { "type": "json", "data": "{\n  \"firstName\": \"\",\n  \"surName\": \"\",\n  \"dateOfBirth\": \"\",\n  \"watchlistTypes\": [\"sanction\", \"pep\", \"warning\"]\n}" }
+          },
+          "docs": "Lightweight screening using request and interview data without persistent storage."
+        },
+        {
+          "info": { "name": "Retrieve updated watchlist results.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://demo-api.incodesmile.com/omni/updated-watchlist-result?id={{interviewId}}&ref="
+          },
+          "docs": "Retrieves refreshed watchlist search results after an ongoing-monitoring webhook."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Results", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "Fetch session scores.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://demo-api.incodesmile.com/omni/get/score?id={{interviewId}}"
+          },
+          "docs": "Returns all check and validation results, including the overall status (OK, WARN, FAIL)."
+        },
+        {
+          "info": { "name": "Fetch OCR data.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://demo-api.incodesmile.com/omni/get/ocr-data?interviewId={{interviewId}}"
+          },
+          "docs": "Returns OCR data extracted from the captured ID."
+        },
+        {
+          "info": { "name": "Fetch session images.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://demo-api.incodesmile.com/omni/get/images?interviewId={{interviewId}}"
+          },
+          "docs": "Returns the captured images for the onboarding session."
+        }
+      ]
+    }
+  ]
+}

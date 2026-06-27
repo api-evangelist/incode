@@ -1,0 +1,280 @@
+{
+  "info": {
+    "name": "Incode Omni API",
+    "description": "Incode Omni identity verification REST API: onboarding sessions, ID capture and validation, face match and liveness, government validation, watchlist/AML, and results. All calls require x-api-key; module calls also require the X-Incode-Hardware-Id session token returned by /omni/start.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://demo-api.incodesmile.com" },
+    { "key": "apiKey", "value": "" },
+    { "key": "sessionToken", "value": "" },
+    { "key": "configurationId", "value": "" },
+    { "key": "interviewId", "value": "" }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      { "key": "key", "value": "x-api-key" },
+      { "key": "value", "value": "{{apiKey}}" },
+      { "key": "in", "value": "header" }
+    ]
+  },
+  "item": [
+    {
+      "name": "Onboarding Sessions",
+      "item": [
+        {
+          "name": "Start Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "api-version", "value": "1.0" },
+              { "key": "x-api-key", "value": "{{apiKey}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/omni/start", "host": ["{{baseUrl}}"], "path": ["omni", "start"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"countryCode\": \"ALL\",\n  \"configurationId\": \"{{configurationId}}\",\n  \"externalCustomerId\": \"\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Finish Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "api-version", "value": "1.0" },
+              { "key": "x-api-key", "value": "{{apiKey}}" },
+              { "key": "X-Incode-Hardware-Id", "value": "{{sessionToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/omni/finish-status", "host": ["{{baseUrl}}"], "path": ["omni", "finish-status"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "ID Verification",
+      "item": [
+        {
+          "name": "Add Front ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "api-version", "value": "1.0" },
+              { "key": "x-api-key", "value": "{{apiKey}}" },
+              { "key": "X-Incode-Hardware-Id", "value": "{{sessionToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/omni/add/front-id/v2", "host": ["{{baseUrl}}"], "path": ["omni", "add", "front-id", "v2"] },
+            "body": { "mode": "raw", "raw": "{\n  \"base64Image\": \"\"\n}" }
+          }
+        },
+        {
+          "name": "Add Back ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "api-version", "value": "1.0" },
+              { "key": "x-api-key", "value": "{{apiKey}}" },
+              { "key": "X-Incode-Hardware-Id", "value": "{{sessionToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/omni/add/back-id/v2", "host": ["{{baseUrl}}"], "path": ["omni", "add", "back-id", "v2"] },
+            "body": { "mode": "raw", "raw": "{\n  \"base64Image\": \"\"\n}" }
+          }
+        },
+        {
+          "name": "Process ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "api-version", "value": "1.0" },
+              { "key": "x-api-key", "value": "{{apiKey}}" },
+              { "key": "X-Incode-Hardware-Id", "value": "{{sessionToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/omni/process/id", "host": ["{{baseUrl}}"], "path": ["omni", "process", "id"] },
+            "body": { "mode": "raw", "raw": "{}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Face and Liveness",
+      "item": [
+        {
+          "name": "Add Face (Selfie)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "api-version", "value": "1.0" },
+              { "key": "x-api-key", "value": "{{apiKey}}" },
+              { "key": "X-Incode-Hardware-Id", "value": "{{sessionToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/omni/add/face/third-party?imageType=selfie",
+              "host": ["{{baseUrl}}"],
+              "path": ["omni", "add", "face", "third-party"],
+              "query": [{ "key": "imageType", "value": "selfie" }]
+            },
+            "body": { "mode": "raw", "raw": "{\n  \"base64Image\": \"\"\n}" }
+          }
+        },
+        {
+          "name": "Process Face",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "api-version", "value": "1.0" },
+              { "key": "x-api-key", "value": "{{apiKey}}" },
+              { "key": "X-Incode-Hardware-Id", "value": "{{sessionToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/omni/process/face?imageType=selfie",
+              "host": ["{{baseUrl}}"],
+              "path": ["omni", "process", "face"],
+              "query": [{ "key": "imageType", "value": "selfie" }]
+            },
+            "body": { "mode": "raw", "raw": "{}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Government Validation",
+      "item": [
+        {
+          "name": "Process Government Validation",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "api-version", "value": "1.0" },
+              { "key": "x-api-key", "value": "{{apiKey}}" },
+              { "key": "X-Incode-Hardware-Id", "value": "{{sessionToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/omni/process/government-validation", "host": ["{{baseUrl}}"], "path": ["omni", "process", "government-validation"] },
+            "body": { "mode": "raw", "raw": "{\n  \"fallbackEnabled\": false\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Watchlist and AML",
+      "item": [
+        {
+          "name": "Process Global Watchlist",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "api-version", "value": "1.0" },
+              { "key": "x-api-key", "value": "{{apiKey}}" },
+              { "key": "X-Incode-Hardware-Id", "value": "{{sessionToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/omni/process/global-watchlist", "host": ["{{baseUrl}}"], "path": ["omni", "process", "global-watchlist"] },
+            "body": { "mode": "raw", "raw": "{}" }
+          }
+        },
+        {
+          "name": "Watchlist Result",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "api-version", "value": "1.0" },
+              { "key": "x-api-key", "value": "{{apiKey}}" },
+              { "key": "X-Incode-Hardware-Id", "value": "{{sessionToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/omni/watchlist-result", "host": ["{{baseUrl}}"], "path": ["omni", "watchlist-result"] },
+            "body": { "mode": "raw", "raw": "{\n  \"firstName\": \"\",\n  \"surName\": \"\",\n  \"dateOfBirth\": \"\",\n  \"watchlistTypes\": [\"sanction\", \"pep\", \"warning\"]\n}" }
+          }
+        },
+        {
+          "name": "Updated Watchlist Result",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "api-version", "value": "1.0" },
+              { "key": "x-api-key", "value": "{{apiKey}}" },
+              { "key": "X-Incode-Hardware-Id", "value": "{{sessionToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/omni/updated-watchlist-result?id={{interviewId}}&ref=",
+              "host": ["{{baseUrl}}"],
+              "path": ["omni", "updated-watchlist-result"],
+              "query": [
+                { "key": "id", "value": "{{interviewId}}" },
+                { "key": "ref", "value": "" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Results",
+      "item": [
+        {
+          "name": "Get Score",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "api-version", "value": "1.0" },
+              { "key": "x-api-key", "value": "{{apiKey}}" },
+              { "key": "X-Incode-Hardware-Id", "value": "{{sessionToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/omni/get/score?id={{interviewId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["omni", "get", "score"],
+              "query": [{ "key": "id", "value": "{{interviewId}}" }]
+            }
+          }
+        },
+        {
+          "name": "Get OCR Data",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "api-version", "value": "1.0" },
+              { "key": "x-api-key", "value": "{{apiKey}}" },
+              { "key": "X-Incode-Hardware-Id", "value": "{{sessionToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/omni/get/ocr-data?interviewId={{interviewId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["omni", "get", "ocr-data"],
+              "query": [{ "key": "interviewId", "value": "{{interviewId}}" }]
+            }
+          }
+        },
+        {
+          "name": "Get Images",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "api-version", "value": "1.0" },
+              { "key": "x-api-key", "value": "{{apiKey}}" },
+              { "key": "X-Incode-Hardware-Id", "value": "{{sessionToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/omni/get/images?interviewId={{interviewId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["omni", "get", "images"],
+              "query": [{ "key": "interviewId", "value": "{{interviewId}}" }]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

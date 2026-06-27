@@ -1,0 +1,81 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Incode
+providerId: incode
+created: '2026-06-25'
+modified: '2026-06-25'
+reconciled: false
+tags:
+- Identity Verification
+- Biometrics
+- KYC
+- Liveness
+- Onboarding
+- Plans
+description: >-
+  Incode does not publish public, self-serve pricing for the Incode Omni
+  platform. Access is sales-led: pricing is quoted per deployment based on
+  modules used (ID verification, face match, liveness, government validation,
+  watchlist/AML), verification volume, geographies, and contract term.
+  Prospects request a demo and engage Incode sales to obtain credentials and a
+  quote. The plan structure below is representational, not reconciled against
+  published rates.
+notes: >-
+  No public price list is available. Verify modules, volume tiers, and per-
+  verification rates with Incode sales during reconciliation.
+sources:
+- https://incode.com/demo
+- https://incode.com/platform
+- https://developer.incode.com/docs
+plans:
+- id: incode-demo
+  name: Demo / Sandbox
+  type: trial
+  description: >-
+    Sandbox access against the demo API (https://demo-api.incodesmile.com)
+    with API keys and Flow configurations provisioned by Incode for evaluation
+    and integration testing.
+  entries:
+  - label: Sandbox Access
+    name: sandbox
+    type: trial
+    metric: verifications
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: contact sales
+    userMultiplied: false
+  elements:
+  - name: Onboarding Sessions
+  - name: ID Verification
+  - name: Face and Liveness
+- id: incode-enterprise
+  name: Enterprise
+  type: enterprise
+  description: >-
+    Production Incode Omni deployment with negotiated per-verification pricing
+    across the contracted modules, volume commitments, geographies, SLAs, and
+    support. Contact Incode sales.
+  entries:
+  - label: Enterprise Agreement
+    name: enterprise
+    type: flat
+    metric: contract
+    limit: -1
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: contact sales
+    userMultiplied: false
+  elements:
+  - name: Onboarding Sessions
+  - name: ID Verification
+  - name: Face and Liveness
+  - name: Government Validation
+  - name: Watchlist and AML
+  - name: Results and Webhooks
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

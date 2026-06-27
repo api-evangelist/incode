@@ -1,0 +1,68 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: Incode
+providerId: incode
+created: '2026-06-25'
+modified: '2026-06-25'
+reconciled: false
+tags:
+- Identity Verification
+- Biometrics
+- KYC
+- Liveness
+- Onboarding
+- Rate Limiting
+- Quotas
+- Throttling
+description: >-
+  The Incode Omni API applies tiered, token-bucket rate limits by endpoint
+  weight. Document endpoints (SUPER_HEAVY, e.g. add/front-id, add/back-id,
+  process/id) and facial recognition endpoints (HEAVY, e.g. add/face,
+  process/face) are limited to roughly 1 request/second with a 5-token burst,
+  while other endpoints (OTHER) allow about 100 requests/second with a 50-token
+  burst. Requests are capped at a 10 MB request/response size and a 30-second
+  timeout. Exact account-level limits are set per deployment and not fully
+  reconciled here.
+notes: >-
+  Confirm per-account and per-endpoint limits with Incode during
+  reconciliation; values may vary by deployment and contract.
+sources:
+- https://developer.incode.com/reference/introduction
+- https://developer.incode.com/docs
+responseCodes:
+  throttled: 429
+limits:
+- name: Document Endpoints (SUPER_HEAVY)
+  scope: account
+  metric: requests
+  limit: ~1 request/second, 5-token burst
+  notes: Applies to ID document endpoints such as add/front-id, add/back-id, process/id.
+- name: Facial Recognition Endpoints (HEAVY)
+  scope: account
+  metric: requests
+  limit: ~1 request/second, 5-token burst
+  notes: Applies to face endpoints such as add/face and process/face.
+- name: Other Endpoints (OTHER)
+  scope: account
+  metric: requests
+  limit: ~100 requests/second, 50-token burst
+  notes: Applies to remaining Omni endpoints.
+- name: Request / Response Size
+  scope: request
+  metric: bytes
+  limit: 10 MB
+  notes: Maximum request and response payload size.
+- name: Request Timeout
+  scope: request
+  metric: seconds
+  limit: 30
+  notes: Maximum processing time per request.
+policies:
+- name: Token Bucket
+  description: Endpoint classes use a token-bucket model with steady refill and a burst capacity.
+- name: Backoff Strategy
+  description: Clients should implement exponential backoff with jitter and retry on 429 responses.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
