@@ -172,6 +172,12 @@ apis:
     ONBOARDING_FINISHED event signals that scores and data are ready to fetch, with a
     one-time retry on non-200 responses.
 common:
+- type: TrustCenter
+  url: security/incode-trust-center.yml
+- type: DomainSecurity
+  url: security/incode-domain-security.yml
+- type: Authentication
+  url: authentication/incode-authentication.yml
 - type: GitHubOrganization
   url: https://github.com/Incode-Technologies-Example-Repos
 - type: LinkedIn
@@ -186,6 +192,8 @@ common:
   url: rate-limits/incode-rate-limits.yml
 - type: FinOps
   url: finops/incode-finops.yml
+- type: Blog
+  url: https://incode.com/blog
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com

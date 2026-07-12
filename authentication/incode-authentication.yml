@@ -1,0 +1,23 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/incode-openapi.yml
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - header
+schemes:
+- name: ApiKeyAuth
+  type: apiKey
+  in: header
+  parameter: x-api-key
+  description: Client API key issued by Incode.
+  sources:
+  - openapi/incode-openapi.yml
+- name: SessionToken
+  type: apiKey
+  in: header
+  parameter: X-Incode-Hardware-Id
+  description: Session token (Onboarding Token) returned by POST /omni/start.
+  sources:
+  - openapi/incode-openapi.yml
