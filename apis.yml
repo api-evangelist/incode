@@ -172,6 +172,8 @@ apis:
     ONBOARDING_FINISHED event signals that scores and data are ready to fetch, with a
     one-time retry on non-200 responses.
 common:
+- type: AgenticAccess
+  url: agentic-access/incode-agentic-access.yml
 - type: TrustCenter
   url: security/incode-trust-center.yml
 - type: DomainSecurity
