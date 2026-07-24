@@ -1,0 +1,143 @@
+openapi: 3.0.1
+info:
+  title: Incode Omni Face and Liveness ID Verification API
+  description: REST API for the Incode Omni identity verification platform. Onboarding sessions capture and validate government IDs, run face match and passive liveness, perform government-database and watchlist/AML screening, and return scores, OCR data, and images. All calls require an x-api-key, and module calls additionally require the session token in the X-Incode-Hardware-Id header.
+  termsOfService: https://incode.com/legal/terms-of-service
+  contact:
+    name: Incode Support
+    url: https://developer.incode.com/
+  version: '1.0'
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Demo / sandbox
+- url: https://api.incodesmile.com
+  description: Production
+security:
+- ApiKeyAuth: []
+  SessionToken: []
+tags:
+- name: ID Verification
+  description: Government ID capture and validation.
+paths:
+  /omni/add/front-id/v2:
+    post:
+      operationId: addFrontId
+      tags:
+      - ID Verification
+      summary: Add the front of an ID document.
+      description: Uploads a base64-encoded image of the front of a government ID.
+      parameters:
+      - $ref: '#/components/parameters/ApiVersion'
+      - $ref: '#/components/parameters/HardwareId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddImageRequest'
+      responses:
+        '200':
+          description: ID front processed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddIdResponse'
+  /omni/add/back-id/v2:
+    post:
+      operationId: addBackId
+      tags:
+      - ID Verification
+      summary: Add the back of an ID document.
+      description: Uploads a base64-encoded image of the back of a government ID.
+      parameters:
+      - $ref: '#/components/parameters/ApiVersion'
+      - $ref: '#/components/parameters/HardwareId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddImageRequest'
+      responses:
+        '200':
+          description: ID back processed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddIdResponse'
+  /omni/process/id:
+    post:
+      operationId: processId
+      tags:
+      - ID Verification
+      summary: Process the captured ID.
+      description: Runs document validation and OCR on the captured ID images for the session. Accepts an empty JSON object.
+      parameters:
+      - $ref: '#/components/parameters/ApiVersion'
+      - $ref: '#/components/parameters/HardwareId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: ID processed; scores available via the Results API.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessResponse'
+components:
+  schemas:
+    AddImageRequest:
+      type: object
+      required:
+      - base64Image
+      properties:
+        base64Image:
+          type: string
+          description: Base64-encoded image.
+    AddIdResponse:
+      type: object
+      properties:
+        sharpness:
+          type: number
+        glare:
+          type: number
+        classification:
+          type: boolean
+        typeOfId:
+          type: string
+    ProcessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+      additionalProperties: true
+  parameters:
+    HardwareId:
+      name: X-Incode-Hardware-Id
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Session token returned by POST /omni/start.
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: Client API key issued by Incode.
+    SessionToken:
+      type: apiKey
+      in: header
+      name: X-Incode-Hardware-Id
+      description: Session token (Onboarding Token) returned by POST /omni/start.

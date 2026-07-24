@@ -1,0 +1,135 @@
+openapi: 3.0.1
+info:
+  title: Incode Omni Face and Liveness Results API
+  description: REST API for the Incode Omni identity verification platform. Onboarding sessions capture and validate government IDs, run face match and passive liveness, perform government-database and watchlist/AML screening, and return scores, OCR data, and images. All calls require an x-api-key, and module calls additionally require the session token in the X-Incode-Hardware-Id header.
+  termsOfService: https://incode.com/legal/terms-of-service
+  contact:
+    name: Incode Support
+    url: https://developer.incode.com/
+  version: '1.0'
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Demo / sandbox
+- url: https://api.incodesmile.com
+  description: Production
+security:
+- ApiKeyAuth: []
+  SessionToken: []
+tags:
+- name: Results
+  description: Fetch scores, OCR data, and images.
+paths:
+  /omni/get/score:
+    get:
+      operationId: getScore
+      tags:
+      - Results
+      summary: Fetch session scores.
+      description: Returns all check and validation results for a completed session, including the overall status (OK, WARN, FAIL).
+      parameters:
+      - $ref: '#/components/parameters/ApiVersion'
+      - $ref: '#/components/parameters/HardwareId'
+      - name: id
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Interview ID (Session ID); extracted from the token if omitted.
+      responses:
+        '200':
+          description: Score data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScoreResponse'
+  /omni/get/ocr-data:
+    get:
+      operationId: getOcrData
+      tags:
+      - Results
+      summary: Fetch OCR data.
+      description: Returns OCR data extracted from the captured ID for the session.
+      parameters:
+      - $ref: '#/components/parameters/ApiVersion'
+      - $ref: '#/components/parameters/HardwareId'
+      - name: interviewId
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Interview ID (Session ID).
+      responses:
+        '200':
+          description: OCR data.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /omni/get/images:
+    get:
+      operationId: getImages
+      tags:
+      - Results
+      summary: Fetch session images.
+      description: Returns the captured images for the onboarding session.
+      parameters:
+      - $ref: '#/components/parameters/ApiVersion'
+      - $ref: '#/components/parameters/HardwareId'
+      - name: interviewId
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Interview ID (Session ID).
+      responses:
+        '200':
+          description: Image data.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+components:
+  parameters:
+    HardwareId:
+      name: X-Incode-Hardware-Id
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Session token returned by POST /omni/start.
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  schemas:
+    ScoreResponse:
+      type: object
+      properties:
+        overall:
+          type: object
+          properties:
+            status:
+              type: string
+              enum:
+              - OK
+              - WARN
+              - FAIL
+            value:
+              type: number
+      additionalProperties: true
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: Client API key issued by Incode.
+    SessionToken:
+      type: apiKey
+      in: header
+      name: X-Incode-Hardware-Id
+      description: Session token (Onboarding Token) returned by POST /omni/start.

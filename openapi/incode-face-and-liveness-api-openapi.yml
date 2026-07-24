@@ -1,0 +1,128 @@
+openapi: 3.0.1
+info:
+  title: Incode Omni Face and Liveness API
+  description: REST API for the Incode Omni identity verification platform. Onboarding sessions capture and validate government IDs, run face match and passive liveness, perform government-database and watchlist/AML screening, and return scores, OCR data, and images. All calls require an x-api-key, and module calls additionally require the session token in the X-Incode-Hardware-Id header.
+  termsOfService: https://incode.com/legal/terms-of-service
+  contact:
+    name: Incode Support
+    url: https://developer.incode.com/
+  version: '1.0'
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Demo / sandbox
+- url: https://api.incodesmile.com
+  description: Production
+security:
+- ApiKeyAuth: []
+  SessionToken: []
+tags:
+- name: Face and Liveness
+  description: Selfie capture, passive liveness, and face match.
+paths:
+  /omni/add/face/third-party:
+    post:
+      operationId: addFace
+      tags:
+      - Face and Liveness
+      summary: Add a selfie image and run liveness.
+      description: Uploads a base64-encoded selfie image. Passive liveness is evaluated on upload, indicating whether the image is of a real, present person.
+      parameters:
+      - $ref: '#/components/parameters/ApiVersion'
+      - $ref: '#/components/parameters/HardwareId'
+      - name: imageType
+        in: query
+        required: true
+        schema:
+          type: string
+          default: selfie
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddImageRequest'
+      responses:
+        '200':
+          description: Selfie added; liveness result returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FaceResponse'
+  /omni/process/face:
+    post:
+      operationId: processFace
+      tags:
+      - Face and Liveness
+      summary: Run face match.
+      description: Compares the session selfie against the face on the captured ID and returns the face match result.
+      parameters:
+      - $ref: '#/components/parameters/ApiVersion'
+      - $ref: '#/components/parameters/HardwareId'
+      - name: imageType
+        in: query
+        required: false
+        schema:
+          type: string
+          default: selfie
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Face match result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FaceResponse'
+components:
+  parameters:
+    HardwareId:
+      name: X-Incode-Hardware-Id
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Session token returned by POST /omni/start.
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  schemas:
+    FaceResponse:
+      type: object
+      properties:
+        confidence:
+          type: number
+        isBright:
+          type: boolean
+        hasLenses:
+          type: boolean
+        hasFaceMask:
+          type: boolean
+        existingUser:
+          type: boolean
+    AddImageRequest:
+      type: object
+      required:
+      - base64Image
+      properties:
+        base64Image:
+          type: string
+          description: Base64-encoded image.
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: Client API key issued by Incode.
+    SessionToken:
+      type: apiKey
+      in: header
+      name: X-Incode-Hardware-Id
+      description: Session token (Onboarding Token) returned by POST /omni/start.

@@ -1,0 +1,122 @@
+openapi: 3.0.1
+info:
+  title: Incode Omni Face and Liveness Onboarding API
+  description: REST API for the Incode Omni identity verification platform. Onboarding sessions capture and validate government IDs, run face match and passive liveness, perform government-database and watchlist/AML screening, and return scores, OCR data, and images. All calls require an x-api-key, and module calls additionally require the session token in the X-Incode-Hardware-Id header.
+  termsOfService: https://incode.com/legal/terms-of-service
+  contact:
+    name: Incode Support
+    url: https://developer.incode.com/
+  version: '1.0'
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Demo / sandbox
+- url: https://api.incodesmile.com
+  description: Production
+security:
+- ApiKeyAuth: []
+  SessionToken: []
+tags:
+- name: Onboarding
+  description: Create and complete onboarding sessions.
+paths:
+  /omni/start:
+    post:
+      operationId: startOnboarding
+      tags:
+      - Onboarding
+      summary: Start an onboarding session.
+      description: Creates a new onboarding session from a Flow configuration and returns a session token (Onboarding Token) used to authorize all subsequent Omni module calls.
+      security:
+      - ApiKeyAuth: []
+      parameters:
+      - $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartSessionRequest'
+      responses:
+        '200':
+          description: Session created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartSessionResponse'
+  /omni/finish-status:
+    get:
+      operationId: finishStatus
+      tags:
+      - Onboarding
+      summary: Get onboarding completion status.
+      description: Returns the completion status of the onboarding session.
+      parameters:
+      - $ref: '#/components/parameters/ApiVersion'
+      - $ref: '#/components/parameters/HardwareId'
+      responses:
+        '200':
+          description: Onboarding status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinishStatusResponse'
+components:
+  schemas:
+    FinishStatusResponse:
+      type: object
+      properties:
+        onboardingStatus:
+          type: string
+          example: ONBOARDING_FINISHED
+    StartSessionRequest:
+      type: object
+      required:
+      - configurationId
+      properties:
+        configurationId:
+          type: string
+          description: The Incode Flow identifier (Flow ID).
+        countryCode:
+          type: string
+          description: Country code for the session (e.g. ALL, MEX, USA).
+          example: ALL
+        externalCustomerId:
+          type: string
+          description: Custom ID linking the session to your system.
+    StartSessionResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: Session token used for subsequent Omni calls.
+        interviewId:
+          type: string
+          description: Unique session identifier.
+        interviewToken:
+          type: string
+  parameters:
+    HardwareId:
+      name: X-Incode-Hardware-Id
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Session token returned by POST /omni/start.
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: Client API key issued by Incode.
+    SessionToken:
+      type: apiKey
+      in: header
+      name: X-Incode-Hardware-Id
+      description: Session token (Onboarding Token) returned by POST /omni/start.

@@ -1,0 +1,153 @@
+openapi: 3.0.1
+info:
+  title: Incode Omni Face and Liveness Watchlist and AML API
+  description: REST API for the Incode Omni identity verification platform. Onboarding sessions capture and validate government IDs, run face match and passive liveness, perform government-database and watchlist/AML screening, and return scores, OCR data, and images. All calls require an x-api-key, and module calls additionally require the session token in the X-Incode-Hardware-Id header.
+  termsOfService: https://incode.com/legal/terms-of-service
+  contact:
+    name: Incode Support
+    url: https://developer.incode.com/
+  version: '1.0'
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Demo / sandbox
+- url: https://api.incodesmile.com
+  description: Production
+security:
+- ApiKeyAuth: []
+  SessionToken: []
+tags:
+- name: Watchlist and AML
+  description: Sanctions, PEP, and warning-list screening.
+paths:
+  /omni/process/global-watchlist:
+    post:
+      operationId: processGlobalWatchlist
+      tags:
+      - Watchlist and AML
+      summary: Run a global watchlist screening.
+      description: Screens the session subject against global sanctions, PEP, and warning lists using the Flow configuration; results persist with the session.
+      parameters:
+      - $ref: '#/components/parameters/ApiVersion'
+      - $ref: '#/components/parameters/HardwareId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WatchlistRequest'
+      responses:
+        '200':
+          description: Watchlist screening result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WatchlistResponse'
+  /omni/watchlist-result:
+    post:
+      operationId: watchlistResult
+      tags:
+      - Watchlist and AML
+      summary: Query watchlist data without persistence.
+      description: Lightweight screening that queries watchlist data using request and interview data without persistent storage.
+      parameters:
+      - $ref: '#/components/parameters/ApiVersion'
+      - $ref: '#/components/parameters/HardwareId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WatchlistRequest'
+      responses:
+        '200':
+          description: Watchlist result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WatchlistResponse'
+  /omni/updated-watchlist-result:
+    get:
+      operationId: updatedWatchlistResult
+      tags:
+      - Watchlist and AML
+      summary: Retrieve updated watchlist results.
+      description: Retrieves refreshed watchlist search results after an ongoing-monitoring webhook notification.
+      parameters:
+      - $ref: '#/components/parameters/ApiVersion'
+      - $ref: '#/components/parameters/HardwareId'
+      - name: id
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Interview ID.
+      - name: ref
+        in: query
+        required: true
+        schema:
+          type: string
+        description: Reference number from the watchlist update webhook.
+      responses:
+        '200':
+          description: Updated watchlist result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WatchlistResponse'
+components:
+  parameters:
+    HardwareId:
+      name: X-Incode-Hardware-Id
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Session token returned by POST /omni/start.
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  schemas:
+    WatchlistResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        hits:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+    WatchlistRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+        surName:
+          type: string
+        dateOfBirth:
+          type: string
+        watchlistTypes:
+          type: array
+          items:
+            type: string
+            enum:
+            - sanction
+            - pep
+            - warning
+        subscribe:
+          type: boolean
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: Client API key issued by Incode.
+    SessionToken:
+      type: apiKey
+      in: header
+      name: X-Incode-Hardware-Id
+      description: Session token (Onboarding Token) returned by POST /omni/start.
