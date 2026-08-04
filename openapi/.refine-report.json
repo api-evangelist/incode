@@ -1,0 +1,24 @@
+{
+  "provider": "incode",
+  "sources": [
+    "incode-face-and-liveness-api-openapi.yml",
+    "incode-government-validation-api-openapi.yml",
+    "incode-id-verification-api-openapi.yml",
+    "incode-onboarding-api-openapi.yml",
+    "incode-results-api-openapi.yml",
+    "incode-watchlist-and-aml-api-openapi.yml"
+  ],
+  "outputs": [
+    "incode-face-and-liveness-api-openapi.yml",
+    "incode-government-validation-api-openapi.yml",
+    "incode-id-verification-api-openapi.yml",
+    "incode-onboarding-api-openapi.yml",
+    "incode-results-api-openapi.yml",
+    "incode-watchlist-and-aml-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
