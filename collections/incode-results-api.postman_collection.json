@@ -1,0 +1,403 @@
+{
+  "item": [
+    {
+      "id": "758c4eae-6f79-41b4-826a-7afc31ba642b",
+      "name": "Results",
+      "description": {
+        "content": "Fetch scores, OCR data, and images.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "86f8b483-4354-407b-987b-b905639f5975",
+          "name": "Fetch session scores.",
+          "request": {
+            "name": "Fetch session scores.",
+            "description": {
+              "content": "Returns all check and validation results for a completed session, including the overall status (OK, WARN, FAIL).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "omni",
+                "get",
+                "score"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "id",
+                  "value": "<string>",
+                  "description": "Interview ID (Session ID); extracted from the token if omitted."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) ",
+                "key": "api-version",
+                "value": "1.0"
+              },
+              {
+                "disabled": false,
+                "description": "(Required) Session token returned by POST /omni/start.",
+                "key": "X-Incode-Hardware-Id",
+                "value": "<string>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "42e4430e-b87b-4773-910c-749e02bd5877",
+              "name": "Score data.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "omni",
+                    "get",
+                    "score"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) ",
+                    "key": "api-version",
+                    "value": "1.0"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) Session token returned by POST /omni/start.",
+                    "key": "X-Incode-Hardware-Id",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"overall\": {\n    \"status\": \"WARN\",\n    \"value\": 5971.109431178244\n  },\n  \"key_0\": 3287.631565711905\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "93c22df6-3f7f-4d6e-b12b-b6f81a8980ab",
+          "name": "Fetch OCR data.",
+          "request": {
+            "name": "Fetch OCR data.",
+            "description": {
+              "content": "Returns OCR data extracted from the captured ID for the session.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "omni",
+                "get",
+                "ocr-data"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "interviewId",
+                  "value": "<string>",
+                  "description": "Interview ID (Session ID)."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) ",
+                "key": "api-version",
+                "value": "1.0"
+              },
+              {
+                "disabled": false,
+                "description": "(Required) Session token returned by POST /omni/start.",
+                "key": "X-Incode-Hardware-Id",
+                "value": "<string>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "54004d58-fc53-4420-8372-9020152b9658",
+              "name": "OCR data.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "omni",
+                    "get",
+                    "ocr-data"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "interviewId",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) ",
+                    "key": "api-version",
+                    "value": "1.0"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) Session token returned by POST /omni/start.",
+                    "key": "X-Incode-Hardware-Id",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"key_0\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d9e47907-185d-496d-aa7e-707b76441115",
+          "name": "Fetch session images.",
+          "request": {
+            "name": "Fetch session images.",
+            "description": {
+              "content": "Returns the captured images for the onboarding session.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "omni",
+                "get",
+                "images"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "interviewId",
+                  "value": "<string>",
+                  "description": "Interview ID (Session ID)."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) ",
+                "key": "api-version",
+                "value": "1.0"
+              },
+              {
+                "disabled": false,
+                "description": "(Required) Session token returned by POST /omni/start.",
+                "key": "X-Incode-Hardware-Id",
+                "value": "<string>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "7895e144-55b0-4513-9ce5-b57e4adbb5fe",
+              "name": "Image data.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "omni",
+                    "get",
+                    "images"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "interviewId",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) ",
+                    "key": "api-version",
+                    "value": "1.0"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) Session token returned by POST /omni/start.",
+                    "key": "X-Incode-Hardware-Id",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"key_0\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://demo-api.incodesmile.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "x-api-key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "cfd16a2c-ef2d-4160-a847-2f314c2d6b2f",
+    "name": "Incode Omni Face and Liveness Results API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "REST API for the Incode Omni identity verification platform. Onboarding sessions capture and validate government IDs, run face match and passive liveness, perform government-database and watchlist/AML screening, and return scores, OCR data, and images. All calls require an x-api-key, and module calls additionally require the session token in the X-Incode-Hardware-Id header.\n\nContact Support:\n Name: Incode Support",
+      "type": "text/plain"
+    }
+  }
+}

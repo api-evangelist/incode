@@ -1,0 +1,113 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Incode Omni Face and Liveness Results API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Results",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Fetch session scores.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://demo-api.incodesmile.com/omni/get/score",
+            "headers": [
+              {
+                "name": "api-version",
+                "value": ""
+              },
+              {
+                "name": "X-Incode-Hardware-Id",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "Interview ID (Session ID); extracted from the token if omitted."
+              }
+            ]
+          },
+          "docs": "Returns all check and validation results for a completed session, including the overall status (OK, WARN, FAIL)."
+        },
+        {
+          "info": {
+            "name": "Fetch OCR data.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://demo-api.incodesmile.com/omni/get/ocr-data",
+            "headers": [
+              {
+                "name": "api-version",
+                "value": ""
+              },
+              {
+                "name": "X-Incode-Hardware-Id",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "interviewId",
+                "value": "",
+                "type": "query",
+                "description": "Interview ID (Session ID)."
+              }
+            ]
+          },
+          "docs": "Returns OCR data extracted from the captured ID for the session."
+        },
+        {
+          "info": {
+            "name": "Fetch session images.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://demo-api.incodesmile.com/omni/get/images",
+            "headers": [
+              {
+                "name": "api-version",
+                "value": ""
+              },
+              {
+                "name": "X-Incode-Hardware-Id",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "interviewId",
+                "value": "",
+                "type": "query",
+                "description": "Interview ID (Session ID)."
+              }
+            ]
+          },
+          "docs": "Returns the captured images for the onboarding session."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

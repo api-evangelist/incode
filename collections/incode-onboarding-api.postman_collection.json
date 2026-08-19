@@ -1,0 +1,282 @@
+{
+  "item": [
+    {
+      "id": "e77529c1-e765-408c-83b7-e0eba259d970",
+      "name": "Onboarding",
+      "description": {
+        "content": "Create and complete onboarding sessions.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "7a9314e4-c18b-41ae-9e20-5d8384a22791",
+          "name": "Start an onboarding session.",
+          "request": {
+            "name": "Start an onboarding session.",
+            "description": {
+              "content": "Creates a new onboarding session from a Flow configuration and returns a session token (Onboarding Token) used to authorize all subsequent Omni module calls.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "omni",
+                "start"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) ",
+                "key": "api-version",
+                "value": "1.0"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"configurationId\": \"<string>\",\n  \"countryCode\": \"<string>\",\n  \"externalCustomerId\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "9d339375-6ff9-4d0d-b1b4-67b91164615f",
+              "name": "Session created.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "omni",
+                    "start"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) ",
+                    "key": "api-version",
+                    "value": "1.0"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"configurationId\": \"<string>\",\n  \"countryCode\": \"ALL\",\n  \"externalCustomerId\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"token\": \"string\",\n  \"interviewId\": \"string\",\n  \"interviewToken\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "a7c0afe5-b07b-4b6f-b593-cea7f9739eeb",
+          "name": "Get onboarding completion status.",
+          "request": {
+            "name": "Get onboarding completion status.",
+            "description": {
+              "content": "Returns the completion status of the onboarding session.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "omni",
+                "finish-status"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) ",
+                "key": "api-version",
+                "value": "1.0"
+              },
+              {
+                "disabled": false,
+                "description": "(Required) Session token returned by POST /omni/start.",
+                "key": "X-Incode-Hardware-Id",
+                "value": "<string>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "39ee1614-2a08-4f11-a8af-261fd7f275aa",
+              "name": "Onboarding status.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "omni",
+                    "finish-status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) ",
+                    "key": "api-version",
+                    "value": "1.0"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) Session token returned by POST /omni/start.",
+                    "key": "X-Incode-Hardware-Id",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"onboardingStatus\": \"ONBOARDING_FINISHED\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://demo-api.incodesmile.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "x-api-key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "c17f8413-c484-464b-b049-35d0a1b84cc5",
+    "name": "Incode Omni Face and Liveness Onboarding API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "REST API for the Incode Omni identity verification platform. Onboarding sessions capture and validate government IDs, run face match and passive liveness, perform government-database and watchlist/AML screening, and return scores, OCR data, and images. All calls require an x-api-key, and module calls additionally require the session token in the X-Incode-Hardware-Id header.\n\nContact Support:\n Name: Incode Support",
+      "type": "text/plain"
+    }
+  }
+}

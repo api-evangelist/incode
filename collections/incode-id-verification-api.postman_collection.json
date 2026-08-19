@@ -1,0 +1,434 @@
+{
+  "item": [
+    {
+      "id": "add4a623-c122-460f-b9f5-fb580d236926",
+      "name": "ID Verification",
+      "description": {
+        "content": "Government ID capture and validation.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "7873ec02-b9af-4ad9-8397-f21d43fba9b1",
+          "name": "Add the front of an ID document.",
+          "request": {
+            "name": "Add the front of an ID document.",
+            "description": {
+              "content": "Uploads a base64-encoded image of the front of a government ID.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "omni",
+                "add",
+                "front-id",
+                "v2"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) ",
+                "key": "api-version",
+                "value": "1.0"
+              },
+              {
+                "disabled": false,
+                "description": "(Required) Session token returned by POST /omni/start.",
+                "key": "X-Incode-Hardware-Id",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"base64Image\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "83ad25db-cc5b-4f3e-86b5-8b7cb75df290",
+              "name": "ID front processed.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "omni",
+                    "add",
+                    "front-id",
+                    "v2"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) ",
+                    "key": "api-version",
+                    "value": "1.0"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) Session token returned by POST /omni/start.",
+                    "key": "X-Incode-Hardware-Id",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"base64Image\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"sharpness\": 7883.287724429776,\n  \"glare\": 9904.6626135857,\n  \"classification\": true,\n  \"typeOfId\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "7221ffeb-c22e-45fb-ad59-ccb3a804d0f4",
+          "name": "Add the back of an ID document.",
+          "request": {
+            "name": "Add the back of an ID document.",
+            "description": {
+              "content": "Uploads a base64-encoded image of the back of a government ID.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "omni",
+                "add",
+                "back-id",
+                "v2"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) ",
+                "key": "api-version",
+                "value": "1.0"
+              },
+              {
+                "disabled": false,
+                "description": "(Required) Session token returned by POST /omni/start.",
+                "key": "X-Incode-Hardware-Id",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"base64Image\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "6f4e833f-4bb8-401a-b89a-02c01e267793",
+              "name": "ID back processed.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "omni",
+                    "add",
+                    "back-id",
+                    "v2"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) ",
+                    "key": "api-version",
+                    "value": "1.0"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) Session token returned by POST /omni/start.",
+                    "key": "X-Incode-Hardware-Id",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"base64Image\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"sharpness\": 7883.287724429776,\n  \"glare\": 9904.6626135857,\n  \"classification\": true,\n  \"typeOfId\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "68cfd058-4d35-4f5e-8a89-9e381e509d1f",
+          "name": "Process the captured ID.",
+          "request": {
+            "name": "Process the captured ID.",
+            "description": {
+              "content": "Runs document validation and OCR on the captured ID images for the session. Accepts an empty JSON object.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "omni",
+                "process",
+                "id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) ",
+                "key": "api-version",
+                "value": "1.0"
+              },
+              {
+                "disabled": false,
+                "description": "(Required) Session token returned by POST /omni/start.",
+                "key": "X-Incode-Hardware-Id",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "<object>",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "5af9dd60-f7a2-452c-a490-7dcef6ec8b3f",
+              "name": "ID processed; scores available via the Results API.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "omni",
+                    "process",
+                    "id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) ",
+                    "key": "api-version",
+                    "value": "1.0"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) Session token returned by POST /omni/start.",
+                    "key": "X-Incode-Hardware-Id",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<object>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://demo-api.incodesmile.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "x-api-key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "4dbb66e7-2c48-421c-8e4d-824896934e22",
+    "name": "Incode Omni Face and Liveness ID Verification API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "REST API for the Incode Omni identity verification platform. Onboarding sessions capture and validate government IDs, run face match and passive liveness, perform government-database and watchlist/AML screening, and return scores, OCR data, and images. All calls require an x-api-key, and module calls additionally require the session token in the X-Incode-Hardware-Id header.\n\nContact Support:\n Name: Incode Support",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Incode Omni Face and Liveness Onboarding API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Onboarding",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Start an onboarding session.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://demo-api.incodesmile.com/omni/start",
+            "headers": [
+              {
+                "name": "api-version",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Creates a new onboarding session from a Flow configuration and returns a session token (Onboarding Token) used to authorize all subsequent Omni module calls."
+        },
+        {
+          "info": {
+            "name": "Get onboarding completion status.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://demo-api.incodesmile.com/omni/finish-status",
+            "headers": [
+              {
+                "name": "api-version",
+                "value": ""
+              },
+              {
+                "name": "X-Incode-Hardware-Id",
+                "value": ""
+              }
+            ]
+          },
+          "docs": "Returns the completion status of the onboarding session."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

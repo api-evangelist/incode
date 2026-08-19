@@ -1,0 +1,427 @@
+{
+  "item": [
+    {
+      "id": "00f76699-4abe-4224-a0e4-e52e030ee7c8",
+      "name": "Watchlist and AML",
+      "description": {
+        "content": "Sanctions, PEP, and warning-list screening.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "cb7fe53d-a87b-430d-9f6c-fc09fe2bbaf6",
+          "name": "Run a global watchlist screening.",
+          "request": {
+            "name": "Run a global watchlist screening.",
+            "description": {
+              "content": "Screens the session subject against global sanctions, PEP, and warning lists using the Flow configuration; results persist with the session.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "omni",
+                "process",
+                "global-watchlist"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) ",
+                "key": "api-version",
+                "value": "1.0"
+              },
+              {
+                "disabled": false,
+                "description": "(Required) Session token returned by POST /omni/start.",
+                "key": "X-Incode-Hardware-Id",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"<string>\",\n  \"surName\": \"<string>\",\n  \"dateOfBirth\": \"<string>\",\n  \"watchlistTypes\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"subscribe\": \"<boolean>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "ce25b789-0791-41d6-b32b-dc2daed90152",
+              "name": "Watchlist screening result.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "omni",
+                    "process",
+                    "global-watchlist"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) ",
+                    "key": "api-version",
+                    "value": "1.0"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) Session token returned by POST /omni/start.",
+                    "key": "X-Incode-Hardware-Id",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstName\": \"<string>\",\n  \"surName\": \"<string>\",\n  \"dateOfBirth\": \"<string>\",\n  \"watchlistTypes\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"subscribe\": \"<boolean>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": \"string\",\n  \"hits\": [\n    {\n      \"key_0\": 3282.581993166147,\n      \"key_1\": false\n    },\n    {\n      \"key_0\": 2278.1861863034046,\n      \"key_1\": 4886\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ce861610-3605-43eb-bb04-ca709ba2815f",
+          "name": "Query watchlist data without persistence.",
+          "request": {
+            "name": "Query watchlist data without persistence.",
+            "description": {
+              "content": "Lightweight screening that queries watchlist data using request and interview data without persistent storage.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "omni",
+                "watchlist-result"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) ",
+                "key": "api-version",
+                "value": "1.0"
+              },
+              {
+                "disabled": false,
+                "description": "(Required) Session token returned by POST /omni/start.",
+                "key": "X-Incode-Hardware-Id",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"<string>\",\n  \"surName\": \"<string>\",\n  \"dateOfBirth\": \"<string>\",\n  \"watchlistTypes\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"subscribe\": \"<boolean>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "14bb652c-e622-4eae-bae3-4a0764b75a45",
+              "name": "Watchlist result.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "omni",
+                    "watchlist-result"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) ",
+                    "key": "api-version",
+                    "value": "1.0"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) Session token returned by POST /omni/start.",
+                    "key": "X-Incode-Hardware-Id",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstName\": \"<string>\",\n  \"surName\": \"<string>\",\n  \"dateOfBirth\": \"<string>\",\n  \"watchlistTypes\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"subscribe\": \"<boolean>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": \"string\",\n  \"hits\": [\n    {\n      \"key_0\": false\n    },\n    {\n      \"key_0\": 7058.631773705949,\n      \"key_1\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "f9e0fc5c-88ad-4da9-b24d-c0e1fa368a07",
+          "name": "Retrieve updated watchlist results.",
+          "request": {
+            "name": "Retrieve updated watchlist results.",
+            "description": {
+              "content": "Retrieves refreshed watchlist search results after an ongoing-monitoring webhook notification.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "omni",
+                "updated-watchlist-result"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "id",
+                  "value": "<string>",
+                  "description": "Interview ID."
+                },
+                {
+                  "disabled": false,
+                  "key": "ref",
+                  "value": "<string>",
+                  "description": "(Required) Reference number from the watchlist update webhook."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) ",
+                "key": "api-version",
+                "value": "1.0"
+              },
+              {
+                "disabled": false,
+                "description": "(Required) Session token returned by POST /omni/start.",
+                "key": "X-Incode-Hardware-Id",
+                "value": "<string>"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "aa98a7fa-9a63-4341-862c-d8fed181681c",
+              "name": "Updated watchlist result.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "omni",
+                    "updated-watchlist-result"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "ref",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) ",
+                    "key": "api-version",
+                    "value": "1.0"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) Session token returned by POST /omni/start.",
+                    "key": "X-Incode-Hardware-Id",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": \"string\",\n  \"hits\": [\n    {\n      \"key_0\": false\n    },\n    {\n      \"key_0\": 7058.631773705949,\n      \"key_1\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://demo-api.incodesmile.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "x-api-key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "7b53ca4f-3e42-4e1b-a18c-e6e2ec08b468",
+    "name": "Incode Omni Face and Liveness Watchlist and AML API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "REST API for the Incode Omni identity verification platform. Onboarding sessions capture and validate government IDs, run face match and passive liveness, perform government-database and watchlist/AML screening, and return scores, OCR data, and images. All calls require an x-api-key, and module calls additionally require the session token in the X-Incode-Hardware-Id header.\n\nContact Support:\n Name: Incode Support",
+      "type": "text/plain"
+    }
+  }
+}

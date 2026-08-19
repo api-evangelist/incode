@@ -1,0 +1,111 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Incode Omni Face and Liveness Watchlist and AML API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Watchlist and AML",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Run a global watchlist screening.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://demo-api.incodesmile.com/omni/process/global-watchlist",
+            "headers": [
+              {
+                "name": "api-version",
+                "value": ""
+              },
+              {
+                "name": "X-Incode-Hardware-Id",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Screens the session subject against global sanctions, PEP, and warning lists using the Flow configuration; results persist with the session."
+        },
+        {
+          "info": {
+            "name": "Query watchlist data without persistence.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://demo-api.incodesmile.com/omni/watchlist-result",
+            "headers": [
+              {
+                "name": "api-version",
+                "value": ""
+              },
+              {
+                "name": "X-Incode-Hardware-Id",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Lightweight screening that queries watchlist data using request and interview data without persistent storage."
+        },
+        {
+          "info": {
+            "name": "Retrieve updated watchlist results.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://demo-api.incodesmile.com/omni/updated-watchlist-result",
+            "headers": [
+              {
+                "name": "api-version",
+                "value": ""
+              },
+              {
+                "name": "X-Incode-Hardware-Id",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "Interview ID."
+              },
+              {
+                "name": "ref",
+                "value": "",
+                "type": "query",
+                "description": "Reference number from the watchlist update webhook."
+              }
+            ]
+          },
+          "docs": "Retrieves refreshed watchlist search results after an ongoing-monitoring webhook notification."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

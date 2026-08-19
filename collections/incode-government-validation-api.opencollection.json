@@ -1,0 +1,51 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Incode Omni Face and Liveness Government Validation API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Government Validation",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Validate ID data against a government database.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://demo-api.incodesmile.com/omni/process/government-validation",
+            "headers": [
+              {
+                "name": "api-version",
+                "value": ""
+              },
+              {
+                "name": "X-Incode-Hardware-Id",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Validates captured ID data against the applicable government source based on the session country code (e.g. Mexico INE, Peru RENIEC), with optional fallback and selfie-to-government-image comparison."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

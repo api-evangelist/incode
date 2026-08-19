@@ -1,0 +1,101 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Incode Omni Face and Liveness ID Verification API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "ID Verification",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Add the front of an ID document.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://demo-api.incodesmile.com/omni/add/front-id/v2",
+            "headers": [
+              {
+                "name": "api-version",
+                "value": ""
+              },
+              {
+                "name": "X-Incode-Hardware-Id",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Uploads a base64-encoded image of the front of a government ID."
+        },
+        {
+          "info": {
+            "name": "Add the back of an ID document.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://demo-api.incodesmile.com/omni/add/back-id/v2",
+            "headers": [
+              {
+                "name": "api-version",
+                "value": ""
+              },
+              {
+                "name": "X-Incode-Hardware-Id",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Uploads a base64-encoded image of the back of a government ID."
+        },
+        {
+          "info": {
+            "name": "Process the captured ID.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://demo-api.incodesmile.com/omni/process/id",
+            "headers": [
+              {
+                "name": "api-version",
+                "value": ""
+              },
+              {
+                "name": "X-Incode-Hardware-Id",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Runs document validation and OCR on the captured ID images for the session. Accepts an empty JSON object."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

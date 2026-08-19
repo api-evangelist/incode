@@ -1,0 +1,90 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Incode Omni Face and Liveness API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Face and Liveness",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Add a selfie image and run liveness.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://demo-api.incodesmile.com/omni/add/face/third-party",
+            "headers": [
+              {
+                "name": "api-version",
+                "value": ""
+              },
+              {
+                "name": "X-Incode-Hardware-Id",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "imageType",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Uploads a base64-encoded selfie image. Passive liveness is evaluated on upload, indicating whether the image is of a real, present person."
+        },
+        {
+          "info": {
+            "name": "Run face match.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://demo-api.incodesmile.com/omni/process/face",
+            "headers": [
+              {
+                "name": "api-version",
+                "value": ""
+              },
+              {
+                "name": "X-Incode-Hardware-Id",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "imageType",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Compares the session selfie against the face on the captured ID and returns the face match result."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

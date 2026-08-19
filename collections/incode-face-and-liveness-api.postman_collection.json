@@ -1,0 +1,328 @@
+{
+  "item": [
+    {
+      "id": "d0564970-1aa2-47c9-8085-b12d87495658",
+      "name": "Face and Liveness",
+      "description": {
+        "content": "Selfie capture, passive liveness, and face match.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "52fce709-7070-45ef-be1d-1be22c448462",
+          "name": "Add a selfie image and run liveness.",
+          "request": {
+            "name": "Add a selfie image and run liveness.",
+            "description": {
+              "content": "Uploads a base64-encoded selfie image. Passive liveness is evaluated on upload, indicating whether the image is of a real, present person.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "omni",
+                "add",
+                "face",
+                "third-party"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "imageType",
+                  "value": "selfie",
+                  "description": "(Required) "
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) ",
+                "key": "api-version",
+                "value": "1.0"
+              },
+              {
+                "disabled": false,
+                "description": "(Required) Session token returned by POST /omni/start.",
+                "key": "X-Incode-Hardware-Id",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"base64Image\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "ca14488d-6b3e-4fe6-a008-f9d841123305",
+              "name": "Selfie added; liveness result returned.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "omni",
+                    "add",
+                    "face",
+                    "third-party"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "imageType",
+                      "value": "selfie"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) ",
+                    "key": "api-version",
+                    "value": "1.0"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) Session token returned by POST /omni/start.",
+                    "key": "X-Incode-Hardware-Id",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"base64Image\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"confidence\": 8466.906604160127,\n  \"isBright\": false,\n  \"hasLenses\": false,\n  \"hasFaceMask\": false,\n  \"existingUser\": false\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "6c192dea-a712-4ba2-ab26-6ea758505e13",
+          "name": "Run face match.",
+          "request": {
+            "name": "Run face match.",
+            "description": {
+              "content": "Compares the session selfie against the face on the captured ID and returns the face match result.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "omni",
+                "process",
+                "face"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "imageType",
+                  "value": "selfie"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "(Required) ",
+                "key": "api-version",
+                "value": "1.0"
+              },
+              {
+                "disabled": false,
+                "description": "(Required) Session token returned by POST /omni/start.",
+                "key": "X-Incode-Hardware-Id",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "<object>",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "708d7dd8-af46-410a-badd-c82df63a0367",
+              "name": "Face match result.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "omni",
+                    "process",
+                    "face"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "imageType",
+                      "value": "selfie"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) ",
+                    "key": "api-version",
+                    "value": "1.0"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "(Required) Session token returned by POST /omni/start.",
+                    "key": "X-Incode-Hardware-Id",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "<object>",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"confidence\": 8466.906604160127,\n  \"isBright\": false,\n  \"hasLenses\": false,\n  \"hasFaceMask\": false,\n  \"existingUser\": false\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://demo-api.incodesmile.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "x-api-key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "cc7ac714-59ac-4204-ac12-198da219fce0",
+    "name": "Incode Omni Face and Liveness API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "REST API for the Incode Omni identity verification platform. Onboarding sessions capture and validate government IDs, run face match and passive liveness, perform government-database and watchlist/AML screening, and return scores, OCR data, and images. All calls require an x-api-key, and module calls additionally require the session token in the X-Incode-Hardware-Id header.\n\nContact Support:\n Name: Incode Support",
+      "type": "text/plain"
+    }
+  }
+}
