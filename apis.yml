@@ -6,6 +6,18 @@ description: Incode is an AI-powered identity verification and biometric authent
   platform. The Incode Omni API runs configurable onboarding sessions that capture and
   validate government IDs, perform face match and passive liveness, run government-database
   and watchlist/AML checks, and return scores, OCR data, and images via REST.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: freemium
   onboarding: self-serve
