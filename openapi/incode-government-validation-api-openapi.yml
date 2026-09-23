@@ -1,6 +1,6 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  title: Incode Omni Face and Liveness Government Validation API
+  title: Incode Omni Government Validation API
   description: REST API for the Incode Omni identity verification platform. Onboarding sessions capture and validate government IDs, run face match and passive liveness, perform government-database and watchlist/AML screening, and return scores, OCR data, and images. All calls require an x-api-key, and module calls additionally require the session token in the X-Incode-Hardware-Id header.
   termsOfService: https://incode.com/legal/terms-of-service
   contact:
@@ -24,7 +24,7 @@ paths:
       operationId: processGovernmentValidation
       tags:
       - Government Validation
-      summary: Validate ID data against a government database.
+      summary: Validate ID data against a government database
       description: Validates captured ID data against the applicable government source based on the session country code (e.g. Mexico INE, Peru RENIEC), with optional fallback and selfie-to-government-image comparison.
       parameters:
       - $ref: '#/components/parameters/ApiVersion'
@@ -44,13 +44,6 @@ paths:
                 $ref: '#/components/schemas/ProcessResponse'
 components:
   parameters:
-    HardwareId:
-      name: X-Incode-Hardware-Id
-      in: header
-      required: true
-      schema:
-        type: string
-      description: Session token returned by POST /omni/start.
     ApiVersion:
       name: api-version
       in: header
@@ -58,7 +51,20 @@ components:
       schema:
         type: string
         default: '1.0'
+    HardwareId:
+      name: X-Incode-Hardware-Id
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Session token returned by POST /omni/start.
   schemas:
+    ProcessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+      additionalProperties: true
     GovernmentValidationRequest:
       type: object
       properties:
@@ -68,12 +74,6 @@ components:
         scrapingMethod:
           type: boolean
           default: false
-      additionalProperties: true
-    ProcessResponse:
-      type: object
-      properties:
-        success:
-          type: boolean
       additionalProperties: true
   securitySchemes:
     ApiKeyAuth:

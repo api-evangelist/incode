@@ -1,12 +1,7 @@
 {
   "provider": "incode",
   "sources": [
-    "incode-face-and-liveness-api-openapi.yml",
-    "incode-government-validation-api-openapi.yml",
-    "incode-id-verification-api-openapi.yml",
-    "incode-onboarding-api-openapi.yml",
-    "incode-results-api-openapi.yml",
-    "incode-watchlist-and-aml-api-openapi.yml"
+    "_original/incode-openapi.yml"
   ],
   "outputs": [
     "incode-face-and-liveness-api-openapi.yml",
@@ -19,6 +14,17 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "incode-openapi.yml: upgraded openapi 3.0.1 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "incode-face-and-liveness-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "incode-government-validation-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "incode-id-verification-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "incode-onboarding-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "incode-results-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "incode-watchlist-and-aml-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

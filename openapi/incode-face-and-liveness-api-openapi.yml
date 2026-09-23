@@ -1,4 +1,4 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
   title: Incode Omni Face and Liveness API
   description: REST API for the Incode Omni identity verification platform. Onboarding sessions capture and validate government IDs, run face match and passive liveness, perform government-database and watchlist/AML screening, and return scores, OCR data, and images. All calls require an x-api-key, and module calls additionally require the session token in the X-Incode-Hardware-Id header.
@@ -24,7 +24,7 @@ paths:
       operationId: addFace
       tags:
       - Face and Liveness
-      summary: Add a selfie image and run liveness.
+      summary: Add a selfie image and run liveness
       description: Uploads a base64-encoded selfie image. Passive liveness is evaluated on upload, indicating whether the image is of a real, present person.
       parameters:
       - $ref: '#/components/parameters/ApiVersion'
@@ -53,7 +53,7 @@ paths:
       operationId: processFace
       tags:
       - Face and Liveness
-      summary: Run face match.
+      summary: Run face match
       description: Compares the session selfie against the face on the captured ID and returns the face match result.
       parameters:
       - $ref: '#/components/parameters/ApiVersion'
@@ -78,21 +78,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/FaceResponse'
 components:
-  parameters:
-    HardwareId:
-      name: X-Incode-Hardware-Id
-      in: header
-      required: true
-      schema:
-        type: string
-      description: Session token returned by POST /omni/start.
-    ApiVersion:
-      name: api-version
-      in: header
-      required: true
-      schema:
-        type: string
-        default: '1.0'
   schemas:
     FaceResponse:
       type: object
@@ -115,6 +100,21 @@ components:
         base64Image:
           type: string
           description: Base64-encoded image.
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+    HardwareId:
+      name: X-Incode-Hardware-Id
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Session token returned by POST /omni/start.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

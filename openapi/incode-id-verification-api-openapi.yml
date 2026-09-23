@@ -1,6 +1,6 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  title: Incode Omni Face and Liveness ID Verification API
+  title: Incode Omni ID Verification API
   description: REST API for the Incode Omni identity verification platform. Onboarding sessions capture and validate government IDs, run face match and passive liveness, perform government-database and watchlist/AML screening, and return scores, OCR data, and images. All calls require an x-api-key, and module calls additionally require the session token in the X-Incode-Hardware-Id header.
   termsOfService: https://incode.com/legal/terms-of-service
   contact:
@@ -24,7 +24,7 @@ paths:
       operationId: addFrontId
       tags:
       - ID Verification
-      summary: Add the front of an ID document.
+      summary: Add the front of an ID document
       description: Uploads a base64-encoded image of the front of a government ID.
       parameters:
       - $ref: '#/components/parameters/ApiVersion'
@@ -47,7 +47,7 @@ paths:
       operationId: addBackId
       tags:
       - ID Verification
-      summary: Add the back of an ID document.
+      summary: Add the back of an ID document
       description: Uploads a base64-encoded image of the back of a government ID.
       parameters:
       - $ref: '#/components/parameters/ApiVersion'
@@ -70,7 +70,7 @@ paths:
       operationId: processId
       tags:
       - ID Verification
-      summary: Process the captured ID.
+      summary: Process the captured ID
       description: Runs document validation and OCR on the captured ID images for the session. Accepts an empty JSON object.
       parameters:
       - $ref: '#/components/parameters/ApiVersion'
@@ -89,6 +89,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProcessResponse'
 components:
+  parameters:
+    HardwareId:
+      name: X-Incode-Hardware-Id
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Session token returned by POST /omni/start.
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
   schemas:
     AddImageRequest:
       type: object
@@ -115,21 +130,6 @@ components:
         success:
           type: boolean
       additionalProperties: true
-  parameters:
-    HardwareId:
-      name: X-Incode-Hardware-Id
-      in: header
-      required: true
-      schema:
-        type: string
-      description: Session token returned by POST /omni/start.
-    ApiVersion:
-      name: api-version
-      in: header
-      required: true
-      schema:
-        type: string
-        default: '1.0'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
