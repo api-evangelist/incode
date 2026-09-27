@@ -61,21 +61,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/FinishStatusResponse'
 components:
-  parameters:
-    HardwareId:
-      name: X-Incode-Hardware-Id
-      in: header
-      required: true
-      schema:
-        type: string
-      description: Session token returned by POST /omni/start.
-    ApiVersion:
-      name: api-version
-      in: header
-      required: true
-      schema:
-        type: string
-        default: '1.0'
   schemas:
     StartSessionRequest:
       type: object
@@ -92,6 +77,12 @@ components:
         externalCustomerId:
           type: string
           description: Custom ID linking the session to your system.
+    FinishStatusResponse:
+      type: object
+      properties:
+        onboardingStatus:
+          type: string
+          example: ONBOARDING_FINISHED
     StartSessionResponse:
       type: object
       properties:
@@ -103,12 +94,21 @@ components:
           description: Unique session identifier.
         interviewToken:
           type: string
-    FinishStatusResponse:
-      type: object
-      properties:
-        onboardingStatus:
-          type: string
-          example: ONBOARDING_FINISHED
+  parameters:
+    HardwareId:
+      name: X-Incode-Hardware-Id
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Session token returned by POST /omni/start.
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

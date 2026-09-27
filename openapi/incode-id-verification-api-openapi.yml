@@ -89,6 +89,32 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProcessResponse'
 components:
+  schemas:
+    ProcessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+      additionalProperties: true
+    AddIdResponse:
+      type: object
+      properties:
+        sharpness:
+          type: number
+        glare:
+          type: number
+        classification:
+          type: boolean
+        typeOfId:
+          type: string
+    AddImageRequest:
+      type: object
+      required:
+      - base64Image
+      properties:
+        base64Image:
+          type: string
+          description: Base64-encoded image.
   parameters:
     HardwareId:
       name: X-Incode-Hardware-Id
@@ -104,32 +130,6 @@ components:
       schema:
         type: string
         default: '1.0'
-  schemas:
-    AddImageRequest:
-      type: object
-      required:
-      - base64Image
-      properties:
-        base64Image:
-          type: string
-          description: Base64-encoded image.
-    AddIdResponse:
-      type: object
-      properties:
-        sharpness:
-          type: number
-        glare:
-          type: number
-        classification:
-          type: boolean
-        typeOfId:
-          type: string
-    ProcessResponse:
-      type: object
-      properties:
-        success:
-          type: boolean
-      additionalProperties: true
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
