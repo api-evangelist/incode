@@ -78,21 +78,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/FaceResponse'
 components:
-  parameters:
-    ApiVersion:
-      name: api-version
-      in: header
-      required: true
-      schema:
-        type: string
-        default: '1.0'
-    HardwareId:
-      name: X-Incode-Hardware-Id
-      in: header
-      required: true
-      schema:
-        type: string
-      description: Session token returned by POST /omni/start.
   schemas:
     FaceResponse:
       type: object
@@ -115,6 +100,21 @@ components:
         base64Image:
           type: string
           description: Base64-encoded image.
+  parameters:
+    HardwareId:
+      name: X-Incode-Hardware-Id
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Session token returned by POST /omni/start.
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

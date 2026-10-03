@@ -90,12 +90,6 @@ paths:
                 $ref: '#/components/schemas/ProcessResponse'
 components:
   schemas:
-    ProcessResponse:
-      type: object
-      properties:
-        success:
-          type: boolean
-      additionalProperties: true
     AddIdResponse:
       type: object
       properties:
@@ -115,6 +109,12 @@ components:
         base64Image:
           type: string
           description: Base64-encoded image.
+    ProcessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+      additionalProperties: true
   parameters:
     HardwareId:
       name: X-Incode-Hardware-Id

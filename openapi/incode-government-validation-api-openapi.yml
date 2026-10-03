@@ -43,21 +43,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProcessResponse'
 components:
-  parameters:
-    ApiVersion:
-      name: api-version
-      in: header
-      required: true
-      schema:
-        type: string
-        default: '1.0'
-    HardwareId:
-      name: X-Incode-Hardware-Id
-      in: header
-      required: true
-      schema:
-        type: string
-      description: Session token returned by POST /omni/start.
   schemas:
     GovernmentValidationRequest:
       type: object
@@ -75,6 +60,21 @@ components:
         success:
           type: boolean
       additionalProperties: true
+  parameters:
+    HardwareId:
+      name: X-Incode-Hardware-Id
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Session token returned by POST /omni/start.
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

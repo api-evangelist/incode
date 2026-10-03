@@ -95,6 +95,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/WatchlistResponse'
 components:
+  parameters:
+    HardwareId:
+      name: X-Incode-Hardware-Id
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Session token returned by POST /omni/start.
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
   schemas:
     WatchlistResponse:
       type: object
@@ -125,21 +140,6 @@ components:
             - warning
         subscribe:
           type: boolean
-  parameters:
-    ApiVersion:
-      name: api-version
-      in: header
-      required: true
-      schema:
-        type: string
-        default: '1.0'
-    HardwareId:
-      name: X-Incode-Hardware-Id
-      in: header
-      required: true
-      schema:
-        type: string
-      description: Session token returned by POST /omni/start.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

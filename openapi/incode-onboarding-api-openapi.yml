@@ -62,6 +62,23 @@ paths:
                 $ref: '#/components/schemas/FinishStatusResponse'
 components:
   schemas:
+    StartSessionResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: Session token used for subsequent Omni calls.
+        interviewId:
+          type: string
+          description: Unique session identifier.
+        interviewToken:
+          type: string
+    FinishStatusResponse:
+      type: object
+      properties:
+        onboardingStatus:
+          type: string
+          example: ONBOARDING_FINISHED
     StartSessionRequest:
       type: object
       required:
@@ -77,23 +94,6 @@ components:
         externalCustomerId:
           type: string
           description: Custom ID linking the session to your system.
-    FinishStatusResponse:
-      type: object
-      properties:
-        onboardingStatus:
-          type: string
-          example: ONBOARDING_FINISHED
-    StartSessionResponse:
-      type: object
-      properties:
-        token:
-          type: string
-          description: Session token used for subsequent Omni calls.
-        interviewId:
-          type: string
-          description: Unique session identifier.
-        interviewToken:
-          type: string
   parameters:
     HardwareId:
       name: X-Incode-Hardware-Id
