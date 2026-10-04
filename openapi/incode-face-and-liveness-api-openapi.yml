@@ -79,6 +79,14 @@ paths:
                 $ref: '#/components/schemas/FaceResponse'
 components:
   schemas:
+    AddImageRequest:
+      type: object
+      required:
+      - base64Image
+      properties:
+        base64Image:
+          type: string
+          description: Base64-encoded image.
     FaceResponse:
       type: object
       properties:
@@ -92,14 +100,6 @@ components:
           type: boolean
         existingUser:
           type: boolean
-    AddImageRequest:
-      type: object
-      required:
-      - base64Image
-      properties:
-        base64Image:
-          type: string
-          description: Base64-encoded image.
   parameters:
     HardwareId:
       name: X-Incode-Hardware-Id
