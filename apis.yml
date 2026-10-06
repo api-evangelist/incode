@@ -39,7 +39,7 @@ tags:
 - Liveness
 - Onboarding
 created: '2026-06-25'
-modified: '2026-06-25'
+modified: '2026-10-06'
 specificationVersion: '0.23'
 apis:
 - aid: incode:incode-face-and-liveness-api
@@ -283,6 +283,8 @@ apis:
   - type: APIReference
     url: https://developer.incode.com/docs/webhooks
 common:
+- url: https://incode.com/rss.xml
+  type: BlogRSS
 - type: AgenticAccess
   url: agentic-access/incode-agentic-access.yml
 - type: TrustCenter
