@@ -1,0 +1,46 @@
+generated: '2026-10-14'
+method: searched
+checked:
+- okta/integrations/okta-integration-edges.yml
+- ping-identity/integrations/ping-identity-integration-edges.yml
+source:
+- okta/integrations/okta-integration-edges.yml
+- ping-identity/integrations/ping-identity-integration-edges.yml
+edges:
+- partner_name: Okta (own)
+  partner: okta
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://www.okta.com/integrations/incodeomni/
+  mirror_of: okta/integrations/okta-integration-edges.yml
+  apps:
+  - Incode Omni
+  listing_count: 1
+  detected: '2026-10-14'
+  detected_by: mirror-platform-listings.py
+  category: Single Sign-On
+  badges:
+  - OKTA_VERIFIED
+  features:
+  - OIDC
+- partner_name: Ping Identity (own)
+  partner: ping-identity
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://marketplace.pingone.com/item/incode-davinci-connector
+  mirror_of: ping-identity/integrations/ping-identity-integration-edges.yml
+  apps:
+  - Incode Connector
+  listing_count: 1
+  detected: '2026-10-14'
+  detected_by: mirror-platform-listings.py
