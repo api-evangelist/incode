@@ -77,12 +77,6 @@ components:
         externalCustomerId:
           type: string
           description: Custom ID linking the session to your system.
-    FinishStatusResponse:
-      type: object
-      properties:
-        onboardingStatus:
-          type: string
-          example: ONBOARDING_FINISHED
     StartSessionResponse:
       type: object
       properties:
@@ -94,6 +88,12 @@ components:
           description: Unique session identifier.
         interviewToken:
           type: string
+    FinishStatusResponse:
+      type: object
+      properties:
+        onboardingStatus:
+          type: string
+          example: ONBOARDING_FINISHED
   parameters:
     ApiVersion:
       name: api-version

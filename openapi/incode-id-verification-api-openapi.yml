@@ -90,6 +90,20 @@ paths:
                 $ref: '#/components/schemas/ProcessResponse'
 components:
   schemas:
+    AddImageRequest:
+      type: object
+      required:
+      - base64Image
+      properties:
+        base64Image:
+          type: string
+          description: Base64-encoded image.
+    ProcessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+      additionalProperties: true
     AddIdResponse:
       type: object
       properties:
@@ -101,20 +115,6 @@ components:
           type: boolean
         typeOfId:
           type: string
-    ProcessResponse:
-      type: object
-      properties:
-        success:
-          type: boolean
-      additionalProperties: true
-    AddImageRequest:
-      type: object
-      required:
-      - base64Image
-      properties:
-        base64Image:
-          type: string
-          description: Base64-encoded image.
   parameters:
     ApiVersion:
       name: api-version
