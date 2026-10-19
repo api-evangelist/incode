@@ -1,0 +1,381 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Custom watchlist API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Custom watchlist
+paths:
+  /omni/process/watchlist:
+    post:
+      tags:
+      - Custom watchlist
+      summary: Process custom watchlist
+      description: 'This endpoint fetches data (photo, email, phone, document number) from onboarding session and tries to find a match in custom
+
+        watchlist database. If a match on the watchlist is found, then the score influence is calculated based on the number of matched fields.'
+      operationId: processincodewatchlistrecord
+      parameters:
+      - name: id
+        in: query
+        description: Id of onboarding session. If not present, it will be extracted from token.
+        required: false
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessWatchlistResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/process-watchlist/
+      x-incode-markdown: https://developer.incode.com/api-reference/process-watchlist.md
+  /omni/delete/watchlist/single-record:
+    post:
+      tags:
+      - Custom watchlist
+      summary: Delete custom watchlist entry
+      description: Works with Admin Token.
+      operationId: deleteincodewatchlistrecord
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteWatchlistRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/delete-watchlist-single-record/
+      x-incode-markdown: https://developer.incode.com/api-reference/delete-watchlist-single-record.md
+  /omni/add/watchlist/single-record:
+    post:
+      tags:
+      - Custom watchlist
+      summary: Add custom watchlist entry
+      description: Works with Admin Token.
+      operationId: insertincodewatchlistrecord
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        description: 'Values of `idNumber`, `email`, `phone`,`imageBase64` must be unique. These fields are used to perform search
+
+          in watchlist database. At least one of these must be supplied.
+
+          '
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InsertWatchlistRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddSingleWatchlistResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-watchlist-single-record/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-watchlist-single-record.md
+  /omni/add/watchlist/session:
+    post:
+      tags:
+      - Custom watchlist
+      summary: Add custom watchlist entry from session
+      description: Works with Admin Token.
+      operationId: insertwatchlistrecordfromsession
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InsertSessionToWatchlistRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-watchlist-session/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-watchlist-session.md
+  /omni/add/watchlist/identity:
+    post:
+      tags:
+      - Custom watchlist
+      summary: Add custom watchlist entry from identity
+      description: Works with Admin Token.
+      operationId: insertwatchlistrecordfromidentity
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InsertIdentityToWatchlistRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-watchlist-identity/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-watchlist-identity.md
+components:
+  schemas:
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    BasicResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+    InsertIdentityToWatchlistRequest:
+      type: object
+      properties:
+        identityId:
+          type: string
+        watchlistType:
+          type: string
+          enum:
+          - WHITELIST
+          - BLACKLIST
+        recordExpiresAt:
+          type: string
+    InsertSessionToWatchlistRequest:
+      type: object
+      properties:
+        sessionId:
+          type: string
+        watchlistType:
+          type: string
+          enum:
+          - WHITELIST
+          - BLACKLIST
+        recordExpiresAt:
+          type: string
+    ProcessWatchlistResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+        match:
+          type: boolean
+          description: Flag indicating if a match in the watchlist has been found.
+    InsertWatchlistRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of person that is being uploaded to Watchlist
+        birthDate:
+          type: string
+          description: Birthdate (timestamp) of person that is being uploaded to Watchlist
+        idNumber:
+          type: string
+          description: Id number of person that is being uploaded to Watchlist
+        email:
+          type: string
+          description: Email of person that is being uploaded to Watchlist
+        phone:
+          type: string
+          description: Phone of person that is being uploaded to Watchlist
+        personalIdNumber:
+          type: string
+          description: Personal Id Number of person that is being uploaded to Watchlist
+        externalId:
+          type: string
+          description: External id of person that is being uploaded to Watchlist
+        imageBase64:
+          type: string
+          description: Base64 representation of face image of person that is being uploaded to Watchlist
+        frontIdBase64:
+          type: string
+          description: Base64 representation of front side of document image that is being processed to gather OCR data and uploaded to Watchlist
+        backIdBase64:
+          type: string
+          description: Base64 representation of back side of document image that is being processed to gather OCR data and uploaded to Watchlist
+        watchlistType:
+          type: string
+          description: Defines type of Watchlist to use
+          enum:
+          - WHITELIST
+          - BLACKLIST
+        recordExpiresAt:
+          type: string
+          description: Date (timestamp) until the watchlist entry is active. When searched after this date, score of watchlist match will be 0.
+    DeleteWatchlistRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id of entry in watchlist database
+          minLength: 1
+    AddSingleWatchlistResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+        customerId:
+          type: string
+        watchlistId:
+          type: string
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

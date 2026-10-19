@@ -1,0 +1,128 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Electronic signature advanced API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Electronic signature advanced
+paths:
+  /omni/es/documents/signed/v2:
+    get:
+      tags:
+      - Electronic signature advanced
+      summary: Get signed documents
+      description: This endpoint is used to get signed documents for a session
+      operationId: getSignedDocumentsV2
+      parameters:
+      - name: interviewId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: pageNo
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: pageSize
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 20
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ESignedDocumentsResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/es-documents-signed-v2/
+      x-incode-markdown: https://developer.incode.com/api-reference/es-documents-signed-v2.md
+components:
+  schemas:
+    ESignedDocumentsResponse:
+      type: object
+      properties:
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/ESignedDocumentDto'
+        total:
+          type: integer
+          format: int32
+        more:
+          type: boolean
+    ESignedDocumentDto:
+      type: object
+      properties:
+        documentRef:
+          type: string
+        documentUrl:
+          type: string
+        qesAttemptId:
+          type: string
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

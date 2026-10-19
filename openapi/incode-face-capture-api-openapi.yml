@@ -1,0 +1,462 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Face capture API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Face capture
+paths:
+  /omni/process/face-vs-second-id:
+    post:
+      tags:
+      - Face capture
+      summary: Process face vs second id
+      description: '**Note**: This endpoint should be called only after selfie and
+
+        front-second-id both are over.
+
+
+        It is validating user''s selfie against photo from ID (1:1 recognition). Also, this call validates if user already exists
+
+        in the system (1:N recognition).
+
+
+        It is highly recommended that before calling this process-face endpoint, one should first finish following endpoints:
+
+        add-front-secondId, add-back-secondId (not required in
+
+        case of passports), process-secondId and add-selfie in order
+
+        to get complete result view based on id verification, face recognition and liveness.'
+      operationId: processfacevssecondid
+      parameters:
+      - name: imageType
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - selfie
+          - videoSelfie
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessFaceResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/process-face-vs-second-id/
+      x-incode-markdown: https://developer.incode.com/api-reference/process-face-vs-second-id.md
+  /omni/process/face:
+    post:
+      tags:
+      - Face capture
+      summary: Process face
+      description: '**Note: This endpoint should be called only after selfie
+
+        and front-id both are over.**
+
+
+        It is validating user''s selfie against photo from ID (1:1 recognition).
+
+        Also, this call validates if user already exists in the system (1:N recognition).
+
+
+        **It is highly recommended that before calling this process-face endpoint, one should first finish following endpoints:
+
+        add-front, add-back(not required in case of passports),
+
+        process-id and add-selfie in order to get complete result view
+
+        based on id verification, face recognition and liveness.**'
+      operationId: processface
+      parameters:
+      - name: imageType
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - selfie
+          - videoSelfie
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessFaceResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/process-face/
+      x-incode-markdown: https://developer.incode.com/api-reference/process-face.md
+  /omni/add/face/third-party:
+    post:
+      tags:
+      - Face capture
+      summary: Add face/Selfie image
+      description: 'Uploads selfie image for onboarding session. Response will contain data regarding liveness — if that is the photo of a real person.
+
+        Number of retries is not limited.
+
+
+        **Note**: After selfie and front-id are uploaded, endpoint for comparing faces process-face on those two images can be called.
+
+
+        It is required that person is alone on the photo.'
+      operationId: addFaceByThirdParty
+      parameters:
+      - name: imageType
+        in: query
+        description: Image type. Default is selfie
+        required: false
+        schema:
+          type: string
+          enum:
+          - selfie
+          - videoSelfie
+          - id
+          - nfc
+      - name: captureType
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - AUTO
+          - MANUAL
+          - NATIVE
+          - UPLOAD
+      - name: externalCaptureId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: recordingId
+        in: query
+        required: false
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddFaceRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddFaceResponse'
+        '400':
+          description: 'Custom error statuses:
+
+            - 4010: More than one face detected
+
+            - 4019: Face not found
+
+            - 4077: Selfie image has low quality
+
+            - 4078: Selfie face is occluded or partially covered
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-face-third-party/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-face-third-party.md
+components:
+  schemas:
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    FaceCoordinatesDto:
+      type: object
+      properties:
+        leftEyeX:
+          type: number
+          format: float
+          description: Left eye coordinates for X
+          example: 1391.01
+        leftEyeY:
+          type: number
+          format: float
+          description: Left eye coordinates for Y
+          example: 1334.62
+        rightEyeX:
+          type: number
+          format: float
+          description: Right eye coordinates for X
+          example: 918.383
+        rightEyeY:
+          type: number
+          format: float
+          description: Right eye coordinates for Y
+          example: 1359.96
+        mouthX:
+          type: number
+          format: float
+          deprecated: true
+          description: 'Left mouth coordinates for X. Note: the field is deprecated, use leftMouthX instead'
+          example: 918.383
+        leftMouthX:
+          type: number
+          format: float
+          description: Left mouth coordinates for X
+          example: 918.383
+        mouthY:
+          type: number
+          format: float
+          deprecated: true
+          description: 'Left mouth coordinates for Y. Note: the field is deprecated, use leftMouthY instead'
+          example: 1359.96
+        leftMouthY:
+          type: number
+          format: float
+          description: Left mouth coordinates for Y
+          example: 1359.96
+        rightMouthX:
+          type: number
+          format: float
+          description: Right mouth coordinates for X
+          example: 918.383
+        rightMouthY:
+          type: number
+          format: float
+          description: Right mouth coordinates for Y
+          example: 1359.96
+        noseTipX:
+          type: number
+          format: float
+          description: Nose coordinates for X
+          example: 918.383
+        noseTipY:
+          type: number
+          format: float
+          description: Nose coordinates for Y
+          example: 1359.96
+        x:
+          type: number
+          format: float
+          description: X coordinate of face rectangle.
+          example: 448
+        y:
+          type: number
+          format: float
+          description: Y coordinate of face rectangle.
+          example: 778
+        width:
+          type: number
+          format: float
+          description: Width of face rectangle.
+          example: 1366
+        height:
+          type: number
+          format: float
+          description: Height of face rectangle.
+          example: 1366
+      required:
+      - height
+      - leftEyeX
+      - leftEyeY
+      - noseTipX
+      - noseTipY
+      - rightEyeX
+      - rightEyeY
+      - rightMouthX
+      - rightMouthY
+      - width
+      - x
+      - y
+    AddFaceResponse:
+      type: object
+      properties:
+        age:
+          type: integer
+          format: int32
+          description: Age of th person in the photo.
+        isBright:
+          type: boolean
+          description: We recommend capturing another photo if value is false.
+        confidence:
+          type: number
+          format: float
+          description: Value 0 means that person on photo is alive. We recommend capturing another photo if value is 1.
+          maximum: 1
+          minimum: 0
+        hasLenses:
+          type: boolean
+          description: We recommend capturing another photo if value is true.
+        hasFaceMask:
+          type: boolean
+          description: Checked only if configured in the session flow. We recommend capturing another photo if value is true.
+        hasClosedEyes:
+          type: boolean
+          description: Checked only if configured in the session flow. We recommend capturing another photo if value is true.
+        hasHeadCover:
+          type: boolean
+          description: Checked only if configured in the session flow. We recommend capturing another photo if value is true.
+        faceOccluded:
+          type: boolean
+          description: Checked only if configured in the session flow. We recommend capturing another photo if value is true.
+        sessionStatus:
+          type: string
+          description: SessionStatus
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+        captureAttemptsLimit:
+          $ref: '#/components/schemas/CaptureAttemptsLimitDto'
+          description: Checked only if configured in the session flow.
+    ProcessFaceResponse:
+      type: object
+      properties:
+        confidence:
+          type: number
+          format: float
+          description: Value 0 means that selfie doesn't match face photo from ID.
+          maximum: 1
+          minimum: 0
+        existingUser:
+          type: boolean
+          description: Flag indicating if this user already exists in the system.
+        existingInterviewId:
+          type: string
+          description: Session id where user is approved previously (existingUser=true).
+        existingExternalId:
+          type: string
+          description: In case the session does have an externalId which can be assigned at start call.
+        nameMatched:
+          type: boolean
+          description: In case user is approved previously (existingUser=true), flag indicating if names are matching.
+      required:
+      - confidence
+      - existingUser
+    CaptureAttemptsLimitDto:
+      type: object
+      properties:
+        max:
+          type: integer
+          format: int32
+          description: Maximum number of attempts to capture a photo.
+        remaining:
+          type: integer
+          format: int32
+          description: Number of remaining attempts to capture a photo.
+    AddFaceRequest:
+      type: object
+      properties:
+        base64Image:
+          type: string
+          description: Image of user's face represented in base64.
+          example: /9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEB...
+        imageUrl:
+          type: string
+          description: URL of face image, required to belong to a whitelisted domain
+          example: https://...
+        faceCoordinates:
+          $ref: '#/components/schemas/FaceCoordinatesDto'
+          description: Face coordinates
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

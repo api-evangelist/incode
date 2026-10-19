@@ -1,0 +1,658 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Login API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Login
+paths:
+  /omni/oneToN/v2/identify:
+    post:
+      tags:
+      - Login
+      summary: Face Authentication 1:N
+      description: 'Identify user by face. Parameter base64Image is optional if template is present. If there is more than one user that has
+
+        recognition confidence above threshold, secondFactor will be true and /omni/oneToN/mfa must be called.'
+      operationId: oneToNIdentify
+      parameters:
+      - name: correlationId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: returnIPDeviceLocation
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OneToNRequestV2'
+        required: true
+      responses:
+        '200':
+          description: '- customerId: String. ID of recognized customer. (only if single customer was recognized)
+
+            - token: String. Token bound to the customerId of recognized customer. (only if single customer was recognized)
+
+            - interviewId: String. ID of the session where recognized customer got approved. (only if single customer was recognized)
+
+            - interviewToken: String. Token bound to the session identified with interviewId (only if single customer was recognized)
+
+            - transactionId: String. Authentication attempt identifier.
+
+            - faceMatch: Boolean. True only if single customer was recognized.
+
+            - spoofAttempt: Boolean. Flag indicating if this was spoof attempt.
+
+            - secondFactor: Boolean. True in case multiple possible candidates were recognized, in which case additional verification is needed using [/omni/oneToN/mfa](#/Login/oneToNMfa).
+
+            - overallScore: Float. Overall score search, value form 0 to 100.
+
+            - overallStatus: String. Overall status search PASS or FAIL.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationAttemptResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      x-incode-status: undocumented
+  /omni/oneToN/mfa:
+    post:
+      tags:
+      - Login
+      summary: Perform MFA
+      description: 'This method is used for confirming user identity by sending last four digits of his phone number. transactionId which
+
+        was received in /omni/oneToN/identify response should be used.'
+      operationId: oneToNMfa
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OneToNMfaRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationAttemptResponse'
+        '400':
+          description: 'Custom error status:
+
+            - 4004: Couldn''t find record with verificationCode and transactionId
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/oneton-mfa/
+      x-incode-markdown: https://developer.incode.com/api-reference/oneton-mfa.md
+  /omni/oneToN/identify:
+    post:
+      tags:
+      - Login
+      summary: Face Authentication 1:N
+      description: 'Identify user by face. Parameter base64Image is optional if template is present. If there is more than one user that has
+
+        recognition confidence above threshold, secondFactor will be true and /omni/oneToN/mfa must be called.'
+      operationId: oneToNIdentify_1
+      parameters:
+      - name: correlationId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: returnIPDeviceLocation
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OneToNRequest'
+        required: true
+      responses:
+        '200':
+          description: '- customerId: String. ID of recognized customer. (only if single customer was recognized)
+
+            - token: String. Token bound to the customerId of recognized customer. (only if single customer was recognized)
+
+            - interviewId: String. ID of the session where recognized customer got approved. (only if single customer was recognized)
+
+            - interviewToken: String. Token bound to the session identified with interviewId (only if single customer was recognized)
+
+            - transactionId: String. Authentication attempt identifier.
+
+            - faceMatch: Boolean. True only if single customer was recognized.
+
+            - spoofAttempt: Boolean. Flag indicating if this was spoof attempt.
+
+            - secondFactor: Boolean. True in case multiple possible candidates were recognized, in which case additional verification is needed using [/omni/oneToN/mfa](#/Login/oneToNMfa).
+
+            - overallScore: Float. Overall score search, value form 0 to 100.
+
+            - overallStatus: String. Overall status search PASS or FAIL.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationAttemptResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      x-incode-status: undocumented
+  /omni/1to1/v2/identify:
+    post:
+      tags:
+      - Login
+      summary: Face Authentication 1:1
+      description: 'Authenticate existing user, by comparing base64 image from request and user''s existing face template. User is first found
+
+        in DB by any of criteria from request: uuid, externalId, deviceFingerprintHash, phone or email (in that order). At least one of
+
+        criteria parameter must be sent in request. In case face doesn''t match error response is returned with custom error code and message.'
+      operationId: oneToOneIdentify
+      parameters:
+      - name: returnIPDeviceLocation
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OneToOneIdentifyCustomerRequestV2'
+        required: true
+      responses:
+        '200':
+          description: '- customerId: String. Id of authenticated user.
+
+            - token: String. Token bound to the customerId of authenticated user.
+
+            - interviewId: String. Id of the session where authenticated user got approved.
+
+            - interviewToken: String. Token bound to the session identified with interviewId.
+
+            - transactionId: String. Authentication attempt identifier.
+
+            - faceMatch: Boolean. Flag indicating if user''s face matched.
+
+            - spoofAttempt: Boolean. Flag indicating if this was spoof attempt.
+
+            - secondFactor: Boolean. Always false for 1:1.
+
+            - overallScore: Float. Overall score search, value form 0 to 100.
+
+            - overallStatus: String. Overall status search PASS or FAIL.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationAttemptResponse'
+        '400':
+          description: 'Custom error status:
+
+            - 4004: Non existing customer.
+
+            - 4005: Spoof attempt detected.
+
+            - 4015: User is not recognized.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      x-incode-status: undocumented
+  /omni/1to1/identify:
+    post:
+      tags:
+      - Login
+      summary: Face Authentication 1:1
+      description: 'Authenticate existing user, by comparing base64 image from request and user''s existing face template. User is first found
+
+        in DB by any of criteria from request: uuid, externalId, deviceFingerprintHash, phone or email (in that order). At least one of
+
+        criteria parameter must be sent in request. In case face doesn''t match error response is returned with custom error code and message.'
+      operationId: oneToOneIdentify_1
+      parameters:
+      - name: returnIPDeviceLocation
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OneToOneIdentifyCustomerRequest'
+        required: true
+      responses:
+        '200':
+          description: '- customerId: String. Id of authenticated user.
+
+            - token: String. Token bound to the customerId of authenticated user.
+
+            - interviewId: String. Id of the session where authenticated user got approved.
+
+            - interviewToken: String. Token bound to the session identified with interviewId.
+
+            - transactionId: String. Authentication attempt identifier.
+
+            - faceMatch: Boolean. Flag indicating if user''s face matched.
+
+            - spoofAttempt: Boolean. Flag indicating if this was spoof attempt.
+
+            - secondFactor: Boolean. Always false for 1:1.
+
+            - overallScore: Float. Overall score search, value form 0 to 100.
+
+            - overallStatus: String. Overall status search PASS or FAIL.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationAttemptResponse'
+        '400':
+          description: 'Custom error status:
+
+            - 4004: Non existing customer.
+
+            - 4005: Spoof attempt detected.
+
+            - 4015: User is not recognized.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      x-incode-status: undocumented
+components:
+  schemas:
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    SelfieWithCoordinates:
+      type: object
+      properties:
+        base64Image:
+          type: string
+          description: Image of user's face represented in base64.
+          example: /9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEB...
+        faceCoordinates:
+          $ref: '#/components/schemas/FaceCoordinatesDto'
+          description: Face coordinates
+    FaceCoordinatesDto:
+      type: object
+      properties:
+        leftEyeX:
+          type: number
+          format: float
+          description: Left eye coordinates for X
+          example: 1391.01
+        leftEyeY:
+          type: number
+          format: float
+          description: Left eye coordinates for Y
+          example: 1334.62
+        rightEyeX:
+          type: number
+          format: float
+          description: Right eye coordinates for X
+          example: 918.383
+        rightEyeY:
+          type: number
+          format: float
+          description: Right eye coordinates for Y
+          example: 1359.96
+        mouthX:
+          type: number
+          format: float
+          deprecated: true
+          description: 'Left mouth coordinates for X. Note: the field is deprecated, use leftMouthX instead'
+          example: 918.383
+        leftMouthX:
+          type: number
+          format: float
+          description: Left mouth coordinates for X
+          example: 918.383
+        mouthY:
+          type: number
+          format: float
+          deprecated: true
+          description: 'Left mouth coordinates for Y. Note: the field is deprecated, use leftMouthY instead'
+          example: 1359.96
+        leftMouthY:
+          type: number
+          format: float
+          description: Left mouth coordinates for Y
+          example: 1359.96
+        rightMouthX:
+          type: number
+          format: float
+          description: Right mouth coordinates for X
+          example: 918.383
+        rightMouthY:
+          type: number
+          format: float
+          description: Right mouth coordinates for Y
+          example: 1359.96
+        noseTipX:
+          type: number
+          format: float
+          description: Nose coordinates for X
+          example: 918.383
+        noseTipY:
+          type: number
+          format: float
+          description: Nose coordinates for Y
+          example: 1359.96
+        x:
+          type: number
+          format: float
+          description: X coordinate of face rectangle.
+          example: 448
+        y:
+          type: number
+          format: float
+          description: Y coordinate of face rectangle.
+          example: 778
+        width:
+          type: number
+          format: float
+          description: Width of face rectangle.
+          example: 1366
+        height:
+          type: number
+          format: float
+          description: Height of face rectangle.
+          example: 1366
+      required:
+      - height
+      - leftEyeX
+      - leftEyeY
+      - noseTipX
+      - noseTipY
+      - rightEyeX
+      - rightEyeY
+      - rightMouthX
+      - rightMouthY
+      - width
+      - x
+      - y
+    AuthenticationAttemptResponse:
+      type: object
+      properties:
+        customerId:
+          type: string
+          example: 6ea0859301170f0016fbd985
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiJ9.eyJleHRlcm5hbFVzZXJJZCI6IjYx85Mjdh...
+        interviewId:
+          type: string
+          example: 6gdftr59301170f0011234567
+        interviewToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiJ9.eyJleHR6IjYx85Mj6IjYx85Mjlcm...
+        transactionId:
+          type: string
+          description: Authentication attempt identifier.
+          example: 6128ca6c515d0e0013806d55
+        externalId:
+          type: string
+          description: External ID of customer, provided by client on /omni/start call.
+        externalCustomerId:
+          type: string
+          description: External ID of customer, provided by client on /omni/start call.
+        faceMatch:
+          type: boolean
+        spoofAttempt:
+          type: boolean
+          description: Flag indicating if this was spoof attempt.
+        secondFactor:
+          type: boolean
+        children:
+          type: array
+          deprecated: true
+          items:
+            type: object
+            deprecated: true
+        spoofConfidence:
+          type: number
+          format: float
+          description: 'Score between 0 and 1 that indicates if an image is a spoof. Scores closer to 0 indicate a legitimate session with a live user,
+
+            whereas scores closer to 1 indicate a higher probability that the provided image is spoofed and that the session may be fraudulent.
+
+            '
+        overallScore:
+          type: number
+          format: float
+          description: Overall score search, value form 0 to 100.
+          maximum: 100
+          minimum: 0
+        overallStatus:
+          type: string
+          description: Overall status
+          enum:
+          - PASS
+          - FAIL
+        deviceIPLocationData:
+          $ref: '#/components/schemas/DeviceIPLocationDataDto'
+    OneToNRequest:
+      type: object
+      properties:
+        selfie:
+          $ref: '#/components/schemas/SelfieWithoutCoordinates'
+        returnFirst:
+          type: boolean
+    OneToNRequestV2:
+      type: object
+      properties:
+        selfie:
+          $ref: '#/components/schemas/SelfieWithCoordinates'
+        returnFirst:
+          type: boolean
+    DeviceIPLocationDataDto:
+      type: object
+      properties:
+        ipAddress:
+          type: string
+        ipCountry:
+          type: string
+        ipCity:
+          type: string
+        ipRegion:
+          type: string
+    SelfieWithoutCoordinates:
+      type: object
+      properties:
+        base64Image:
+          type: string
+          description: Image of user's face represented in base64.
+          example: /9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEB...
+    OneToOneIdentifyCustomerRequest:
+      type: object
+      properties:
+        uuid:
+          type: string
+          description: Id of previously enrolled user.
+          example: 6ea0859301170f0016fbd985
+        externalId:
+          type: string
+          description: External ID of previously enrolled user.
+        deviceFingerprintHash:
+          type: string
+          description: Device fingerprint of previously enrolled user.
+        phone:
+          type: string
+          description: Phone number of previously enrolled user.
+        email:
+          type: string
+          description: Email of previously enrolled user.
+        nationalNumber:
+          type: string
+          description: National Number of previously enrolled user.
+        authReference:
+          type: string
+          description: Reference of previously initialized authentication.
+        selfie:
+          $ref: '#/components/schemas/SelfieWithoutCoordinates'
+    OneToNMfaRequest:
+      type: object
+      properties:
+        verificationCode:
+          type: string
+          description: The last 4 digits of the user's phone number.
+          example: 4892
+          minLength: 1
+        transactionId:
+          type: string
+          description: Authentication identifier received in [/omni/oneToN/identify](#/Login/oneToNIdentify).
+          example: 6128ca6c515d0e0013806d55
+          minLength: 1
+    OneToOneIdentifyCustomerRequestV2:
+      type: object
+      properties:
+        uuid:
+          type: string
+          description: Id of previously enrolled user.
+          example: 6ea0859301170f0016fbd985
+        externalId:
+          type: string
+          description: External ID of previously enrolled user.
+        deviceFingerprintHash:
+          type: string
+          description: Device fingerprint of previously enrolled user.
+        phone:
+          type: string
+          description: Phone number of previously enrolled user.
+        email:
+          type: string
+          description: Email of previously enrolled user.
+        nationalNumber:
+          type: string
+          description: National Number of previously enrolled user.
+        authReference:
+          type: string
+          description: Reference of previously initialized authentication.
+        selfie:
+          $ref: '#/components/schemas/SelfieWithCoordinates'
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

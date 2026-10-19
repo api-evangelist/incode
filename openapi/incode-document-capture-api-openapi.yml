@@ -1,0 +1,587 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Document capture API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Document capture
+paths:
+  /omni/attach-stamp-on-annotation:
+    post:
+      tags:
+      - Document capture
+      summary: Attach stamp on annotation
+      description: 'Substitute stamps from interview to previously uploaded PDF contracts at all places with pdf text annotations. Annotations
+
+        must contain text with preselected values. Preselected values are:
+
+        - NAME (NAME_STAMP),
+
+        - ADDRESS (ADDRESS_STAMP),
+
+        - DATE #ZoneId# #Format#,
+
+        - AGE,
+
+        - SEX,
+
+        - DOB #Format#,
+
+        - COUNTRY,
+
+        - STATE,
+
+        - PHONE,
+
+        - TIME #ZoneId# #Format#,
+
+        - SECOND_NAME*
+
+
+        Replace parameter ZoneId with full size zone using time zones used in Java8 TimeDate API Replace parameter Format with format
+
+        you wish to display the time and date
+
+
+        Stamps are added in Helvetica, size 13. Endpoint is intended to be used as fluent api. One call to the api gives in
+
+        responses id of the signed document which can then be used in the subsequent call to continuously add another signature on a different annotation.'
+      operationId: addStampToPdfOnAnnotation
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttachStampOnAnnotationRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/attach-stamp-on-annotation/
+      x-incode-markdown: https://developer.incode.com/api-reference/attach-stamp-on-annotation.md
+  /omni/add/document/v3:
+    post:
+      tags:
+      - Document capture
+      summary: Add document V3
+      description: Upload document image gathered and store data.
+      operationId: adddocumentv3
+      parameters:
+      - name: type
+        in: query
+        description: '- **signature**: Upload user''s digital signature. This can be later fetched in get images endpoint.
+
+          - **document**: Upload user''s proof of address document. This can be later fetched in get images endpoint.
+
+          - **addressStatement**: (Legacy) Upload user''s proof of address document. Used for backward compatibility. Use type ''document'' instead.
+
+          - **contract**: Upload contract image.
+
+          - **v5cMultiPageLogbook**: Upload single page (image) of V5C logbook multi page document.
+
+          - **carInvoice**: Upload single page (image) of two pages car invoice document.
+
+          - **financeSettlement**: Upload single page (image) of two pages finance settlement letter.
+
+          - **w8Ben**: Upload IRS W-8BEN form as a single page image or a PDF.
+
+          - **w8BenE**: Upload one page (image) of the multi page IRS W-8BEN-E form, or the complete form as a PDF. Finish with the finalize document endpoint.
+
+          '
+        required: true
+        schema:
+          type: string
+          enum:
+          - signature
+          - document
+          - contract
+          - v5cMultiPageLogbook
+          - carInvoice
+          - financeSettlement
+          - w8Ben
+          - w8BenE
+      - name: title
+        in: query
+        description: Only if type is contract. Title of contract.
+        required: false
+        schema:
+          type: string
+      - name: format
+        in: query
+        description: Only if type is document. Possible values are image (jpg and png supported) or pdf. Default is image.
+        required: false
+        schema:
+          type: string
+          enum:
+          - image
+          - pdf
+      - name: processingMethod
+        in: query
+        description: Only applicable for some documents. Possible values are sync and async. Default is sync.
+        required: false
+        schema:
+          type: string
+          default: sync
+          enum:
+          - sync
+          - async
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddDocumentRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddDocumentResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-document-v3/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-document-v3.md
+  /omni/add/document/v2:
+    post:
+      tags:
+      - Document capture
+      summary: Add document V2
+      description: Upload document image and store data.
+      operationId: adddocumentv2
+      parameters:
+      - name: type
+        in: query
+        description: '- **signature**: Upload user''s digital signature. This can be later fetched in get images endpoint.
+
+          - **document**: Upload user''s proof of address document. This can be later fetched in get images endpoint.
+
+          - **addressStatement**: (Legacy) Upload user''s proof of address document. Used for backward compatibility. Use type ''document'' instead.
+
+          - **contract**: Upload contract image.
+
+          '
+        required: true
+        schema:
+          type: string
+          enum:
+          - signature
+          - document
+          - contract
+      - name: title
+        in: query
+        description: Only if type is contract. Title of contract.
+        required: false
+        schema:
+          type: string
+      - name: format
+        in: query
+        description: Only if type is document. Possible values are image (jpg and png supported) or pdf. Default is image.
+        required: false
+        schema:
+          type: string
+          enum:
+          - image
+          - pdf
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Base64ImageOrImgUrlRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-document-v2/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-document-v2.md
+  /omni/add/document/async:
+    post:
+      tags:
+      - Document capture
+      summary: Add document asynchronously
+      description: Upload document image and store data asynchronously.
+      operationId: adddocumentasync
+      parameters:
+      - name: type
+        in: query
+        description: '- **signature**: Upload user''s digital signature. This can be later fetched in get images endpoint.
+
+          - **document**: Upload user''s proof of address document. This can be later fetched in get images endpoint.
+
+          - **addressStatement**: (Legacy) Upload user''s proof of address document. Used for backward compatibility. Use type ''document'' instead.
+
+          - **contract**: Upload contract image.
+
+          '
+        required: true
+        schema:
+          type: string
+          enum:
+          - signature
+          - document
+          - contract
+      - name: title
+        in: query
+        description: Only if type is contract. Title of contract.
+        required: false
+        schema:
+          type: string
+      - name: format
+        in: query
+        description: Only if type is document. Possible values are image (jpg and png supported) or pdf. Default is image.
+        required: false
+        schema:
+          type: string
+          enum:
+          - image
+          - pdf
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Base64ImageOrImgUrlRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-document-async/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-document-async.md
+  /omni/add/document:
+    post:
+      tags:
+      - Document capture
+      summary: Add document
+      description: 'Upload document image and store data.
+
+
+        **Note**: Make sure to put the ''Content-Type'' header as ''Content-Type: image/jpeg'' or ''Content-Type: image/png''.'
+      operationId: addDocument
+      parameters:
+      - name: type
+        in: query
+        description: '- **signature**: Upload user''s digital signature. This can be later fetched in get images endpoint.
+
+          - **document**: Upload user''s proof of address document. This can be later fetched in get images endpoint.
+
+          - **addressStatement**: (Legacy) Upload user''s proof of address document. Used for backward compatibility. Use type ''document'' instead.
+
+          - **contract**: Upload contract image.
+
+          '
+        required: true
+        schema:
+          type: string
+          enum:
+          - signature
+          - document
+          - contract
+      - name: title
+        in: query
+        description: Only if type is contract. Title of contract.
+        required: false
+        schema:
+          type: string
+      - name: format
+        in: query
+        description: Only if type is document. Possible values are image (jpg and png supported) or pdf. Default is image.
+        required: false
+        schema:
+          type: string
+          enum:
+          - image
+          - pdf
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        description: Binary Image.
+        content:
+          application/json:
+            schema:
+              type: string
+              format: byte
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-document/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-document.md
+  /omni/get/contracts-links:
+    get:
+      tags:
+      - Document capture
+      summary: Get contracts links
+      description: Fetches temporary link of the contracts uploaded for the current session.
+      operationId: getContracts
+      parameters:
+      - name: id
+        in: query
+        required: false
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedResponse'
+              example:
+                success: true
+                sessionStatus: Alive
+                additionalInformation:
+                  document ID1: Temporary URL to uploaded document with ID1
+                  document ID2: Temporary URL to uploaded document with ID2
+                  document ID3: Temporary URL to uploaded document with ID3
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/get-contracts-links/
+      x-incode-markdown: https://developer.incode.com/api-reference/get-contracts-links.md
+components:
+  schemas:
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    AddDocumentRequest:
+      type: object
+      properties:
+        base64Image:
+          type: string
+          description: Image in base64 format. One of base64Image or imageUrl is required
+          example: /9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEB...
+        imageUrl:
+          type: string
+          description: URL of the image. One of base64Image or imageUrl is required
+          example: http://...
+    BasicResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+    AddDocumentResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: AddDocumentStatus
+          enum:
+          - SUCCESS
+          - PROCESS_DOC_ERROR
+          - SESSION_ERROR
+          - ADD_NEXT_PAGE
+          - OPTIONAL_PAGE_CAPTURE
+          - CLASSIFICATION_ERROR
+          - MULTI_PAGE_CLASSIFICATION_ERROR
+          - V5C_REGISTRATION_NUMBER_MISMATCH
+          - V5C_REFERENCE_NUMBER_MISMATCH
+          - V5C_NUMBER_MISMATCH
+          - FSL_AGREEMENT_REFERENCE_MISMATCH
+          - FSL_NAME_MISMATCH
+          - NOT_W8_BEN
+          - NOT_W8_BEN_E
+          - MANDATORY_FIELD_MISSING
+          - UNSUPPORTED_PAGE_NUMBERS
+          - VALIDATION_ERROR
+          - UNEXPECTED_ERROR
+          - FINALIZE_ERROR_NO_PAGES
+          - UNSUPPORTED_MP_DOCUMENT_TYPE
+    AttachStampOnAnnotationRequest:
+      type: object
+      properties:
+        contractId:
+          type: string
+          description: ' IDs of previously added contract (ID is returned on /add/document?imageType=contract'
+        customFields:
+          type: object
+          additionalProperties:
+            type: string
+          description: 'Use to add substitute text for stamps with asterisk
+
+
+            Eg: `{ "contractId": "e81cd044-98fd-47b0-b0c5-937b22b69977#contract1", "customFields": { "SECOND_NAME": "Luke Skywalker" } }`
+
+            '
+      required:
+      - contractId
+    Base64ImageOrImgUrlRequest:
+      type: object
+      properties:
+        base64Image:
+          type: string
+          description: Image in base64 format. One of base64Image or imageUrl is required
+          example: /9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEB...
+        imageUrl:
+          type: string
+          description: URL of the image. One of base64Image or imageUrl is required
+          example: http://...
+    ExtendedResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+        additionalInformation:
+          type: object
+          additionalProperties:
+            type: object
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

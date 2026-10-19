@@ -1,0 +1,268 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Authentications API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Authentications
+paths:
+  /omni/authentications/external/search:
+    post:
+      tags:
+      - Authentications
+      summary: Fetch authentication attempts
+      description: 'This API allows for searching through stored authentication records, providing insight into both 1:1 (one to one) and 1:N (one to many) authentication modes. It includes data for successful and failed login attempts, enabling an overview of authentication activity within the organization.
+
+        Works with Admin Token.'
+      operationId: authenticationAttempts
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: object
+              description: Provides filter for authentications
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerAuthenticationsExternalResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/authentications-external-search/
+      x-incode-markdown: https://developer.incode.com/api-reference/authentications-external-search.md
+  /omni/authentication/verify:
+    post:
+      tags:
+      - Authentications
+      summary: Verify authentication attempt
+      description: 'Verify the authenticity of an authentication attempt.
+
+        Works with Admin Token.'
+      operationId: verifyauthattempt
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthVerificationRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthVerificationResponseDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/authentication-verify/
+      x-incode-markdown: https://developer.incode.com/api-reference/authentication-verify.md
+components:
+  schemas:
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    CustomerAuthenticationsExternalResponse:
+      type: object
+      properties:
+        authenticationAttempts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthenticationAttemptExternalDto'
+        total:
+          type: integer
+          format: int32
+        more:
+          type: boolean
+    AuthVerificationRequestDTO:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          minLength: 1
+        token:
+          type: string
+          minLength: 1
+        interviewToken:
+          type: string
+        customerId:
+          type: string
+    AuthVerificationResponseDTO:
+      type: object
+      properties:
+        verified:
+          type: boolean
+        reason:
+          type: integer
+          format: int32
+        customerId:
+          type: string
+    AuthenticationAttemptExternalDto:
+      type: object
+      properties:
+        customerId:
+          type: string
+        deviceType:
+          type: string
+          enum:
+          - IOS
+          - ANDROID
+          - WEBAPP
+        deviceName:
+          type: string
+        version:
+          type: string
+        isSpoof:
+          type: boolean
+        get_updatedAt:
+          type: integer
+          format: int64
+        url:
+          type: string
+        isAuthenticated:
+          type: boolean
+        recognitionConfidence:
+          type: number
+          format: float
+        source:
+          type: string
+        transactionId:
+          type: string
+        authenticationType:
+          type: string
+          enum:
+          - ONE_TO_ONE
+          - ONE_TO_N
+        authenticationMethod:
+          type: string
+          enum:
+          - server
+          - local
+          - hybrid
+        faceEnrollmentForced:
+          type: boolean
+        isBlocklisted:
+          type: boolean
+        clientRecognitionThreshold:
+          type: number
+          format: float
+        clientLivenessThreshold:
+          type: number
+          format: float
+        blocklistConfidence:
+          type: number
+          format: float
+        videoRecordingUrl:
+          type: string
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

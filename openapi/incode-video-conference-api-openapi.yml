@@ -1,0 +1,1361 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Video conference API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Video conference
+paths:
+  /omni/queue/conference/add:
+    put:
+      tags:
+      - Video conference
+      summary: Add user to queue
+      description: 'When data collection is over, users can be added to the queue for joining conference calls with an executive. The average
+
+        time for before user joins to conference is given in response.'
+      operationId: addToQueue
+      parameters:
+      - name: queueName
+        in: query
+        description: 'The name of the queue, user is entering in case a conference call will be used. If not set, default queue will be used.
+
+          Possible values: aristotle, buddha, confucius, diogenes. Same value for queueName needs to be used across all requests
+
+          in one onboarding session.
+
+          '
+        required: false
+        schema:
+          type: string
+          default: ''
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyInterviewRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddToQueueResponse'
+        '400':
+          description: 'Custom error status:
+
+            - 4014: Invalid interview code
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/queue-conference-add/
+      x-incode-markdown: https://developer.incode.com/api-reference/queue-conference-add.md
+  /omni/finish:
+    put:
+      tags:
+      - Video conference
+      summary: Finish interview
+      description: Finish the interview and remove customer from the queue.
+      operationId: finishInterview
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FinishInterviewRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinishInterviewResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/finish/
+      x-incode-markdown: https://developer.incode.com/api-reference/finish.md
+  /omni/verifyFace:
+    post:
+      tags:
+      - Video conference
+      summary: Verify face
+      description: 'A bank executive can ask the customer to additionally capture his face during an interview and do face recognition.
+
+        A face can be captured from selfie or ID that a customer places in front of camera.'
+      operationId: recognize
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MatchRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebappRecognizeResponse'
+        '400':
+          description: 'Custom error statuses:
+
+            - 4019: Face not found
+
+            - 1003: Face cropping failure
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/verifyface/
+      x-incode-markdown: https://developer.incode.com/api-reference/verifyface.md
+  /omni/record-stop:
+    post:
+      tags:
+      - Video conference
+      summary: Stop recording
+      description: Stop recording the interview.
+      operationId: interviewStopRecord
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InterviewStopRecordRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/record-stop/
+      x-incode-markdown: https://developer.incode.com/api-reference/record-stop.md
+  /omni/record-start:
+    post:
+      tags:
+      - Video conference
+      summary: Start recording
+      description: Start recording of the interview.
+      operationId: interviewStartRecord
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InterviewStartRecordRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InterviewStartRecordResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/record-start/
+      x-incode-markdown: https://developer.incode.com/api-reference/record-start.md
+  /omni/queue/conference/disconnect:
+    post:
+      tags:
+      - Video conference
+      summary: Disconnect user from the queue
+      description: Users can disconnect themselves while waiting in the queue at any time.
+      operationId: customerDisconnect
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: 'success: flag indicating if user was successfully removed from the queue. False in the case the user not found in the queue, true otherwise
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/queue-conference-disconnect/
+      x-incode-markdown: https://developer.incode.com/api-reference/queue-conference-disconnect.md
+  /omni/conference/report-issue:
+    post:
+      tags:
+      - Video conference
+      summary: Report conference issue
+      description: An executive can report any issue by this call.
+      operationId: reportIssue
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportIssueRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/conference-report-issue/
+      x-incode-markdown: https://developer.incode.com/api-reference/conference-report-issue.md
+  /omni/conference/photo:
+    post:
+      tags:
+      - Video conference
+      summary: Store conference photos
+      description: A bank executive can ask the customer to additionally capture his face or document. These will be stored in DB.
+      operationId: storePhotos
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfStoreRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/conference-photo/
+      x-incode-markdown: https://developer.incode.com/api-reference/conference-photo.md
+  /omni/conference/add/event:
+    post:
+      tags:
+      - Video conference
+      summary: Add conference event
+      description: Send (OpenTok) conference event. Any connection issue caught by webapp could be reported using this call.
+      operationId: addConferenceEvent
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConferenceEvent'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/conference-add-event/
+      x-incode-markdown: https://developer.incode.com/api-reference/conference-add-event.md
+  /omni/chat:
+    post:
+      tags:
+      - Video conference
+      summary: Send conference chat
+      description: Store conference chat. The executive should send the whole chat at the end of conference call (just before finish is called).
+      operationId: saveChat
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/chat/
+      x-incode-markdown: https://developer.incode.com/api-reference/chat.md
+  /omni/add/conference/notes:
+    post:
+      tags:
+      - Video conference
+      summary: Add notes
+      description: This endpoint is used for adding notes for interview/session.
+      operationId: addNotes
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddNotesRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-conference-notes/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-conference-notes.md
+  /omni/add/notes:
+    post:
+      tags:
+      - Video conference
+      summary: Add notes
+      description: This endpoint is used for adding notes for interview/session.
+      operationId: addNotes_1
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddNotesRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-notes/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-notes.md
+  /omni/add/conference/feedback:
+    post:
+      tags:
+      - Video conference
+      summary: Add conference feedback
+      description: This endpoint is used for adding conference feedback for the interview/session.
+      operationId: addConferenceFeedback
+      parameters:
+      - name: id
+        in: query
+        required: true
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddConferenceFeedback'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-conference-feedback/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-conference-feedback.md
+  /omni/add/conference-module:
+    post:
+      tags:
+      - Video conference
+      summary: Add conference module
+      description: Add conference module with name, url and icon (base64).
+      operationId: addConferenceModule
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddConferenceModuleRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-conference-module/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-conference-module.md
+  /omni/add/conference-consent:
+    post:
+      tags:
+      - Video conference
+      summary: Save user consent
+      description: Save information indicating that user has accepted terms and conditions and other checks on conference.
+      operationId: addConferenceConsent
+      parameters:
+      - name: interviewId
+        in: query
+        description: ID of interview for which consent needs to be given.
+        required: true
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConferenceConsentRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-conference-consent/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-conference-consent.md
+  /omni/queue/conference/next:
+    get:
+      tags:
+      - Video conference
+      summary: Get next customer from the queue
+      description: Fetch next customer from a conference queue. In case no customer in the queue, and empty body is returned.
+      operationId: getNext
+      parameters:
+      - name: queueName
+        in: query
+        description: 'The name of the queue the user is entering in the case the conference call will be used. If not set,
+
+          the default queue will be used. Same value for queueName needs to be used across all requests in one onboarding session.
+
+          '
+        required: false
+        schema:
+          type: string
+          enum:
+          - aristotle
+          - buddha
+          - confucius
+          - diogenes
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InterviewAnswerResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/queue-conference-next/
+      x-incode-markdown: https://developer.incode.com/api-reference/queue-conference-next.md
+  /omni/queue/conference/index:
+    get:
+      tags:
+      - Video conference
+      summary: Get user's position in queue
+      description: 'Use this endpoint to check user''s position in waiting queue. Once the index in the response is 0, users can connect to
+
+        the conference call. Use endpoint Get position in queue. Once the index becomes 0, the customer can connect to the interview.
+
+        Call Connect to fetch connection data.'
+      operationId: getQueueIndex
+      parameters:
+      - name: queueName
+        in: query
+        description: 'The name of the queue the user is entering in case a conference call will be used. If not set, the default queue
+
+          will be used. Possible values: aristotle, buddha, confucius, diogenes. Same value for queueName needs to be used
+
+          across all requests in one onboarding session.
+
+          '
+        required: false
+        schema:
+          type: string
+          default: ''
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueIndexResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/queue-conference-index/
+      x-incode-markdown: https://developer.incode.com/api-reference/queue-conference-index.md
+  /omni/queue/conference/connection-details:
+    get:
+      tags:
+      - Video conference
+      summary: Get connection details
+      description: 'An executive can invite the user to join a conference if the connection is lost by sending uuid ID to user.
+
+        Using this uuid connection details for that session can be fetched.'
+      operationId: connectToConference
+      parameters:
+      - name: uuid
+        in: query
+        required: true
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionDetailsResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/queue-conference-connection-details/
+      x-incode-markdown: https://developer.incode.com/api-reference/queue-conference-connection-details.md
+  /omni/get/interviewer-info:
+    get:
+      tags:
+      - Video conference
+      summary: Connect to conference call
+      description: 'Get interviewer name for given interview ID read from token. If the interviewer is not yet assigned to interview, null
+
+        will be returned. This method also returns credentials for OpenTok session. It is recommended to call this method
+
+        after Get-user''s-position returns 0 in response.'
+      operationId: getInterviewerInfo
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InterviewerInfoResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/get-interviewer-info/
+      x-incode-markdown: https://developer.incode.com/api-reference/get-interviewer-info.md
+  /omni/get/conference/notes:
+    get:
+      tags:
+      - Video conference
+      summary: Fetch notes
+      description: This endpoint is used for fetching conference notes for interview/session. Works with Admin Token.
+      operationId: getconferencenotes
+      parameters:
+      - name: id
+        in: query
+        description: ID of interview. If omitted, the interview ID from teh token is used (current session)
+        required: false
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: 'notes: String. Notes saved for interview.'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/get-conference-notes/
+      x-incode-markdown: https://developer.incode.com/api-reference/get-conference-notes.md
+  /omni/get/conference/feedback:
+    get:
+      tags:
+      - Video conference
+      summary: Fetch conference feedback
+      description: This endpoint is used for fetching conference feedback for the interview/session. Works with Admin Token.
+      operationId: getconferencefeedback
+      parameters:
+      - name: id
+        in: query
+        description: ID of interview. If omitted the interview ID from token is used (current session)
+        required: false
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: 'conferenceFeedback: String. Feedback saved for interview.'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/get-conference-feedback/
+      x-incode-markdown: https://developer.incode.com/api-reference/get-conference-feedback.md
+  /omni/get/conference-status:
+    get:
+      tags:
+      - Video conference
+      summary: Fetch conference status
+      description: Returns data about conference session for given ID.
+      operationId: getconferencedetails
+      parameters:
+      - name: interviewId
+        in: query
+        description: ID of onboarding for which data is requested. If not present, it will be extracted from the token.
+        required: false
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConferenceDetailsResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/get-conference-status/
+      x-incode-markdown: https://developer.incode.com/api-reference/get-conference-status.md
+  /omni/get/chat:
+    get:
+      tags:
+      - Video conference
+      summary: Fetch conference chat
+      description: Fetch conference chat for given 'interviewId'.Works with Admin Token.
+      operationId: getchats
+      parameters:
+      - name: interviewId
+        in: query
+        description: Interview id.
+        required: true
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ChatDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/get-chat/
+      x-incode-markdown: https://developer.incode.com/api-reference/get-chat.md
+  /omni/get/archives:
+    get:
+      tags:
+      - Video conference
+      summary: Fetch video archive urls
+      description: 'Fetch URLs of video archives from given ''interviewId'' or if omitted for given ''since'' timestamp. If not provided,
+
+        ''since'' will be defaulted to time of first created archive. The maximum fetch size is 1000. In case maximum fetch size
+
+        is reached, a new fetch should be triggered, using ''startTime'' of last record from previous fetch as ''since''. URLs returned are
+
+        temporary URLs, which expire in 5 days.'
+      operationId: geturlarchives
+      parameters:
+      - name: interviewId
+        in: query
+        description: In case this parameter is provided, 'since' is ignored, and response will contain single interview requested.
+        required: false
+        schema:
+          type: string
+      - name: since
+        in: query
+        description: Timestamp — beginning of export. If omitted, it will be defaulted to time of first created archive.
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: "- archives: Array of archive objects\n    - interviewId: String. ID of interview.\n    - name: String. Name of the user in conference call.\n    - url: String. URL of archive file.\n    - startTime: Long. Timestamp of archive creation.\n"
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/get-archives/
+      x-incode-markdown: https://developer.incode.com/api-reference/get-archives.md
+  /omni/conference/get/events:
+    get:
+      tags:
+      - Video conference
+      summary: Fetch conference events
+      description: Fetch conference events for given 'interviewId'.
+      operationId: getConferenceEvents
+      parameters:
+      - name: interviewId
+        in: query
+        description: Interview id.
+        required: true
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ConferenceEvent'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/conference-get-events/
+      x-incode-markdown: https://developer.incode.com/api-reference/conference-get-events.md
+components:
+  schemas:
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    InterviewStartRecordRequest:
+      type: object
+      properties:
+        interviewId:
+          type: string
+          description: ID of interview for which recording is started.
+    AddConferenceFeedback:
+      type: object
+      properties:
+        feedback:
+          type: string
+          description: Feedback to save
+          minLength: 1
+    VerifyInterviewRequest:
+      type: object
+      properties:
+        interviewCode:
+          type: string
+          description: Interview code received in response of [start](#/Onboarding/startInterview) call.
+          example: PTSFP6
+    AddNotesRequest:
+      type: object
+      properties:
+        notes:
+          type: string
+          description: Notes to save
+          minLength: 1
+    ConnectionDetailsResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: 'Access token which needs to be forwarded in header X-Incode-Hardware-Id for future calls. Same purpose as token from [start](#/Onboarding/startInterview)
+
+            '
+        interviewerName:
+          type: string
+          description: The name of the executive who is on conference call with the user.
+        sessionId:
+          type: string
+          description: Used for establishing conference connection via OpenTok.
+        interviewToken:
+          type: string
+          description: Used for establishing conference connection via OpenTok.
+    ReportIssueRequest:
+      type: object
+      properties:
+        interviewId:
+          type: string
+          description: Interview ID for which issue is reported.
+          example: 5ec3e2f99bc2710011fba979
+          minLength: 1
+        opentokSessionId:
+          type: string
+          description: Opentok session ID of current video conference.
+          example: T1==cGFydG5lcl9pZD00NjEzNTg2MiZzaWc9ZjBkMzE5N2I2Y2NkMjFmMmFhNWYzZGQ1OWQ0ZTEzYmQzYTAxYzM2MjpzZXNzaW9
+        details:
+          type: string
+          description: Any description that Opentok sends.
+          example: Subscriber's stream has been interrupted
+      required:
+      - details
+      - interviewId
+      - opentokSessionId
+    MatchRequest:
+      type: object
+      properties:
+        base64Image:
+          type: string
+          description: Base64 string representation of the image.
+          example: /9j/4AAQSkZJRgABAQABLn0kvWaa6Dxv7Kk9Z89nveU+mjuQKB29EWOavLyBDr7nL...
+          minLength: 1
+        interviewId:
+          type: string
+          description: 5c10c728c7a29d001536ad13
+        compareWith:
+          type: string
+          enum:
+          - selfie
+          - videoSelfie
+          - id
+          - nfc
+      required:
+      - compareWith
+    FinishInterviewRequest:
+      type: object
+      properties:
+        interviewId:
+          type: string
+          description: Interview id.
+        status:
+          type: string
+          default: NEEDS_REVIEW
+          description: Status of finished interview
+          enum:
+          - NO_CONFERENCE
+          - APPROVED
+          - REJECTED
+          - ABANDONED
+          - NEEDS_REVIEW
+          - REJECTED_BY_RISK
+          - COMPLETED
+    BasicResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+    InterviewStartRecordResponse:
+      type: object
+      properties:
+        opentokArchiveId:
+          type: string
+          description: ID of created OpenTok archive.
+    InterviewAnswerResponse:
+      type: object
+      properties:
+        interviewId:
+          type: string
+          description: ID of fetched interview.
+        apiKey:
+          type: integer
+          format: int32
+          description: OpenTok apiKey used for connection to video call.
+        interviewToken:
+          type: string
+          description: OpenTok token used for connection to video call.
+        sessionId:
+          type: string
+          description: OpenTok session id used for connection to video call.
+    InterviewStopRecordRequest:
+      type: object
+      properties:
+        opentokArchiveId:
+          type: string
+          description: ID of OpenTok archive for which recording stop is requested. In case omitted, last created archive on given interview will be stopped.
+    ChatDto:
+      type: object
+      properties:
+        date:
+          type: integer
+          format: int64
+          description: UTC timestamp.
+        body:
+          type: string
+          description: Single message in chat.
+          minLength: 1
+        author:
+          type: string
+          description: Author of the message.
+          enum:
+          - user
+          - interviewer
+          minLength: 1
+      required:
+      - body
+      - date
+    ChatRequest:
+      type: object
+      properties:
+        interviewId:
+          type: string
+          description: Interview id.
+          minLength: 1
+        chat:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatDto'
+          minItems: 1
+      required:
+      - chat
+    InterviewerInfoResponse:
+      type: object
+      properties:
+        interviewerName:
+          type: string
+          description: The name of the executive who is on a conference call with the user.
+        apiKey:
+          type: integer
+          format: int32
+          description: Used for establishing a conference connection via OpenTok.
+        interviewToken:
+          type: string
+          description: Used for establishing a conference connection via OpenTok.
+        sessionId:
+          type: string
+          description: Used for establishing a conference connection via OpenTok.
+    AddToQueueResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+        waitingTimeInSeconds:
+          type: integer
+          format: int64
+          description: Average waiting time before user joins conference call.
+          example: 203
+    FinishInterviewResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+        urls:
+          type: array
+          items:
+            type: string
+        uuid:
+          type: string
+          description: ID of newly created customer (if onboarding was approved).
+    QueueIndexResponse:
+      type: object
+      properties:
+        index:
+          type: integer
+          format: int32
+    ConfStoreRequest:
+      type: object
+      properties:
+        base64Image:
+          type: string
+          description: Base64 string representation of the image.
+          example: /9j/4AAQSkZJRgABAQABLn0kvWaa6Dxv7Kk9Z89nveU+mjuQKB29EWOavLyBDr7nL...
+          minLength: 1
+        interviewId:
+          type: string
+          description: ID of interview.
+          example: 5c10c728c7a29d001536ad13
+        origin:
+          type: string
+          description: This parameter indicates which type of photo is taken
+          enum:
+          - selfie
+          - front
+          - back
+          - poa
+      required:
+      - origin
+    ConferenceEvent:
+      type: object
+      properties:
+        get_version:
+          type: integer
+          format: int64
+        interviewId:
+          type: string
+          description: Interview ID for which event is reported.
+          example: 5ec3e2f99bc2710011fba979
+        opentokSessionId:
+          type: string
+          description: Opentok session ID of current video conference.
+          example: T1==cGFydG5lcl9pZD00NjEzNTg2MiZzaWc9ZjBkMzE5N2I2Y2NkMjFmMmFhNWYzZGQ1OWQ0ZTEzYmQzYTAxYzM2MjpzZXNzaW9
+        eventType:
+          type: string
+          description: Opentok event type. Could be anything that Opentok sends, e.g. StreamDisconnected, StreamReconnected, VideoDisabled, VideoEnabled...
+          example: StreamDisconnected
+        details:
+          type: string
+          description: Any description that Opentok sends.
+          example: Subscriber's stream has been interrupted
+        eventSource:
+          type: string
+          description: Indicate event caught on customer or executive side.
+          enum:
+          - customer
+          - executive
+          example: executive
+      required:
+      - eventSource
+      - eventType
+      - interviewId
+      - opentokSessionId
+    ConferenceDetailsResponse:
+      type: object
+      properties:
+        conferenceStatus:
+          type: string
+          enum:
+          - NO_CONFERENCE
+          - APPROVED
+          - REJECTED
+          - ABANDONED
+          - NEEDS_REVIEW
+          - REJECTED_BY_RISK
+          - COMPLETED
+        executiveId:
+          type: string
+        conferenceStartTime:
+          type: integer
+          format: int64
+          description: UTC timestamp
+        conferenceEndTime:
+          type: integer
+          format: int64
+          description: UTC timestamp
+        conferenceDuration:
+          type: integer
+          format: int64
+          description: Conference duration in milliseconds.
+        conferenceTermAndConditionsAccepted:
+          type: boolean
+        creditBureauConsentGiven:
+          type: boolean
+        applicantDataConfirmed:
+          type: boolean
+    AddConferenceModuleRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Conference module name
+          minLength: 1
+        url:
+          type: string
+          example: https://example.com
+          minLength: 1
+        iconBase64:
+          type: string
+          example: IMAGE BASE64
+          minLength: 1
+        index:
+          type: string
+          example: 1
+          minLength: 1
+    ConferenceConsentRequest:
+      type: object
+      properties:
+        conferenceTermAndConditionsAccepted:
+          type: boolean
+          description: User accepts terms and conditions.
+        creditBureauConsentGiven:
+          type: boolean
+          description: User accepts credit bureau check.
+        applicantDataConfirmed:
+          type: boolean
+          description: Executive has verified user data.
+    WebappRecognizeResponse:
+      type: object
+      properties:
+        confidence:
+          type: number
+          format: float
+          description: Confidence value of comparing. Number between 0 and 1.
+          maximum: 1
+          minimum: 0
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

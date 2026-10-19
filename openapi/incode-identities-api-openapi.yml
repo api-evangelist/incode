@@ -1,0 +1,219 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Identities API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Identities
+paths:
+  /omni/b2b/v1/identities/{id}:
+    get:
+      tags:
+      - Identities
+      summary: Fetch Identity data
+      description: 'Fetches data associated with identity, which was gathered in onboarding.
+
+        Works with Admin Token.'
+      operationId: identitydata
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchIdentityDataResponseDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/b2b-v1-identities/
+      x-incode-markdown: https://developer.incode.com/api-reference/b2b-v1-identities.md
+components:
+  schemas:
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    IdentityDocument:
+      type: object
+      properties:
+        documentNumber:
+          type: string
+        issuingCountry:
+          type: string
+        documentType:
+          type: string
+          enum:
+          - Unknown
+          - Passport
+          - Visa
+          - DriversLicense
+          - IdentificationCard
+          - Permit
+          - Currency
+          - ResidenceDocument
+          - TravelDocument
+          - BirthCertificate
+          - VehicleRegistration
+          - Other
+          - WeaponLicense
+          - TribalIdentification
+          - VoterIdentification
+          - Military
+          - TaxIdentification
+          - FederalID
+          - MedicalCard
+        documentExpiryDate:
+          type: integer
+          format: int32
+    FetchIdentityDataResponseDto:
+      type: object
+      properties:
+        identityId:
+          type: string
+        originalSessionId:
+          type: string
+        ocrData:
+          $ref: '#/components/schemas/IdentityOcrData'
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityDocument'
+    IdentityOcrData:
+      type: object
+      properties:
+        name:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        dateOfBirth:
+          type: string
+        personalIdNumber:
+          type: string
+        address:
+          type: string
+        nationalNumber:
+          type: string
+        countryCode:
+          type: string
+        documentType:
+          type: string
+          enum:
+          - Unknown
+          - Passport
+          - Visa
+          - DriversLicense
+          - IdentificationCard
+          - Permit
+          - Currency
+          - ResidenceDocument
+          - TravelDocument
+          - BirthCertificate
+          - VehicleRegistration
+          - Other
+          - WeaponLicense
+          - TribalIdentification
+          - VoterIdentification
+          - Military
+          - TaxIdentification
+          - FederalID
+          - MedicalCard
+        docExpiryDate:
+          type: integer
+          format: int32
+        displayName:
+          type: string
+        fullNameMrz:
+          type: string
+        gender:
+          type: string
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

@@ -42,46 +42,6 @@ created: '2026-06-25'
 modified: '2026-10-06'
 specificationVersion: '0.23'
 apis:
-- aid: incode:incode-face-and-liveness-api
-  name: Incode Face and Liveness API
-  description: Selfie capture, passive liveness, and face match.
-  humanURL: https://developer.incode.com/docs/onboarding-integration
-  baseURL: https://demo-api.incodesmile.com
-  tags:
-  - Face and Liveness
-  properties:
-  - type: OpenAPI
-    url: openapi/incode-face-and-liveness-api-openapi.yml
-  - type: Documentation
-    url: https://developer.incode.com/docs/onboarding-integration
-  - type: APIReference
-    url: https://developer.incode.com/docs/api-onboarding-start-session
-  - type: PostmanCollection
-    url: collections/incode.postman_collection.json
-  - type: OpenCollection
-    url: collections/incode.opencollection.json
-  - type: Documentation
-    url: https://developer.incode.com/docs/api-onboarding-id-validation
-  - type: APIReference
-    url: https://developer.incode.com/reference/processid
-  - type: Documentation
-    url: https://developer.incode.com/docs/api-onboarding-face-validation
-  - type: APIReference
-    url: https://developer.incode.com/reference/processface
-  - type: Documentation
-    url: https://developer.incode.com/docs/government-verification
-  - type: APIReference
-    url: https://developer.incode.com/reference/processgovernmentvalidation
-  - type: Documentation
-    url: https://developer.incode.com/docs/global-watchlist
-  - type: Documentation
-    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
-  - type: APIReference
-    url: https://developer.incode.com/docs/fetch-scores
-  - type: Documentation
-    url: https://developer.incode.com/docs/onboarding-status-webhook
-  - type: APIReference
-    url: https://developer.incode.com/docs/webhooks
 - aid: incode:incode-government-validation-api
   name: Incode Government Validation API
   description: Validation against government databases.
@@ -92,46 +52,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/incode-government-validation-api-openapi.yml
-  - type: Documentation
-    url: https://developer.incode.com/docs/onboarding-integration
-  - type: APIReference
-    url: https://developer.incode.com/docs/api-onboarding-start-session
-  - type: PostmanCollection
-    url: collections/incode.postman_collection.json
-  - type: OpenCollection
-    url: collections/incode.opencollection.json
-  - type: Documentation
-    url: https://developer.incode.com/docs/api-onboarding-id-validation
-  - type: APIReference
-    url: https://developer.incode.com/reference/processid
-  - type: Documentation
-    url: https://developer.incode.com/docs/api-onboarding-face-validation
-  - type: APIReference
-    url: https://developer.incode.com/reference/processface
-  - type: Documentation
-    url: https://developer.incode.com/docs/government-verification
-  - type: APIReference
-    url: https://developer.incode.com/reference/processgovernmentvalidation
-  - type: Documentation
-    url: https://developer.incode.com/docs/global-watchlist
-  - type: Documentation
-    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
-  - type: APIReference
-    url: https://developer.incode.com/docs/fetch-scores
-  - type: Documentation
-    url: https://developer.incode.com/docs/onboarding-status-webhook
-  - type: APIReference
-    url: https://developer.incode.com/docs/webhooks
-- aid: incode:incode-id-verification-api
-  name: Incode ID Verification API
-  description: Government ID capture and validation.
-  humanURL: https://developer.incode.com/docs/onboarding-integration
-  baseURL: https://demo-api.incodesmile.com
-  tags:
-  - ID Verification
-  properties:
-  - type: OpenAPI
-    url: openapi/incode-id-verification-api-openapi.yml
   - type: Documentation
     url: https://developer.incode.com/docs/onboarding-integration
   - type: APIReference
@@ -202,16 +122,59 @@ apis:
     url: https://developer.incode.com/docs/onboarding-status-webhook
   - type: APIReference
     url: https://developer.incode.com/docs/webhooks
-- aid: incode:incode-results-api
-  name: Incode Results API
-  description: Fetch scores, OCR data, and images.
+- aid: incode:incode-api-keys-api
+  name: Incode API Keys API
+  description: >-
+    Following endpoints facilitate API key rotation, for security reasons - current key gets stolen, user
+    access needs
+
+    to be revoked, organization expires, etc. It is good practice to rotate them every once in a while,
+    regardless
+
+    (e.g. every three months).
+
+
+    **Migration**
+
+    There used to be only one API key per organization, created and registered on API Gateway at the time
+    of organization
+
+    creation. Each organization has a user defined `name`, on which 3 random digits are added to generate
+    `clientId`,
+
+    on which sha1 was applied to generate `apiKey`. Field `clientId` was also used as organization identifier,
+    while
+
+    `apiKey` also served as organization reference.
+
+
+    With the rotatable approach, API key management is delegated to a separate collection, which would
+    contain `clientId`
+
+    and `value` for each record. This also enables having multiple API keys per organization. Fields `clientId`/`apiKey`
+
+    on organization entity will keep their identifier/reference function, to maintain referential integrity
+    between entities.
+
+
+    In order to facilitate the new approach and ensure backwards compatibility, a migration process is
+    established.
+
+    Through it, API key related fields are copied from Organization to RotatableApiKey collection, so
+    that in the end
+
+    each organization would have a corresponding rotatable key created. Key validity is checked on API
+    Gateway directly
+
+    (if applicable, otherwise set to `true`). All subsequent API key management would affect new collection
+    only.
   humanURL: https://developer.incode.com/docs/onboarding-integration
   baseURL: https://demo-api.incodesmile.com
   tags:
-  - Results
+  - API Keys
   properties:
   - type: OpenAPI
-    url: openapi/incode-results-api-openapi.yml
+    url: openapi/incode-api-keys-api-openapi.yml
   - type: Documentation
     url: https://developer.incode.com/docs/onboarding-integration
   - type: APIReference
@@ -242,16 +205,1343 @@ apis:
     url: https://developer.incode.com/docs/onboarding-status-webhook
   - type: APIReference
     url: https://developer.incode.com/docs/webhooks
-- aid: incode:incode-watchlist-and-aml-api
-  name: Incode Watchlist and AML API
-  description: Sanctions, PEP, and warning-list screening.
+- aid: incode:incode-api-validations-api
+  name: Incode API validations API
+  description: >-
+    Standalone API validations that are not related to any interview or onboarding process. This helps
+    with various
+
+    identity verifications specific to certain countries such as CURP and INE in Mexico or SSN in USA.
   humanURL: https://developer.incode.com/docs/onboarding-integration
   baseURL: https://demo-api.incodesmile.com
   tags:
-  - Watchlist and AML
+  - API validations
   properties:
   - type: OpenAPI
-    url: openapi/incode-watchlist-and-aml-api-openapi.yml
+    url: openapi/incode-api-validations-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-authentications-api
+  name: Incode Authentications API
+  description: The Authentications API from Incode — 2 operation(s) for authentications.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Authentications
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-authentications-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-curp-validation-api
+  name: Incode Curp validation API
+  description: The Curp validation API from Incode — 4 operation(s) for curp validation.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Curp validation
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-curp-validation-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-custom-fields-api
+  name: Incode Custom fields API
+  description: The Custom fields API from Incode — 2 operation(s) for custom fields.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Custom fields
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-custom-fields-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-custom-watchlist-api
+  name: Incode Custom watchlist API
+  description: The Custom watchlist API from Incode — 5 operation(s) for custom watchlist.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Custom watchlist
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-custom-watchlist-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-document-capture-api
+  name: Incode Document capture API
+  description: The Document capture API from Incode — 6 operation(s) for document capture.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Document capture
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-document-capture-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-ekyb-api
+  name: Incode Ekyb API
+  description: The Ekyb API from Incode — 4 operation(s) for ekyb.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Ekyb
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-ekyb-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-ekyc-api
+  name: Incode Ekyc API
+  description: The Ekyc API from Incode — 4 operation(s) for ekyc.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Ekyc
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-ekyc-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-electronic-signature-advanced-api
+  name: Incode Electronic signature advanced API
+  description: >-
+    The Electronic signature advanced API from Incode — 1 operation(s) for electronic signature advanced.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Electronic signature advanced
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-electronic-signature-advanced-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-electronic-signature-api
+  name: Incode Electronic signature API
+  description: The Electronic signature API from Incode — 4 operation(s) for electronic signature.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Electronic signature
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-electronic-signature-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-email-input-api
+  name: Incode Email input API
+  description: The Email input API from Incode — 2 operation(s) for email input.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Email input
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-email-input-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-face-capture-api
+  name: Incode Face capture API
+  description: The Face capture API from Incode — 3 operation(s) for face capture.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Face capture
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-face-capture-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-fiscal-qr-url-api
+  name: Incode Fiscal qr url API
+  description: The Fiscal qr url API from Incode — 3 operation(s) for fiscal qr url.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Fiscal qr url
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-fiscal-qr-url-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-forms-and-data-entry-api
+  name: Incode Forms and data entry API
+  description: The Forms and data entry API from Incode — 1 operation(s) for forms and data entry.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Forms and data entry
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-forms-and-data-entry-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-frame-analysis-api
+  name: Incode Frame analysis API
+  description: The Frame analysis API from Incode — 2 operation(s) for frame analysis.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Frame analysis
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-frame-analysis-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-geolocation-api
+  name: Incode Geolocation API
+  description: The Geolocation API from Incode — 1 operation(s) for geolocation.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Geolocation
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-geolocation-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-global-watchlist-api
+  name: Incode Global watchlist API
+  description: The Global watchlist API from Incode — 3 operation(s) for global watchlist.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Global watchlist
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-global-watchlist-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-id-capture-api
+  name: Incode Id capture API
+  description: The Id capture API from Incode — 17 operation(s) for id capture.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Id capture
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-id-capture-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-identities-api
+  name: Incode Identities API
+  description: The Identities API from Incode — 1 operation(s) for identities.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Identities
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-identities-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-identity-reuse-api
+  name: Incode Identity reuse API
+  description: The Identity reuse API from Incode — 2 operation(s) for identity reuse.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Identity reuse
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-identity-reuse-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-interview-api
+  name: Incode Interview API
+  description: The Interview API from Incode — 38 operation(s) for interview.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Interview
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-interview-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-login-api
+  name: Incode Login API
+  description: The Login API from Incode — 5 operation(s) for login.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Login
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-login-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-nom151-api
+  name: Incode Nom151 API
+  description: The Nom151 API from Incode — 4 operation(s) for nom151.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Nom151
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-nom151-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-omni-api
+  name: Incode Omni API
+  description: The Omni API from Incode — 4 operation(s) for omni.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Omni
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-omni-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-onboarding-authentication-api
+  name: Incode Onboarding authentication API
+  description: >-
+    The Onboarding authentication API from Incode — 4 operation(s) for onboarding authentication.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Onboarding authentication
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-onboarding-authentication-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-organization-api
+  name: Incode Organization API
+  description: The Organization API from Incode — 4 operation(s) for organization.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Organization
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-organization-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-phone-number-input-api
+  name: Incode Phone number input API
+  description: The Phone number input API from Incode — 3 operation(s) for phone number input.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Phone number input
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-phone-number-input-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-proof-of-address-capture-api
+  name: Incode Proof of address capture API
+  description: >-
+    The Proof of address capture API from Incode — 3 operation(s) for proof of address capture.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Proof of address capture
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-proof-of-address-capture-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-shared-consent-api
+  name: Incode Shared consent API
+  description: The Shared consent API from Incode — 2 operation(s) for shared consent.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Shared consent
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-shared-consent-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-trust-graph-api
+  name: Incode Trust graph API
+  description: The Trust graph API from Incode — 5 operation(s) for trust graph.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Trust graph
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-trust-graph-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-user-consent-api
+  name: Incode User consent API
+  description: The User consent API from Incode — 2 operation(s) for user consent.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - User consent
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-user-consent-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-video-conference-api
+  name: Incode Video conference API
+  description: The Video conference API from Incode — 25 operation(s) for video conference.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Video conference
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-video-conference-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-videoselfie-api
+  name: Incode Videoselfie API
+  description: The Videoselfie API from Incode — 5 operation(s) for videoselfie.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - Videoselfie
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-videoselfie-api-openapi.yml
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-integration
+  - type: APIReference
+    url: https://developer.incode.com/docs/api-onboarding-start-session
+  - type: PostmanCollection
+    url: collections/incode.postman_collection.json
+  - type: OpenCollection
+    url: collections/incode.opencollection.json
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-id-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processid
+  - type: Documentation
+    url: https://developer.incode.com/docs/api-onboarding-face-validation
+  - type: APIReference
+    url: https://developer.incode.com/reference/processface
+  - type: Documentation
+    url: https://developer.incode.com/docs/government-verification
+  - type: APIReference
+    url: https://developer.incode.com/reference/processgovernmentvalidation
+  - type: Documentation
+    url: https://developer.incode.com/docs/global-watchlist
+  - type: Documentation
+    url: https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data
+  - type: APIReference
+    url: https://developer.incode.com/docs/fetch-scores
+  - type: Documentation
+    url: https://developer.incode.com/docs/onboarding-status-webhook
+  - type: APIReference
+    url: https://developer.incode.com/docs/webhooks
+- aid: incode:incode-anti-fraud-api
+  name: Incode anti Fraud API
+  description: The anti Fraud API from Incode — 1 operation(s) for anti fraud.
+  humanURL: https://developer.incode.com/docs/onboarding-integration
+  baseURL: https://demo-api.incodesmile.com
+  tags:
+  - anti Fraud
+  properties:
+  - type: OpenAPI
+    url: openapi/incode-anti-fraud-api-openapi.yml
   - type: Documentation
     url: https://developer.incode.com/docs/onboarding-integration
   - type: APIReference

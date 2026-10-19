@@ -1,0 +1,438 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Electronic signature API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Electronic signature
+paths:
+  /omni/attach-signature-to-pdf/v2:
+    post:
+      tags:
+      - Electronic signature
+      summary: Attach signature to multiple pdf documents
+      description: 'Attach signature from interview to previously uploaded PDF contracts at (x, y) coordinates with desired height to
+
+        desired page on pdf. Coordinates are relative to left bottom corner of page. Every document id can have multiple signature
+
+        attached to it, hence the array of signature positions for every document.
+
+
+        When the session is linked to an identity (successful face authentication, or an approved session) the DEFAULT
+
+        signature stored on that identity is used. The signature captured in the session itself is used only when the
+
+        session has no linked identity, or that identity has no stored signature.'
+      operationId: addsignaturetopdffilev2
+      parameters:
+      - name: interviewId
+        in: query
+        required: false
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttachSignatureV2Request'
+            example:
+              includeSignedDocumentInResponse: true
+              includeNom151SignatureInResponse: true
+              includeSignedDocumentWithNom151InResponse: true
+              includeCertificateDetailsInResponse: true
+              signaturePositionsOnContracts:
+                e81cd044-98fd-47b0-b0c5-937b22b69977#contract1:
+                - x: 10
+                  y: 10
+                  height: 10
+                  pageNumber: 2
+                  orientation: ORIENTATION_NORMAL
+                - x: 20
+                  y: 30
+                  height: 10
+                  pageNumber: 1
+                  orientation: ORIENTATION_90_DEGREE
+                1ffcd128-153f-40d4-a881-7c3362e58806#contract2:
+                - x: 10
+                  y: 10
+                  height: 20
+                  pageNumber: 2
+                - x: 20
+                  y: 30
+                  height: 20
+                  pageNumber: 1
+                074355ff-81f5-4b9f-a6c6-eb41bdcaf9f1#contract3:
+                - x: 10
+                  y: 10
+                  height: 30
+                  pageNumber: 2
+                - x: 20
+                  y: 30
+                  height: 30
+                  pageNumber: 1
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedResponse'
+              example:
+                success: true
+                sessionStatus: Alive
+                additionalInformation:
+                  signingDetails:
+                    providedBy: Advantage Security, S. de R.L. de C.V.
+                    requestedBy: Incode Technologies Inc.
+                    policyValue: 2.16.484.101.10.316.2.1.1.2.
+                    signingHash: AHm8P/i2AnvdM8vKfVLWe5xCovA2v/7l3zmWc1+N4HE=
+                    certificateSerial: 2C
+                    signingTimestamp: '1651076647389'
+                  signedDocumentBase64: base64 of pdf document
+                  signedDocumentWithNomSignatureBase64: base64 of pdf document with nom151
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/attach-signature-to-pdf-v2/
+      x-incode-markdown: https://developer.incode.com/api-reference/attach-signature-to-pdf-v2.md
+  /omni/attach-signature-on-annotation:
+    post:
+      tags:
+      - Electronic signature
+      summary: Attach signature on annotation
+      description: 'Attach signature from interview to previously uploaded PDF contracts at all places annotated with text from request,
+
+        with desired height on pdf. Annotations must contain text with either preselected values, or alternative can be supplied.
+
+        If user wishes to use signature supplied during onboarding, DEFAULT signature type should be used.
+
+
+        Preselected values are: DEFAULT, INITIALS, PATIENTS_SIGNATURE, NON_MEDICAL_SIGNATURE_1, NON_MEDICAL_SIGNATURE_2,
+
+        MEDICAL_SIGNATURE_1, MEDICAL_SIGNATURE_2
+
+
+        Endpoint is intended to be used as fluent api. One call to the api gives in responses id of the signed document which
+
+        can then be used in the subsequent call to continuously add another signature on a different annotation.
+
+
+        For the DEFAULT signature type, when the session is linked to an identity (successful face authentication,
+
+        or an approved session) the DEFAULT signature stored on that identity is used. The signature captured in
+
+        the session itself is used only when the session has no linked identity, or that identity has no stored
+
+        signature. Any other signature type is always taken from the session.'
+      operationId: addsignaturetopdfonannotation
+      parameters:
+      - name: interviewId
+        in: query
+        required: false
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttachSignatureOnAnnotationRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedResponse'
+              example:
+                success: true
+                signedDocumentId: new signed document ID
+                signedDocumentURL: temporary URL to new signed document
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/attach-signature-on-annotation/
+      x-incode-markdown: https://developer.incode.com/api-reference/attach-signature-on-annotation.md
+  /omni/get/signing-ceremony-url:
+    get:
+      tags:
+      - Electronic signature
+      summary: Get signing ceremony URL
+      description: Fetches signing ceremony URL for the current session.
+      operationId: getSigningCeremonyUrl
+      parameters:
+      - name: id
+        in: query
+        required: false
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SigningCeremonyUrlResponse'
+              example:
+                signingCeremonyUrl: https://exaple.com
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/get-signing-ceremony-url/
+      x-incode-markdown: https://developer.incode.com/api-reference/get-signing-ceremony-url.md
+  /omni/get/signed-contracts-links:
+    get:
+      tags:
+      - Electronic signature
+      summary: Get signed contracts links
+      description: Fetches temporary link of the signed contracts uploaded for the current session.
+      operationId: getSignedContracts
+      parameters:
+      - name: id
+        in: query
+        required: false
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedResponse'
+              example:
+                success: true
+                sessionStatus: Alive
+                additionalInformation:
+                  document ID1: Temporary URL to signed document with ID1
+                  document ID2: Temporary URL to signed document with ID2
+                  document ID3: Temporary URL to signed document with ID3
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/get-signed-contracts-links/
+      x-incode-markdown: https://developer.incode.com/api-reference/get-signed-contracts-links.md
+components:
+  schemas:
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    SignaturePosition:
+      type: object
+      properties:
+        x:
+          type: integer
+          format: int32
+          description: The x axis where to place the signature image (from the left bottom corner of page).
+        y:
+          type: integer
+          format: int32
+          description: The y axis where to place the signature image (from the left bottom corner of page).
+        height:
+          type: integer
+          format: int32
+          description: Height of the image when placed in the pdf, keeps aspect ratio.
+        pageNumber:
+          type: integer
+          format: int32
+          description: Number of page on which to put the signature image (pages numbering start from 1, default value is 1).
+        orientation:
+          type: string
+          description: Counterclockwise rotation of the signature in degrees
+          enum:
+          - ORIENTATION_NORMAL
+          - ORIENTATION_90_DEGREE
+          - ORIENTATION_180_DEGREE
+          - ORIENTATION_270_DEGREE
+      required:
+      - height
+      - pageNumber
+      - x
+      - y
+    AttachSignatureOnAnnotationRequest:
+      type: object
+      example:
+        contractId: e81cd044-98fd-47b0-b0c5-937b22b69977#contract1
+        signatureType: PATIENTS_SIGNATURE
+      properties:
+        contractId:
+          type: string
+          description: IDs of previously added contract (ID is returned on /add/document?imageType=contract)
+        signedContractId:
+          type: string
+          description: IDs of previously signed contract (ID is returned as response from the previous /attach/signature/on/annotation)
+        signatureType:
+          type: string
+          description: One of the preselected values for annotation text
+          enum:
+          - DEFAULT
+          - INITIALS
+          - PATIENTS_SIGNATURE
+          - NON_MEDICAL_SIGNATURE_1
+          - NON_MEDICAL_SIGNATURE_2
+          - MEDICAL_SIGNATURE_1
+          - MEDICAL_SIGNATURE_2
+          - MEDICAL_SIGNATURE_3
+          - PATIENTS_SIGNATURE_NAME
+          - NON_MEDICAL_SIGNATURE_1_NAME
+          - NON_MEDICAL_SIGNATURE_2_NAME
+          - MEDICAL_SIGNATURE_1_NAME
+          - MEDICAL_SIGNATURE_2_NAME
+        alternativeSignatureType:
+          type: string
+          description: 'If annotation text is none of the preselected values, pass in here the alternative value (signature must be inserted
+
+            with the alternative value into database as it''s signature type)
+
+            '
+      required:
+      - contractId
+    SigningCeremonyUrlResponse:
+      type: object
+      properties:
+        signingCeremonyUrl:
+          type: string
+    AttachSignatureV2Request:
+      type: object
+      properties:
+        signaturePositionsOnContracts:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/SignaturePosition'
+        includeSignedDocumentInResponse:
+          type: boolean
+          description: Includes the signed document in base64 in response.
+        includeNom151SignatureInResponse:
+          type: boolean
+          description: Includes the Nom 151 signature of the signed document in the response.
+        includeSignedDocumentWithNom151InResponse:
+          type: boolean
+          description: Includes the signed document with the Nom 151 signature attached in the pdf in the response.
+        includeCertificateDetailsInResponse:
+          type: boolean
+          description: Include the certificate details with which the Nom151 signature was created.
+    ExtendedResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+        additionalInformation:
+          type: object
+          additionalProperties:
+            type: object
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

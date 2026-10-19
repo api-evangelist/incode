@@ -1,0 +1,307 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Nom151 API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Nom151
+paths:
+  /omni/sign-string/nom151:
+    post:
+      tags:
+      - Nom151
+      summary: Sign String with NOM 151
+      description: Sign any String with NOM 151.
+      operationId: signStringNom151
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignNom151StringRequest'
+        required: true
+      responses:
+        '200':
+          description: 'Response:
+
+            - signedString: String. NOM 151 constancia (digital evidence)
+
+            - reference: String. Reference folio (unique confirmation id)
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/sign-string-nom151/
+      x-incode-markdown: https://developer.incode.com/api-reference/sign-string-nom151.md
+  /omni/sign-hash/nom151:
+    post:
+      tags:
+      - Nom151
+      summary: Sign hash with NOM 151
+      description: Sign any SHA-256 hash (64-hex) with NOM 151.
+      operationId: signHashNom151
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignNom151HashRequest'
+        required: true
+      responses:
+        '200':
+          description: 'Response:
+
+            - signedString: String. NOM 151 constancia (digital evidence)
+
+            - reference: String. Reference folio (unique confirmation id)
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/sign-hash-nom151/
+      x-incode-markdown: https://developer.incode.com/api-reference/sign-hash-nom151.md
+  /omni/sign-document/nom151:
+    post:
+      tags:
+      - Nom151
+      summary: Sign document with NOM 151
+      description: Sign any base64-encoded document with NOM 151.
+      operationId: signDocumentNom151
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignNom151DocumentRequest'
+        required: true
+      responses:
+        '200':
+          description: 'Response:
+
+            - signedString: String. NOM 151 constancia (digital evidence)
+
+            - reference: String. Reference folio (unique confirmation id)
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/sign-document-nom151/
+      x-incode-markdown: https://developer.incode.com/api-reference/sign-document-nom151.md
+  /omni/calculate-contract-nom151-signature:
+    post:
+      tags:
+      - Nom151
+      summary: Calculate contract Nom151 signature
+      description: This api endpoint calculates the Nom151 signature of an already signed contract and returns the signature.
+      operationId: calculateNom151Signature
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalculateContractNom151SignatureRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedResponse'
+              example:
+                success: true
+                sessionStatus: Alive
+                additionalInformation:
+                  signedDocumentNom151: nom151 signature
+                  signedDocumentBase64: base64 of signed document
+                  signedDocumentWithNomSignatureBase64: base64 of signed contract with attached nom151 signature
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/calculate-contract-nom151-signature/
+      x-incode-markdown: https://developer.incode.com/api-reference/calculate-contract-nom151-signature.md
+components:
+  schemas:
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    SignNom151DocumentRequest:
+      type: object
+      properties:
+        documentToSign:
+          type: string
+          description: Base64-encoded document to be signed with NOM151
+          minLength: 1
+    SignNom151HashRequest:
+      type: object
+      properties:
+        hashToSign:
+          type: string
+          description: Hash to be signed with NOM151
+          minLength: 1
+          pattern: ^[0-9a-fA-F]{64}$
+    ExtendedResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+        additionalInformation:
+          type: object
+          additionalProperties:
+            type: object
+    SignNom151StringRequest:
+      type: object
+      properties:
+        stringToSign:
+          type: string
+          description: String to be signed with NOM151
+          minLength: 1
+    CalculateContractNom151SignatureRequest:
+      type: object
+      properties:
+        includeSignedDocumentInResponse:
+          type: boolean
+          description: Includes the signed document in base64 in response
+        includeCertificateDetailsInResponse:
+          type: boolean
+          description: Includes the signed document with the Nom 151 signature attached in the pdf in the response
+        signedContractId:
+          type: string
+          description: The id of the already signed contract
+          example: cf74e1be-e1bf-4708-9e0e-3b43a8313f85#contract1
+      required:
+      - signedContractId
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

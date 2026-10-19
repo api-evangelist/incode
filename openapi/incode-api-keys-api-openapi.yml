@@ -1,0 +1,289 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni API Keys API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: API Keys
+  description: 'Following endpoints facilitate API key rotation, for security reasons - current key gets stolen, user access needs
+
+    to be revoked, organization expires, etc. It is good practice to rotate them every once in a while, regardless
+
+    (e.g. every three months).
+
+
+    **Migration**
+
+    There used to be only one API key per organization, created and registered on API Gateway at the time of organization
+
+    creation. Each organization has a user defined `name`, on which 3 random digits are added to generate `clientId`,
+
+    on which sha1 was applied to generate `apiKey`. Field `clientId` was also used as organization identifier, while
+
+    `apiKey` also served as organization reference.
+
+
+    With the rotatable approach, API key management is delegated to a separate collection, which would contain `clientId`
+
+    and `value` for each record. This also enables having multiple API keys per organization. Fields `clientId`/`apiKey`
+
+    on organization entity will keep their identifier/reference function, to maintain referential integrity between entities.
+
+
+    In order to facilitate the new approach and ensure backwards compatibility, a migration process is established.
+
+    Through it, API key related fields are copied from Organization to RotatableApiKey collection, so that in the end
+
+    each organization would have a corresponding rotatable key created. Key validity is checked on API Gateway directly
+
+    (if applicable, otherwise set to `true`). All subsequent API key management would affect new collection only.'
+paths:
+  /omni/api-key:
+    get:
+      tags:
+      - API Keys
+      summary: Fetch
+      description: 'Fetch all API keys of current user''s organization. If user is super admin, parameter apiKey can be provided to specify
+
+        organization for which the keys should be fetched (ignored otherwise).'
+      operationId: getApiKeys
+      parameters:
+      - name: apiKey
+        in: query
+        description: Organization reference.
+        required: false
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RotatableApiKeyDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/api-key/
+      x-incode-markdown: https://developer.incode.com/api-reference/api-key.md
+    put:
+      tags:
+      - API Keys
+      summary: Update
+      description: 'Validate/invalidate API key for current user''s organization. If user is super admin, parameter apiKey can be provided
+
+        to specify organization for which the key should be adjusted (ignored otherwise). User is not allowed to invalidate last
+
+        valid key of the belonging organization. Super admin user can invalidate last valid keys of other organizations
+
+        (effectively revoking their access to the application).'
+      operationId: updateApiKey
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateApiKeyRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RotatableApiKeyDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/api-key-put/
+      x-incode-markdown: https://developer.incode.com/api-reference/api-key-put.md
+    post:
+      tags:
+      - API Keys
+      summary: Create
+      description: 'Create new API key for current user''s organization. If user is super admin, parameter apiKey can be provided to specify
+
+        organization for which the key should be created (ignored otherwise).'
+      operationId: addApiKey
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddApiKeyRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RotatableApiKeyDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/api-key-post/
+      x-incode-markdown: https://developer.incode.com/api-reference/api-key-post.md
+components:
+  schemas:
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    AddApiKeyRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Key name.
+          example: key12
+          minLength: 1
+        apiKey:
+          type: string
+          description: Organization reference.
+          example: 6efbabe21a3b44955be51d25336fb7876b68a234
+    UpdateApiKeyRequest:
+      type: object
+      properties:
+        valid:
+          type: boolean
+          description: Key validity.
+          example: false
+        name:
+          type: string
+          description: Key name.
+          example: key12
+          minLength: 1
+        apiKey:
+          type: string
+          description: Organization reference.
+          example: 6efbabe21a3b44955be51d25336fb7876b68a234
+      required:
+      - valid
+    RotatableApiKeyDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Key name.
+          example: key1
+        value:
+          type: string
+          description: Key value, sha1(clientId).
+          example: f35844c8bcb417be1a64fd6e8d622cc93b0fcfaa
+        clientId:
+          type: string
+          description: Key clientId, name + random 3 digits.
+          example: key1254
+        valid:
+          type: boolean
+          description: Key validity.
+        createdAt:
+          type: integer
+          format: int64
+          description: Key creation timestamp.
+          example: 1678185005948
+        updatedAt:
+          type: integer
+          format: int64
+          description: Key adjustment timestamp.
+          example: 1678185005948
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

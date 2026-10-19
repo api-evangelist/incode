@@ -1,0 +1,12 @@
+{
+ "url": "https://developer.incode.com/openapi.json",
+ "final": "https://developer.incode.com/openapi.json",
+ "status": 200,
+ "content_type": "application/json",
+ "bytes": 1027790,
+ "sha256": "59bca2114b83fb52dc8c40466a3130683b3dd8fac7e6a9a7feff2ad3002b4814",
+ "fetched_at": "2026-10-19",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "byte-identical",
+ "note": "re-archived: the provider's current document replaced a stale archive (roadmap#793); the old files are in openapi/_superseded/2026-10-19-stale"
+}

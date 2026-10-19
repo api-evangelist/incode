@@ -1,0 +1,242 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Global watchlist API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Global watchlist
+paths:
+  /omni/watchlist-result:
+    post:
+      tags:
+      - Global watchlist
+      summary: Global Watchlist result
+      description: This endpoint calls the global watchlist api (currently only Tier 2), and gets the latest gathered result.
+      operationId: getWatchlistResult
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WatchlistRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WatchlistSearchResultResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/watchlist-result/
+      x-incode-markdown: https://developer.incode.com/api-reference/watchlist-result.md
+  /omni/process/global-watchlist:
+    post:
+      tags:
+      - Global watchlist
+      summary: Process global watchlist
+      description: 'This endpoint processes a global watchlist search for an individual using the watchlist configuration defined in the flow (including settings for subscription to ongoing monitoring).
+
+        It performs a comprehensive screening against global watchlists (sanctions, PEPs, adverse media) and saves the results for further processing.
+
+        The endpoint returns a basic success/failure response.'
+      operationId: processGlobalWatchlist
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WatchlistRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/process-global-watchlist/
+      x-incode-markdown: https://developer.incode.com/api-reference/process-global-watchlist.md
+  /omni/updated-watchlist-result:
+    get:
+      tags:
+      - Global watchlist
+      summary: Updated global watchlist result
+      description: 'This endpoint gets the latest result for a previous search created with watch-list
+
+        with refId from it''s response, or gathered from an update notification or with interviewId that the search is associated with.'
+      operationId: getupdatedwatchlistresult
+      parameters:
+      - name: ref
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: id
+        in: query
+        required: false
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WatchlistSearchResultResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/updated-watchlist-result/
+      x-incode-markdown: https://developer.incode.com/api-reference/updated-watchlist-result.md
+components:
+  schemas:
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    WatchlistRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+        surName:
+          type: string
+        birthYear:
+          type: integer
+          format: int32
+          description: Year of birth, if known
+        countryCodes:
+          type: array
+          items:
+            description: "Array of ISO 3166-1 alpha-2 strings. List Results are filtered by the entity nationality or country of residence.\n- Country code filtering applies to:\n    - Entity of type PEP only\n    - Entity of type PEP with Adverse Media\n    - Entity that has 1 country value or more (only one has to match)\n- Country code filtering does not apply to (i.e. results will still appear regardless of the country filter):\n    - Entity on sanction lists will always appear regardless of other status (PEP, Adverse media)\n    - Entity that has adverse media mentions only\n    - Entity that does not have a country assigned\n"
+        watchlistTypes:
+          type: array
+          items:
+            description: "- One or more of:\n    sanction\n    warning\n    fitness-probity\n    pep\n    pep-class-1\n    pep-class-2\n    pep-class-3\n    pep-class-4\n- If you use classic Adverse Media Taxonomy:\n    adverse-media\n    adverse-media-financial-crime\n    adverse-media-violent-crime\n    adverse-media-sexual-crime\n    adverse-media-terrorism\n    adverse-media-fraud\n    adverse-media-narcotics\n    adverse-media-general\n- If you use FATF-aligned Adverse Media Taxonomy:\n    adverse-media-v2-property\n    adverse-media-v2-financial-aml-cft\n    adverse-media-v2-fraud-linked\n    adverse-media-v2-narcotics-aml-cft\n    adverse-media-v2-violence-aml-cft\n    adverse-media-v2-terrorism\n    adverse-media-v2-cybercrime\n    adverse-media-v2-general-aml-cft\n    adverse-media-v2-regulatory\n    adverse-media-v2-financial-difficulty\n    adverse-media-v2-violence-non-aml-cft\n    adverse-media-v2-other-financial\n    adverse-media-v2-other-serious\n    adverse-media-v2-other-minor\n"
+        subscribe:
+          type: boolean
+          description: Subscribes to updates on the watchlists to receive notification for updates on the search.
+        fuzziness:
+          type: number
+          format: float
+          description: Determines how closely the returned results must match the supplied name.
+        search_profile:
+          type: string
+          description: Search profile set for the client to use specify what sources they will be searching against.
+    BasicResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+    WatchlistSearchResultResponse:
+      type: object
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

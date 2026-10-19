@@ -1,0 +1,408 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Omni
+paths:
+  /omni/credentials/mdl:
+    post:
+      tags:
+      - Omni
+      summary: Issue a device-bound mDL for the current interview
+      description: Builds credential claims from the interview identified by the access token and issues a device-bound ISO/IEC 18013-5 mDL bound to the supplied device public key.
+      operationId: issuemdl
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MdlIssuanceRequestDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MdlIssuanceResponseDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/credentials-mdl/
+      x-incode-markdown: https://developer.incode.com/api-reference/credentials-mdl.md
+  /omni/add/fingerprints:
+    post:
+      tags:
+      - Omni
+      summary: Add fingerprints
+      description: Add fingerprints blobs and metadata to interview.
+      operationId: addFingerprints
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FingerprintsData'
+        required: true
+      responses:
+        '200':
+          description: Respuesta con validación de CURP
+          content:
+            application/json:
+              examples:
+                Successful CURP Validation:
+                  summary: Successful CURP Validation
+                  description: Successful CURP Validation
+                  value:
+                    success: true
+                    curp: XXXX820814HDFABC01
+                    sex: MUJER
+                    nationality: MEX
+                    result: success
+                    requestData:
+                      name: JUANA
+                      firstLastName: PEREZ
+                      secondLastName: LOPEZ
+                      gender: M
+                      birthDate: 14/08/1982
+                      state: DF
+                    transactionId: transaction1234567890
+                    renapo_valid: true
+                    names: JUANA
+                    paternal_surname: PEREZ
+                    mothers_maiden_name: LOPEZ
+                    birthdate: 14/08/1982
+                    entity_birth: DF
+                    probation_document: '1'
+                    probation_document_data:
+                      foja: ''
+                      numEntidadReg: 09
+                      libro: ''
+                      NumRegExtranjeros: ''
+                      cveEntidadNac: DF
+                      numActa: '00001'
+                      CRIP: ''
+                      tomo: ''
+                      cveEntidadEmisora: ''
+                      anioReg: '1982'
+                      cveMunicipioReg: '001'
+                      FolioCarta: ''
+                    status_curp: RCN
+                    deceasedStatus: ALIVE
+                CURP not found:
+                  summary: CURP not found
+                  description: CURP not found
+                  value:
+                    success: false
+                    error:
+                      codigoError: '06'
+                      resultCURPS:
+                        numEntidadReg: ''
+                        apellidoPaterno: ''
+                        libro: ''
+                        statusCurp: ''
+                        cveEntidadNac: ''
+                        numActa: ''
+                        CRIP: ''
+                        tomo: ''
+                        cveEntidadEmisora: ''
+                        FolioCertificado: ''
+                        anioReg: ''
+                        cveMunicipioReg: ''
+                        FolioCarta: ''
+                        CURP: ''
+                        apellidoMaterno: ''
+                        nombres: ''
+                        nacionalidad: ''
+                        foja: ''
+                        NumRegExtranjeros: ''
+                        fechNac: ''
+                        sexo: ''
+                        docProbatorio: ''
+                      statusOper: NO EXITOSO
+                      tipoError: '01'
+                      sessionID: xF1hOzrjnJU36wDsPl83KlkDpE-eb7tM1Oe2bjI0jrbPJv-mU3IF!1562844632!1749682961123
+                      message: La CURP no se encuentra en la base de datos
+                    result: 'Not valid request: La CURP no se encuentra en la base de datos code: 06'
+                    transactionId: xF1hOzrjnJU36wDsPl83KlkDpE-eb7tM1Oe2bjI0jrbPJv-mU3IF!1562844632!1749682961123
+                    renapo_valid: false
+                Daily Rate Limit Exceeded:
+                  summary: Daily Rate Limit Exceeded
+                  description: Daily Rate Limit Exceeded
+                  value:
+                    success: false
+                    error:
+                      codigoError: '02'
+                      tipoError: '99'
+                      message: SE HA ALCANZADO EL LIMITE DE TRANSACCIONES PERMITIDAS POR DIA
+                    result: SE HA ALCANZADO EL LIMITE DE TRANSACCIONES PERMITIDAS POR DIA
+                    renapo_valid: false
+                Curp status not acceptable:
+                  summary: Curp status not acceptable
+                  description: Curp status not acceptable
+                  value:
+                    success: false
+                    sessionStatus: Alive
+                    error:
+                      codigoError: '02'
+                      tipoError: '99'
+                      message: Curp status is not acceptable.
+                    result: 'Error: STATUS CURP not acceptable.'
+                    renapo_valid: false
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        '500':
+          description: Internal error during CURP validation.
+        '504':
+          description: The request to validate the CURP exceeded the allowed time limit
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-fingerprints/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-fingerprints.md
+  /omni/add/diagnostics-data:
+    post:
+      tags:
+      - Omni
+      summary: Forward diagnostics data
+      description: Accepts an encrypted TrueSight diagnostics envelope from the SDK, enriches it with server-resolved clientId and environment, and forwards it to TrueSight.
+      operationId: addDiagnosticsData
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiagnosticsEnvelopeRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiagnosticsResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-diagnostics-data/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-diagnostics-data.md
+  /omni/get/fingerprints:
+    get:
+      tags:
+      - Omni
+      summary: Get Fingerprints
+      description: This endpoint is used for fetching fingerprints for current session.
+      operationId: getfingerprints
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FingerprintsData'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/get-fingerprints/
+      x-incode-markdown: https://developer.incode.com/api-reference/get-fingerprints.md
+components:
+  schemas:
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    DiagnosticsEnvelopeRequest:
+      type: object
+      properties:
+        version:
+          type: integer
+          format: int32
+          description: Envelope format version
+        alg:
+          type: string
+          description: Encryption algorithm
+          example: A256GCM
+        compression:
+          type: string
+          description: Compression algorithm
+          example: gzip
+        kid:
+          type: string
+          description: Key identifier
+          example: truesight-v1
+        iv:
+          type: string
+          description: Initialization vector (Base64)
+          minLength: 1
+        ciphertext:
+          type: string
+          description: Encrypted diagnostics payload (Base64)
+          minLength: 1
+        tag:
+          type: string
+          description: Authentication tag (Base64)
+          minLength: 1
+    FingerprintsData:
+      type: object
+      properties:
+        type:
+          type: integer
+          format: int32
+        fingerprints:
+          type: array
+          items:
+            $ref: '#/components/schemas/Fingerprint'
+      required:
+      - fingerprints
+    MdlIssuanceRequestDto:
+      type: object
+      properties:
+        devicePublicKey:
+          type: string
+          description: Holder device public key as Base64 (standard) X.509 SubjectPublicKeyInfo DER, EC P-256.
+          minLength: 1
+    DiagnosticsResponse:
+      type: object
+      properties:
+        forwarded:
+          type: boolean
+          description: True when the diagnostics envelope was forwarded to TrueSight. False when diagnostics ingest is not enabled in this environment.
+    MdlIssuanceResponseDto:
+      type: object
+      properties:
+        docType:
+          type: string
+          description: mdoc docType, e.g. org.iso.18013.5.1.mDL.
+        issuerSigned:
+          type: string
+          description: Base64 (standard) of the CBOR-encoded IssuerSigned (nameSpaces + issuerAuth).
+        expiresAt:
+          type: string
+          format: date-time
+          description: When the mDL stops being valid (MSO validityInfo.validUntil).
+    Fingerprint:
+      type: object
+      properties:
+        index:
+          type: integer
+          format: int32
+          maximum: 10
+        base64Fingerprint:
+          type: string
+          minLength: 1
+        fingerprintMetadata:
+          $ref: '#/components/schemas/FingerprintMetadata'
+    FingerprintMetadata:
+      type: object
+      properties:
+        device:
+          type: string
+        resolution:
+          type: string
+        qualityScore:
+          type: string
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,475 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Shared consent API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Shared consent
+paths:
+  /omni/sign-combined-consent:
+    post:
+      tags:
+      - Shared consent
+      summary: Sign combined consents with checkboxes
+      description: Receives information about which checkboxes user signed.
+      operationId: signcombinedconsent
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignCombinedConsentRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/sign-combined-consent/
+      x-incode-markdown: https://developer.incode.com/api-reference/sign-combined-consent.md
+  /omni/get/combined-consent:
+    get:
+      tags:
+      - Shared consent
+      summary: Get combined consent for requested language
+      description: Fetches combined consent for requested language.
+      operationId: getcombinedconsent
+      parameters:
+      - name: id
+        in: query
+        description: Consent id
+        required: false
+        schema:
+          type: string
+      - name: language
+        in: query
+        required: true
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LanguageConsentDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/get-combined-consent/
+      x-incode-markdown: https://developer.incode.com/api-reference/get-combined-consent.md
+components:
+  schemas:
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    BasicResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+    SignCombinedConsentRequest:
+      type: object
+      properties:
+        languageConsentId:
+          type: string
+        checkboxes:
+          type: object
+          additionalProperties:
+            type: boolean
+    LanguageConsentDto:
+      type: object
+      properties:
+        id:
+          type: string
+        languageCode:
+          type: string
+          enum:
+          - ps-AF
+          - sv-AX
+          - sq-AL
+          - ar-DZ
+          - en-AS
+          - ca-AD
+          - pt-AO
+          - en-AI
+          - en-AQ
+          - en-AG
+          - es-AR
+          - hy-AM
+          - nl-AW
+          - en-AU
+          - de-AT
+          - az-AZ
+          - en-BS
+          - ar-BH
+          - bn-BD
+          - en-BB
+          - be-BY
+          - nl-BE
+          - en-BZ
+          - fr-BJ
+          - en-BM
+          - dz-BT
+          - es-BO
+          - nl-BQ
+          - bs-BA
+          - en-BW
+          - no-BV
+          - pt-BR
+          - en-IO
+          - ms-BN
+          - bg-BG
+          - fr-BF
+          - rn-BI
+          - pt-CV
+          - km-KH
+          - fr-CM
+          - en-CA
+          - fr-CA
+          - en-KY
+          - fr-CF
+          - fr-TD
+          - es-CL
+          - zh-CN
+          - en-CX
+          - ms-CC
+          - es-CO
+          - ar-KM
+          - fr-CG
+          - fr-CD
+          - en-CK
+          - es-CR
+          - fr-CI
+          - hr-HR
+          - es-CU
+          - nl-CW
+          - el-CY
+          - cs-CZ
+          - da-DK
+          - fr-DJ
+          - en-DM
+          - es-DO
+          - es-EC
+          - ar-EG
+          - es-SV
+          - es-GQ
+          - aa-ER
+          - et-EE
+          - am-ET
+          - en-FK
+          - fo-FO
+          - en-FJ
+          - fi-FI
+          - fr-FR
+          - fr-GF
+          - fr-PF
+          - fr-TF
+          - fr-GA
+          - en-GM
+          - ka-GE
+          - de-DE
+          - en-GH
+          - en-GI
+          - el-GR
+          - kl-GL
+          - en-GD
+          - fr-GP
+          - en-GU
+          - es-GT
+          - en-GG
+          - fr-GN
+          - pt-GW
+          - en-GY
+          - fr-HT
+          - en-HM
+          - it-VA
+          - es-HN
+          - zh-HK
+          - hu-HU
+          - is-IS
+          - hi-IN
+          - id-ID
+          - fa-IR
+          - ar-IQ
+          - ga-IE
+          - en-IM
+          - he-IL
+          - it-IT
+          - en-JM
+          - ja-JP
+          - en-JE
+          - ar-JO
+          - kk-KZ
+          - sw-KE
+          - en-KI
+          - ko-KP
+          - ko-KR
+          - ar-KW
+          - ky-KG
+          - lo-LA
+          - lv-LV
+          - ar-LB
+          - en-LS
+          - en-LR
+          - ar-LY
+          - de-LI
+          - lt-LT
+          - fr-LU
+          - zh-MO
+          - mg-MG
+          - ny-MW
+          - ms-MY
+          - dv-MV
+          - fr-ML
+          - mt-MT
+          - mh-MH
+          - fr-MQ
+          - ar-MR
+          - en-MU
+          - fr-YT
+          - es-MX
+          - en-FM
+          - ro-MD
+          - fr-MC
+          - mn-MN
+          - sr-ME
+          - en-MS
+          - ar-MA
+          - pt-MZ
+          - my-MM
+          - en-NA
+          - na-NR
+          - ne-NP
+          - nl-NL
+          - fr-NC
+          - en-NZ
+          - es-NI
+          - fr-NE
+          - en-NG
+          - en-NU
+          - en-NF
+          - mk_MK
+          - en-MP
+          - no-NO
+          - ar-OM
+          - ur-PK
+          - en-PW
+          - ar-PS
+          - es-PA
+          - en-PG
+          - es-PY
+          - es-PE
+          - en-PH
+          - en-PN
+          - pl-PL
+          - pt-PT
+          - es-PR
+          - ar-QA
+          - fr-RE
+          - ro-RO
+          - ru-RU
+          - rw-RW
+          - fr-BL
+          - en-SH
+          - en-KN
+          - en-LC
+          - fr-MF
+          - fr-PM
+          - en-VC
+          - sm-WS
+          - it-SM
+          - pt-ST
+          - ar-SA
+          - fr-SN
+          - sr-RS
+          - en-SC
+          - en-SL
+          - en-SG
+          - nl-SX
+          - sk-SK
+          - sl-SI
+          - en-SB
+          - so-SO
+          - en-ZA
+          - en-GS
+          - en-SS
+          - es-ES
+          - si-LK
+          - ar-SD
+          - nl-SR
+          - no-SJ
+          - en-SZ
+          - sv-SE
+          - de-CH
+          - ar-SY
+          - zh-TW
+          - tg-TJ
+          - sw-TZ
+          - th-TH
+          - pt-TL
+          - fr-TG
+          - en-TK
+          - to-TO
+          - en-TT
+          - ar-TN
+          - tr-TR
+          - tk-TM
+          - en-TC
+          - tvl
+          - sw-UG
+          - uk-UA
+          - ar-AE
+          - en-GB
+          - en-US
+          - en-UM
+          - es-UY
+          - uz-UZ
+          - bi-VU
+          - es-VE
+          - vi-VN
+          - en-VG
+          - en-VI
+          - fr-WF
+          - ar-EH
+          - ar-YE
+          - en-ZM
+          - en-ZW
+          - en
+          - es
+          - pt
+          - fr
+          - de
+          - ar
+        title:
+          type: string
+        terms:
+          type: string
+        isDefault:
+          type: boolean
+        consents:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentCheckbox'
+    ConsentCheckbox:
+      type: object
+      properties:
+        checkboxId:
+          type: string
+        consentText:
+          type: string
+        consentType:
+          type: string
+        origin:
+          type: string
+          enum:
+          - USER
+          - SHARED
+        optional:
+          type: boolean
+        editable:
+          type: boolean
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

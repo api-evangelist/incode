@@ -1,0 +1,288 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Fiscal qr url API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Fiscal qr url
+paths:
+  /omni/add/fiscal-qr-url-image:
+    post:
+      tags:
+      - Fiscal qr url
+      summary: Add fiscal qr image
+      description: 'Upload a fiscal qr image as base64 to session. The data available in the url embedded in the qr will be available via the Get fiscal qr url response endpoint.
+
+        (México only)'
+      operationId: addfiscalqrimage
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Base64ImageOrImgUrlRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddFiscalQrUrlResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-fiscal-qr-url-image/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-fiscal-qr-url-image.md
+  /omni/add/fiscal-qr-url:
+    post:
+      tags:
+      - Fiscal qr url
+      summary: Add fiscal qr url
+      description: 'Upload the url extracted from a fiscal qr code. Data from the given url will be available via the Get fiscal qr url response endpoint.
+
+        (México only)'
+      operationId: addfiscalqrurl
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddFiscalQrUrlRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddFiscalQrUrlResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-fiscal-qr-url/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-fiscal-qr-url.md
+  /omni/fiscal-qr-url-response/{interviewId}:
+    get:
+      tags:
+      - Fiscal qr url
+      summary: Get fiscal qr url response
+      description: 'Get the information obtained from a fiscal qr url added to the session.
+
+        (México only)'
+      operationId: getfiscalqrurlresponse
+      parameters:
+      - name: interviewId
+        in: path
+        required: true
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/fiscal-qr-url-response/
+      x-incode-markdown: https://developer.incode.com/api-reference/fiscal-qr-url-response.md
+components:
+  schemas:
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    AddFiscalQrUrlRequest:
+      type: object
+      properties:
+        poaUrl:
+          type: string
+    BasicResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+    Base64ImageOrImgUrlRequest:
+      type: object
+      properties:
+        base64Image:
+          type: string
+          description: Image in base64 format. One of base64Image or imageUrl is required
+          example: /9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEB...
+        imageUrl:
+          type: string
+          description: URL of the image. One of base64Image or imageUrl is required
+          example: http://...
+    AddFiscalQrUrlResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+        rfc:
+          type: string
+        curp:
+          type: string
+        name:
+          type: string
+        firstLastName:
+          type: string
+        secondLastName:
+          type: string
+        birthdate:
+          type: string
+        denomination:
+          type: string
+        regime:
+          type: string
+        constitutionDate:
+          type: string
+        operationStartDate:
+          type: string
+        personStatus:
+          type: string
+        lastSituationChangeDate:
+          type: string
+        state:
+          type: string
+        delegation:
+          type: string
+        colony:
+          type: string
+        streetType:
+          type: string
+        streetName:
+          type: string
+        extNumber:
+          type: string
+        intNumber:
+          type: string
+        postalCode:
+          type: string
+        email:
+          type: string
+        al:
+          type: string
+        fiscalRegime:
+          type: string
+        fiscalStartDate:
+          type: string
+        error:
+          type: string
+        result:
+          type: string
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

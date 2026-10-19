@@ -1,0 +1,315 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Videoselfie API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Videoselfie
+paths:
+  /omni/videoselfie/hash:
+    post:
+      tags:
+      - Videoselfie
+      summary: Get videoselfie hash
+      description: Obtain a hash of the video file of the videoselfie. The hash and hashImage fields in the response will be null if the video file is not yet ready.
+      operationId: getvideoselfiehash
+      parameters:
+      - name: withImage
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VideoSelfieHashResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/videoselfie-hash/
+      x-incode-markdown: https://developer.incode.com/api-reference/videoselfie-hash.md
+  /omni/video-selfie/upload/part:
+    post:
+      tags:
+      - Videoselfie
+      summary: Upload a video selfie chunk
+      description: Upload a single chunk of the video selfie. Chunks must be between 5MB and 10MB, except for the last chunk which can be smaller.
+      operationId: uploadVideoSelfiePart
+      parameters:
+      - name: uploadId
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: partNumber
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+              format: byte
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadVideoPartResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/video-selfie-upload-part/
+      x-incode-markdown: https://developer.incode.com/api-reference/video-selfie-upload-part.md
+  /omni/video-selfie/upload/initiate:
+    post:
+      tags:
+      - Videoselfie
+      summary: Initiate multipart video selfie upload
+      description: 'Start a chunked video upload session. Returns an uploadId for subsequent part uploads and completion.
+
+        The entire upload (all parts + complete) must finish within the configured video selfie timeout (default 240 seconds), otherwise the session will receive a fail score for the video selfie module.'
+      operationId: initiateVideoSelfieUpload
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InitiateVideoUploadResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/video-selfie-upload-initiate/
+      x-incode-markdown: https://developer.incode.com/api-reference/video-selfie-upload-initiate.md
+  /omni/video-selfie/upload/complete:
+    post:
+      tags:
+      - Videoselfie
+      summary: Complete multipart video selfie upload
+      description: Signal that all chunks have been uploaded.
+      operationId: completeVideoSelfieUpload
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompleteVideoUploadRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VideoUploadStatusResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/video-selfie-upload-complete/
+      x-incode-markdown: https://developer.incode.com/api-reference/video-selfie-upload-complete.md
+  /omni/generateVideoSelfieDownloadUrl:
+    get:
+      tags:
+      - Videoselfie
+      summary: Get download URL of videoselfie
+      description: Get URL for downloading video recording of video selfie. This is temporary pre-signed url, that expires in 1 hour
+      operationId: generatevideoselfiedownloadurl
+      parameters:
+      - name: interviewId
+        in: query
+        description: Session ID for which url is generated. In case not set, interviewId will be determined from token from header.
+        required: false
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/generatevideoselfiedownloadurl/
+      x-incode-markdown: https://developer.incode.com/api-reference/generatevideoselfiedownloadurl.md
+components:
+  schemas:
+    UploadVideoPartResponse:
+      type: object
+      properties:
+        partNumber:
+          type: integer
+          format: int32
+        eTag:
+          type: string
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    CompleteVideoUploadRequest:
+      type: object
+      properties:
+        uploadId:
+          type: string
+        parts:
+          type: array
+          items:
+            $ref: '#/components/schemas/PartInfo'
+          minItems: 1
+      required:
+      - uploadId
+    InitiateVideoUploadResponse:
+      type: object
+      properties:
+        uploadId:
+          type: string
+    VideoUploadStatusResponse:
+      type: object
+      properties:
+        status:
+          type: string
+    VideoSelfieHashResponse:
+      type: object
+      properties:
+        hash:
+          type: string
+        hashimage:
+          type: string
+        message:
+          type: string
+    PartInfo:
+      type: object
+      properties:
+        partNumber:
+          type: integer
+          format: int32
+        eTag:
+          type: string
+      required:
+      - eTag
+      - partNumber
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

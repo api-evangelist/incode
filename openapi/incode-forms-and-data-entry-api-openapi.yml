@@ -1,0 +1,177 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Forms and data entry API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Forms and data entry
+paths:
+  /omni/form/answers:
+    get:
+      tags:
+      - Forms and data entry
+      summary: Fetch Form Answers
+      description: 'Retrieves all questions and answers that a user has responded to during a session, regardless of the form module configurations used.
+
+
+        Works with Admin Token.'
+      operationId: fetchFormAnswers
+      parameters:
+      - name: interviewId
+        in: query
+        required: true
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FormAnswersResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/form-answers/
+      x-incode-markdown: https://developer.incode.com/api-reference/form-answers.md
+components:
+  schemas:
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    FormAnswerDetailsDto:
+      type: object
+      properties:
+        singleAnswer:
+          type: string
+          description: 'The user''s answer to the question.
+
+
+            Date Format: Dates in responses are returned as milliseconds since the Unix epoch (UTC)
+
+            Country Code Format: Country codes in responses are returned using ISO 3166-1 alpha-3 format. For example, "USA" for the United States of America, "GBR" for Great Britain.
+
+            '
+        selectedAnswers:
+          type: array
+          description: 'Field intended to support multiple selected answers by the user. Currently, this functionality is not supported and will always return as an empty array.
+
+            '
+          items:
+            type: string
+    FormAnswerDto:
+      type: object
+      properties:
+        question:
+          type: string
+          description: The question presented to the user
+        answerDetails:
+          $ref: '#/components/schemas/FormAnswerDetailsDto'
+          description: Details on user's answer
+        inputType:
+          type: string
+          description: Indicates the type of input used for the answer
+          enum:
+          - NUMBER
+          - CPF
+          - COUNTRY
+          - NATIONALITY
+          - DATE
+          - PHONE
+          - EMAIL
+          - TEXT
+          - MULTISELECT
+          - YESNO
+          - SELECT
+    FormAnswersResponse:
+      type: object
+      properties:
+        answers:
+          type: array
+          description: The answers provided by the user
+          items:
+            $ref: '#/components/schemas/FormAnswerDto'
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

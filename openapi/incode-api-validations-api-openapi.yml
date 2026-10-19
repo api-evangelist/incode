@@ -1,0 +1,1239 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni API validations API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: API validations
+  description: 'Standalone API validations that are not related to any interview or onboarding process. This helps with various
+
+    identity verifications specific to certain countries such as CURP and INE in Mexico or SSN in USA.'
+paths:
+  /api/validate/vin:
+    post:
+      tags:
+      - API validations
+      summary: Vehicle Identification Number Validation
+      description: Validate a VIN number and obtain data related to reports about crashes, theft, etc.
+      operationId: validateVin
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VinRequest'
+        required: true
+      responses:
+        '200':
+          description: "- id: String.\n- vin: String.\n- attributes: Object with following fields.\n    - vin: String.\n    - year: String.\n    - make: String.\n    - model: String.\n    - type: String.\n    - made_In: String.\n    - style: String.\n    - engine: String.\n- success: Boolean.\n- error: String.\n- base64PDF: String.\n"
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/api-validate-vin/
+      x-incode-markdown: https://developer.incode.com/api-reference/api-validate-vin.md
+  /api/validate/ssn:
+    post:
+      tags:
+      - API validations
+      summary: SSN Validation
+      description: Validate a social security number and the person associated with it.
+      operationId: validateSsn
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateSsnRequest'
+        required: true
+      responses:
+        '200':
+          description: '- requestId: Int. Response''s status, check catalog.
+
+            - ssnValid: Boolean. Indicates if ssn information sent is valid.
+
+            - deceasedPerson: Boolean. Indicates if information sent corresponds to a deceased person.
+
+            - errorCode: String. Error code in case something goes wrong.
+
+            - errorCodeDescription: String. Error description in case something goes wrong or if ssn is not valid.
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/api-validate-ssn/
+      x-incode-markdown: https://developer.incode.com/api-reference/api-validate-ssn.md
+  /api/validate/rfc:
+    post:
+      tags:
+      - API validations
+      summary: RFC validation
+      description: Check for valid RFC. If RFC is not found then validRFC field will be false.
+      operationId: validaterfc
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RFCRequest'
+        required: true
+      responses:
+        '200':
+          description: RFC validation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RfcValidationResponse'
+              examples:
+                Valid RFC:
+                  description: Valid RFC
+                  value:
+                    validRFC: true
+                    status: OK
+                    message: RFC Valido
+                    rfcType: F
+                    messageCode: '0'
+                Invalid RFC:
+                  description: Invalid RFC
+                  value:
+                    validRFC: false
+                    status: ERROR
+                    errorMessage: El RFC ingresado no se encuentra en la lista de RFC no cancelados
+        '400':
+          description: Invalid RFC format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+              examples:
+                Invalid RFC Format:
+                  description: Invalid RFC Format
+                  value:
+                    timestamp: 1622548800000
+                    status: 400
+                    error: Bad Request
+                    message: 'BadRequestException: Invalid curp'
+                    path: /api/validate/rfc
+                Missing RFC:
+                  description: Missing RFC
+                  value:
+                    timestamp: 1622548800000
+                    status: 400
+                    error: Bad Request
+                    message: must not be blank
+                    path: /api/validate/rfc
+        '500':
+          description: Internal server error during validation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+              examples:
+                Service Unavailable:
+                  description: Service Unavailable
+                  value:
+                    timestamp: 1622548800000
+                    status: 500
+                    error: Internal Server Error
+                    path: /api/validate/rfc
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/api-validate-rfc/
+      x-incode-markdown: https://developer.incode.com/api-reference/api-validate-rfc.md
+  /api/validate/rfc-by-curp/v2:
+    post:
+      tags:
+      - API validations
+      summary: RFC validation by CURP v2
+      description: 'Check for valid CURP, use obtained data to calculate RFC and then validate the RFC.
+
+        If CURP is not found then renapo_valid field will be false.'
+      operationId: validaterfcbycurpv2
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CurpRequest'
+        required: true
+      responses:
+        '200':
+          description: Respuesta con validación de CURP
+          content:
+            application/json:
+              examples:
+                Successful CURP Validation:
+                  summary: Successful CURP Validation
+                  description: Successful CURP Validation
+                  value:
+                    success: true
+                    curp: XXXX820814HDFABC01
+                    sex: MUJER
+                    nationality: MEX
+                    result: success
+                    requestData:
+                      name: JUANA
+                      firstLastName: PEREZ
+                      secondLastName: LOPEZ
+                      gender: M
+                      birthDate: 14/08/1982
+                      state: DF
+                    transactionId: transaction1234567890
+                    renapo_valid: true
+                    names: JUANA
+                    paternal_surname: PEREZ
+                    mothers_maiden_name: LOPEZ
+                    birthdate: 14/08/1982
+                    entity_birth: DF
+                    probation_document: '1'
+                    probation_document_data:
+                      foja: ''
+                      numEntidadReg: 09
+                      libro: ''
+                      NumRegExtranjeros: ''
+                      cveEntidadNac: DF
+                      numActa: '00001'
+                      CRIP: ''
+                      tomo: ''
+                      cveEntidadEmisora: ''
+                      anioReg: '1982'
+                      cveMunicipioReg: '001'
+                      FolioCarta: ''
+                    status_curp: RCN
+                    deceasedStatus: ALIVE
+                CURP not found:
+                  summary: CURP not found
+                  description: CURP not found
+                  value:
+                    success: false
+                    error:
+                      codigoError: '06'
+                      resultCURPS:
+                        numEntidadReg: ''
+                        apellidoPaterno: ''
+                        libro: ''
+                        statusCurp: ''
+                        cveEntidadNac: ''
+                        numActa: ''
+                        CRIP: ''
+                        tomo: ''
+                        cveEntidadEmisora: ''
+                        FolioCertificado: ''
+                        anioReg: ''
+                        cveMunicipioReg: ''
+                        FolioCarta: ''
+                        CURP: ''
+                        apellidoMaterno: ''
+                        nombres: ''
+                        nacionalidad: ''
+                        foja: ''
+                        NumRegExtranjeros: ''
+                        fechNac: ''
+                        sexo: ''
+                        docProbatorio: ''
+                      statusOper: NO EXITOSO
+                      tipoError: '01'
+                      sessionID: xF1hOzrjnJU36wDsPl83KlkDpE-eb7tM1Oe2bjI0jrbPJv-mU3IF!1562844632!1749682961123
+                      message: La CURP no se encuentra en la base de datos
+                    result: 'Not valid request: La CURP no se encuentra en la base de datos code: 06'
+                    transactionId: xF1hOzrjnJU36wDsPl83KlkDpE-eb7tM1Oe2bjI0jrbPJv-mU3IF!1562844632!1749682961123
+                    renapo_valid: false
+                Daily Rate Limit Exceeded:
+                  summary: Daily Rate Limit Exceeded
+                  description: Daily Rate Limit Exceeded
+                  value:
+                    success: false
+                    error:
+                      codigoError: '02'
+                      tipoError: '99'
+                      message: SE HA ALCANZADO EL LIMITE DE TRANSACCIONES PERMITIDAS POR DIA
+                    result: SE HA ALCANZADO EL LIMITE DE TRANSACCIONES PERMITIDAS POR DIA
+                    renapo_valid: false
+                Curp status not acceptable:
+                  summary: Curp status not acceptable
+                  description: Curp status not acceptable
+                  value:
+                    success: false
+                    sessionStatus: Alive
+                    error:
+                      codigoError: '02'
+                      tipoError: '99'
+                      message: Curp status is not acceptable.
+                    result: 'Error: STATUS CURP not acceptable.'
+                    renapo_valid: false
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        '500':
+          description: Internal error during CURP validation.
+        '504':
+          description: The request to validate the CURP exceeded the allowed time limit
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/api-validate-rfc-by-curp-v2/
+      x-incode-markdown: https://developer.incode.com/api-reference/api-validate-rfc-by-curp-v2.md
+  /api/validate/registraduria:
+    post:
+      tags:
+      - API validations
+      summary: Registraduria validation - Colombian id
+      description: 'Check for valid Colombian ID and return corresponding values of that person.
+
+        Optionally, you can set isForeign flag to true to check for foreign people living in Colombia.
+
+        An example could be a Mexican person with a Colombian ID.'
+      operationId: validateRegistraduria
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistraduriaRequest'
+        required: true
+      responses:
+        '200':
+          description: "Response:\n- data: Object with following fields.\n    - anio_resolucion: Integer.\n    - codigo_error_datos_cedula: Integer.\n    - codigo_respuesta: Integer.\n    - date: String.\n    - departamento_expedicion: String.\n    - descripcion_estado: String.\n    - estado_cedula: Integer.\n    - fecha_expedicion: String.\n    - informacion_adicional: String.\n    - municipio_expedicion: String.\n    - nombre_completo: String.\n    - nuip: Integer.\n    - numero_resolucion: Integer.\n    - particula: String.\n    - primer_apellido: String.\n    - primer_nombre: String.\n    - segundo_apellido: String.\n    - segundo_nombre: String.\n- error: String.\n- findings: String [].\n- status: Boolean.\n\nA response example for foreigners is:\n\n```\n{\n    \"data\": {\n        \"ce\": \"456123\",\n        \"estado\": \"VIGENTE\",\n        \"fecha_expedicion\": \"02/10/2019\",\n        \"fecha_nacimiento\": \"05/03/1956\",\n        \"fecha_vencimiento\": \"01/10/2024\",\n        \"nacionalidad\": \"CHILENA\",\n        \"nombre_completo\": \"JUAN ALEJANDRO PEREZ LOPEZ\"\n    },\n    \"error\": \"\",\n    \"findings\": [],\n    \"status\": true }\n```\n"
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/api-validate-registraduria/
+      x-incode-markdown: https://developer.incode.com/api-reference/api-validate-registraduria.md
+  /api/validate/registraduria-ppt:
+    post:
+      tags:
+      - API validations
+      summary: Colombia - Temporary Residency / PPT Validation
+      description: Check for a valid Colombian temporary residency ID and return the corresponding values of that person.
+      operationId: validateRegistraduriaPPT
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistraduriaRequest'
+        required: true
+      responses:
+        '200':
+          description: "- data: Object with following fields.\n    - estado: String.\n    - fecha_entrega: String.\n    - identidad_venezolana: String.\n    - lugar_entrega: String.\n    - nombre_completo: String.\n    - ppt: String.\n    - tipo_documento: String.\n- error: String.\n- findings: String [].\n- status: Boolean.\n"
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/api-validate-registraduria-ppt/
+      x-incode-markdown: https://developer.incode.com/api-reference/api-validate-registraduria-ppt.md
+  /api/validate/ine:
+    post:
+      tags:
+      - API validations
+      summary: INE scraping validation
+      description: 'Check for valid INE directly with an automated search in https://listanominal.ine.mx/scpln/
+
+        and return corresponding values of that ID.
+
+
+        Scraping service will start working asynchronously and this service will return a resultsId to fetch the results in
+
+        /api/fetch/ine. The recommended wait time is 20 sec.
+
+
+        Possible parameters are ocr, cic, claveElector and numeroEmision but the parameters sent depend on the model of the INE/IFE
+
+        to be consulted.
+
+
+        Model C: IFE with emission year from 2008 to 2013, should send claveElector, numeroEmision and ocr from the back of ID.
+
+
+        Model D: INE with emission year from 2013, should send cic from back of ID (9 characters) and OCR from the back of the ID (13 characters).
+
+
+        Model E,F,G,H: INE with emission year from 2014 onwards, should send CIC from the back of the ID (9 characters) and
+
+        citizen id (ocr) from the back of the ID (9 characters).
+
+
+        Additional indications and information on the models of the credentials can be found in https://listanominal.ine.mx/scpln/'
+      operationId: validateIne
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IneScraperRequest'
+        required: true
+      responses:
+        '200':
+          description: 'idResults: String'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/api-validate-ine/
+      x-incode-markdown: https://developer.incode.com/api-reference/api-validate-ine.md
+  /api/validate/curp/v3:
+    post:
+      tags:
+      - API validations
+      summary: CURP scraping validation
+      description: 'Check for valid CURP directly with an automated search in https://www.gob.mx/curp/ and return
+
+        corresponding values of that person. Parameter must be "curp".
+
+
+        Scraping service will start working asynchronously and this service will return a resultsId to fetch the results in
+
+        /api/fetch/curp/v3. The recommended wait time is 25 sec.'
+      operationId: validateCurp3
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CurpRequest'
+        required: true
+      responses:
+        '200':
+          description: 'idResults: String'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+        '400':
+          description: 'Invalid curp: a 400 error will be thrown if the curp provided does not match the correct pattern.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/api-validate-curp-v3/
+      x-incode-markdown: https://developer.incode.com/api-reference/api-validate-curp-v3.md
+  /api/validate/curp-by-data/v3:
+    post:
+      tags:
+      - API validations
+      summary: CURP scraping validation by data
+      description: 'Check for valid CURP directly with an automated search in https://www.gob.mx/curp/ and return
+
+        corresponding curp of that person. Parameters are the person''s details.
+
+
+        Scraping service will start working asynchronously and this service will return a resultsId to fetch the results in
+
+        /api/fetch/curp/v3. The recommended wait time is 25 sec.
+
+
+        Valid values for state are the ones listed by renapo in this link: https://es.wikipedia.org/wiki/Plantilla:Abreviaciones_de_los_estados_de_México'
+      operationId: validateCurpByData3
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CurpDataRequest'
+        required: true
+      responses:
+        '200':
+          description: 'idResults: String.'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/api-validate-curp-by-data-v3/
+      x-incode-markdown: https://developer.incode.com/api-reference/api-validate-curp-by-data-v3.md
+  /api/validate/bank-statement:
+    post:
+      tags:
+      - API validations
+      summary: Validate bank statement
+      description: This endpoint is used to validate and get the information from a bank statement.
+      operationId: validateAccountStatement
+      parameters:
+      - name: dummy
+        in: query
+        description: Enables sending any pdf and will return a dummy response.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        description: pdf (bank-statement pdf)
+        content:
+          application/json:
+            schema:
+              type: string
+              format: byte
+        required: true
+      responses:
+        '200':
+          description: 'fields are optional, based on the bank statement format
+
+            - name: String.
+
+            - account_num: String.
+
+            - clabe: String.
+
+            - summary: String.
+
+            - bank: String.
+
+            - rfc: String.
+
+            - starting_balance: Float.
+
+            - ending_balance: Float.
+
+            - pdf_quality: Number.
+
+            - summary: Object. Object with detailed information on balance, deposits, withdrawals and fees.
+
+            - txs: Array of transactions.
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/api-validate-bank-statement/
+      x-incode-markdown: https://developer.incode.com/api-reference/api-validate-bank-statement.md
+  /api/validate/bank-statement/v2:
+    post:
+      tags:
+      - API validations
+      summary: Validate bank statement v2
+      description: This endpoint is used to validate and get the information from a bank statement.
+      operationId: validateAccountStatementv2
+      parameters:
+      - name: dummy
+        in: query
+        description: Enables sending any pdf and will return a dummy response.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Base64AccountStatementMxRequest'
+        required: true
+      responses:
+        '200':
+          description: 'Fields are optional, based on the bank statement format
+
+            - name: String.
+
+            - account_num: String.
+
+            - clabe: String.
+
+            - summary: String.
+
+            - bank: String.
+
+            - rfc: String.
+
+            - starting_balance: Float.
+
+            - ending_balance: Float.
+
+            - pdf_quality: Number.
+
+            - summary: Object. Object with detailed information on balance, deposits, withdrawals and fees.
+
+            - txs: Array of transactions.
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/api-validate-bank-statement-v2/
+      x-incode-markdown: https://developer.incode.com/api-reference/api-validate-bank-statement-v2.md
+  /api/calculate/rfc:
+    post:
+      tags:
+      - API validations
+      summary: Calculate RFC
+      description: 'Calculate and return the RFC based on a person data.
+
+
+        Once you obtain the calculated RFC it doesn''t necessarily mean it''s a valid one. You could use the validate RFC method to check if it exists.'
+      operationId: generaterfc
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalculateRFCRequest'
+        required: true
+      responses:
+        '200':
+          description: Successfully calculated RFC
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RFCResponse'
+              examples:
+                Success Response:
+                  description: Success Response
+                  value:
+                    calculatedRFC: PEPJ870918ABC
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+              examples:
+                Invalid Date Format:
+                  description: Invalid Date Format
+                  value:
+                    timestamp: 1622548800000
+                    status: 400
+                    error: Bad Request
+                    message: Date is not in valid format
+                    path: /api/calculate/rfc
+                    details:
+                      error:
+                        birthDate:
+                        - Birth date must be in format dd/mm/yyyy
+                Missing Required Field:
+                  description: Missing Required Field
+                  value:
+                    timestamp: 1622548800000
+                    status: 400
+                    error: Bad Request
+                    message: Required field missing
+                    path: /api/calculate/rfc
+                    details:
+                      error:
+                        name:
+                        - must not be blank
+        '500':
+          description: Internal server error during calculation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+              examples:
+                Internal Server Error:
+                  description: Internal Server Error
+                  value:
+                    timestamp: 1622548800000
+                    status: 500
+                    error: Internal Server Error
+                    message: Error calculating RFC
+                    path: /api/calculate/rfc
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/api-calculate-rfc/
+      x-incode-markdown: https://developer.incode.com/api-reference/api-calculate-rfc.md
+  /api/fetch/ine:
+    get:
+      tags:
+      - API validations
+      summary: Fetch INE scraping results
+      description: Fetch the results from /api/validate/ine. The recommended wait time is 20 sec and retrying every 5 sec after that.
+      operationId: fetchIne
+      parameters:
+      - name: idResults
+        in: query
+        required: true
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: 'scrapingStatus possible values are:
+
+            - IN_PROGRESS: service hasn''t finished and should retry in 5 seconds.
+
+            - FINISHED: scrapping service finished and we got either a successful response or an error such as curp not found.
+
+            - ERROR: scrapping service had an unhandled error, another attempt should be sent to validate curp.
+
+
+            If INE is not found or an error occurs (such as service being in maintenance) then the success field will be false
+
+            and the field resultDetails will have additional information.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IneResult'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/api-fetch-ine/
+      x-incode-markdown: https://developer.incode.com/api-reference/api-fetch-ine.md
+  /api/fetch/curp/v3:
+    get:
+      tags:
+      - API validations
+      summary: Fetch CURP scraping results
+      description: Fetch the results from /api/validate/curp/v3. The recommended wait time is 25 secs and retrying every 5 secs after that.
+      operationId: fetchCurp3
+      parameters:
+      - name: idResults
+        in: query
+        required: true
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurpResult'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/api-fetch-curp-v3/
+      x-incode-markdown: https://developer.incode.com/api-reference/api-fetch-curp-v3.md
+components:
+  schemas:
+    CalculateRFCRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 80
+          minLength: 2
+        firstLastName:
+          type: string
+          maxLength: 40
+          minLength: 2
+        secondLastName:
+          type: string
+        birthDate:
+          type: string
+          format: dd/mm/yyyy
+          minLength: 1
+      required:
+      - birthDate
+      - firstLastName
+      - name
+      - secondLastName
+    CurpDataRequest:
+      type: object
+      properties:
+        curp:
+          type: string
+          description: User's curp. Has to be in valid format. If it isn't present, then curp value from interview is used.
+          example: COHJ950918HCMVRS09
+        name:
+          type: string
+          minLength: 1
+        firstLastName:
+          type: string
+          minLength: 1
+        secondLastName:
+          type: string
+        gender:
+          type: string
+          description: Valid gender values are "H" (Hombre, male), "M" (mujer, female) and "X" (otro, other)
+          enum:
+          - H
+          - M
+          - X
+          minLength: 1
+        birthDate:
+          type: string
+          format: dd/mm/yyyy
+          example: 07/06/1995
+          minLength: 1
+        state:
+          type: string
+          example: CM
+          minLength: 1
+        externalId:
+          type: string
+          example: bdac7bdd-9339-4f85-9b32-bc90d553ddc6
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    IneScraperRequest:
+      type: object
+      properties:
+        ocr:
+          type: string
+        identificadorCiudadano:
+          type: string
+        cic:
+          type: string
+          description: Mandatory for model D,E,F,G,H
+        claveElector:
+          type: string
+          description: Mandatory for model C
+        numeroEmision:
+          type: string
+          description: 'Mandatory for model C, should have a length of 2: ex 02'
+      required:
+      - ocr
+    RegistraduriaRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+        emissionDate:
+          type: string
+          format: dd/mm/yyyy
+          description: mandatory if isForeign is true, otherwise optional
+          example: 30/10/2020
+        fullName:
+          type: string
+        isForeign:
+          type: boolean
+        nameBean:
+          $ref: '#/components/schemas/NameBean'
+    RFCResponse:
+      type: object
+      properties:
+        calculatedRFC:
+          type: string
+    CurpResult:
+      type: object
+      properties:
+        get_version:
+          type: integer
+          format: int64
+        scrapingStatus:
+          type: string
+          description: '- IN_PROGRESS: Service hasn''t finished and should retry in 5 seconds.
+
+            - FINISHED: Service finished and we got a result. Either a success or an error, such as curp not found.
+
+            - ERROR: Service had an unhandled error, a new attempt is recommended.
+
+            '
+          enum:
+          - IN_PROGRESS
+          - FINISHED
+          - ERROR
+        success:
+          type: boolean
+        result:
+          type: string
+          description: '- success: Call finished and data was validated successfully.
+
+            - error: Invalid curp or data, exact details returned by the website can be found in the resultDetails field.
+
+            - timeout: Elements needed for scrapping were never found, isolated network issue, website down or website changed.
+
+            - maintenance: Elements indicating that the website is under maintenance have been found.
+
+            - unhandledError: Unhandled error occured during scrapping.
+
+            '
+        resultDetails:
+          type: string
+        screenshotUrl:
+          type: string
+        curp:
+          type: string
+        nombre:
+          type: string
+        primerApellido:
+          type: string
+        segundoApellido:
+          type: string
+        sexo:
+          type: string
+        nacionalidad:
+          type: string
+        entidadNacimiento:
+          type: string
+        documentoProbatorio:
+          type: string
+        datosDocumentoProbatorio:
+          type: object
+          additionalProperties:
+            type: object
+          description: '- municipioRegistro: String.
+
+            - entidadRegistro: String.
+
+            - numeroActa: Integer.
+
+            - anioRegistro: Integer.
+
+            '
+        curpHistoricas:
+          type: string
+        statusCurp:
+          type: string
+        transactionId:
+          type: string
+        codigoRespuestaCCB:
+          type: string
+        descripcionRespuestaCCB:
+          type: string
+        codigoRespuestaRENAPO:
+          type: string
+        descripcionRespuestaRENAPO:
+          type: string
+    VinRequest:
+      type: object
+      properties:
+        vin:
+          type: string
+          description: Vehicle Identification Number
+          minLength: 1
+        getPdf:
+          type: boolean
+          default: 'false'
+          description: Obtains pdf with details in base64 format.
+    CurpRequest:
+      type: object
+      properties:
+        curp:
+          type: string
+          minLength: 1
+        externalId:
+          type: string
+          example: bdac7bdd-9339-4f85-9b32-bc90d553ddc6
+    RFCRequest:
+      type: object
+      properties:
+        rfc:
+          type: string
+          minLength: 1
+    ValidateSsnRequest:
+      type: object
+      properties:
+        ssn:
+          type: string
+          description: Person's social security number
+          minLength: 1
+        dateOfBirth:
+          type: string
+          format: YYYY-MM-DD
+          description: Person's birthdate
+          example: '1976-11-21'
+          minLength: 1
+        firstName:
+          type: string
+          description: Person's first name
+          minLength: 1
+        lastName:
+          type: string
+          description: Person's last name
+          minLength: 1
+        middleName:
+          type: string
+          description: Person's middle name
+        email:
+          type: string
+          description: Person's email
+    RfcValidationResponse:
+      type: object
+      properties:
+        validRFC:
+          type: boolean
+        status:
+          type: string
+        message:
+          type: string
+        rfcType:
+          type: string
+        messageCode:
+          type: string
+        errorMessage:
+          type: string
+    NameBean:
+      type: object
+      properties:
+        fullName:
+          type: string
+        fullNameNativeScript:
+          type: string
+        firstNameNativeScript:
+          type: string
+        paternalLastNameNativeScript:
+          type: string
+        maternalLastNameNativeScript:
+          type: string
+        machineReadableFullName:
+          type: string
+          description: Full name from Barcode or MRZ
+        firstName:
+          type: string
+        middleName:
+          type: string
+        givenName:
+          type: string
+        givenNameMrz:
+          type: string
+        initials:
+          type: string
+          description: Initials as returned by bank-ID schemes (e.g. iDIN) — the only given-name evidence they provide
+        nameSuffix:
+          type: string
+        paternalLastName:
+          type: string
+        maternalLastName:
+          type: string
+        lastNameMrz:
+          type: string
+        familyName:
+          type: string
+    Base64AccountStatementMxRequest:
+      type: object
+      properties:
+        base64File:
+          type: string
+          description: Base64 string representation of the bank statement pdf.
+          minLength: 1
+      required:
+      - base64File
+    IneResult:
+      type: object
+      properties:
+        get_version:
+          type: integer
+          format: int64
+        scrapingStatus:
+          type: string
+          description: Scraping status
+          enum:
+          - IN_PROGRESS
+          - FINISHED
+          - ERROR
+        success:
+          type: boolean
+          description: Flag indicating if the process finished successfully.
+        result:
+          type: string
+          description: Result
+          enum:
+          - success
+          - error
+        resultDetails:
+          type: string
+        screenshotUrl:
+          type: string
+        cic:
+          type: string
+          description: Cic value.
+        claveElector:
+          type: string
+          description: Clave de elector.
+        numeroEmision:
+          type: string
+          description: Emission number.
+        ocr:
+          type: string
+          description: Ocr number.
+        anioRegistro:
+          type: string
+          description: Registration year.
+        anioEmision:
+          type: string
+          description: Emission year.
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

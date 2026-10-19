@@ -1,0 +1,6328 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Organization API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Organization
+paths:
+  /omni/executive-events/find:
+    post:
+      tags:
+      - Organization
+      summary: Fetch audit logs
+      description: 'Use this API to retrieve records of activities performed within your organization. These logs include key events such as changes to organization settings, executive actions, updates to flows, workflows and user identities, as well as changes made to organization’s watchlist.
+
+        Note: Requires admin login token.'
+      operationId: auditLogs
+      parameters:
+      - name: avoidCounting
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/Pageable'
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecutiveEventFilter'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutiveEventResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/executive-events-find/
+      x-incode-markdown: https://developer.incode.com/api-reference/executive-events-find.md
+  /executive/log-in:
+    post:
+      tags:
+      - Organization
+      summary: Login admin token
+      description: Logs in an user and provides a token with high-privileges
+      operationId: adminLogin
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecutiveCognitoLoginRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutiveLoginResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      security:
+      - ApiKeyAuth: []
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/executive-log-in/
+      x-incode-markdown: https://developer.incode.com/api-reference/executive-log-in.md
+  /omni/identity/{customerId}/sessions:
+    get:
+      tags:
+      - Organization
+      summary: Fetch all passed onboardings for the same person
+      description: Get all passed onboardings for the same person
+      operationId: getcustomersessions
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Interview'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/identity-sessions/
+      x-incode-markdown: https://developer.incode.com/api-reference/identity-sessions.md
+  /omni/get/process-batch-status:
+    get:
+      tags:
+      - Organization
+      summary: Get batch processing status
+      description: Returns the status of the /omni/process/batch progress
+      operationId: getprocessbatchstatus
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/get-process-batch-status/
+      x-incode-markdown: https://developer.incode.com/api-reference/get-process-batch-status.md
+components:
+  schemas:
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    ExposureFrame:
+      type: object
+      properties:
+        timestamp:
+          type: number
+          format: double
+        exposureType:
+          type: string
+        requestedMode:
+          type: string
+        requestedCompensation:
+          type: number
+          format: float
+        brightness:
+          type: number
+          format: float
+        isCanonical:
+          type: boolean
+        applyConstraintsTime:
+          type: integer
+          format: int32
+        reportedMode:
+          type: string
+        reportedCompensation:
+          type: number
+          format: float
+        reportedExposureTime:
+          type: number
+          format: float
+        isTimeoutReached:
+          type: boolean
+        imageWidth:
+          type: integer
+          format: int32
+        imageHeight:
+          type: integer
+          format: int32
+    AntifraudResult:
+      type: object
+      properties:
+        originalStatus:
+          type: string
+          enum:
+          - FAILED
+          - PASSED
+          - NOT_EXECUTED
+          - MANUAL_REVIEW
+        resolved:
+          type: boolean
+        resolvedReason:
+          type: string
+    SignedConsent:
+      type: object
+      properties:
+        consentType:
+          type: string
+          enum:
+          - ML
+          - PRIVACY
+          - MANDATORY
+        regulationType:
+          type: string
+          enum:
+          - US
+          - Other
+          - Worldwide
+          - US_Illinois
+          - US_California
+          - US_Texas
+          - US_Washington
+        signed:
+          type: boolean
+        consentId:
+          type: string
+        signedTime:
+          type: integer
+          format: int64
+    Detail:
+      type: object
+      properties:
+        kind:
+          type: string
+        error:
+          type: string
+        loc:
+          type: string
+        explanation:
+          type: string
+    VoiceConsentSelfieAttempt:
+      type: object
+      properties:
+        imageRef:
+          type: string
+        timestamp:
+          type: integer
+          format: int64
+        confidence:
+          type: number
+          format: float
+        threshold:
+          type: number
+          format: float
+    AddressBean:
+      type: object
+      properties:
+        street:
+          type: string
+          description: Street line in the way it is read from address string.
+        streetName:
+          type: string
+          description: Street name without exterior and interior numbers.
+        colony:
+          type: string
+          description: Colony line the way it is read from address string. (Not applicable for all countries)
+        postalCode:
+          type: string
+          description: Postal code in the way it is read from address string.
+        city:
+          type: string
+          description: City in the way it is read from address string.
+        state:
+          type: string
+          description: State in the way it is read from address string.
+        stateName:
+          type: string
+          description: Full StateName.
+        district:
+          type: string
+          description: District in the way it is read from address string.
+        stateCode:
+          type: string
+          description: State code if applicable.
+        addressCountryCode:
+          type: string
+          description: Address country code if applicable.
+        label:
+          type: string
+          description: Full address label.
+        exteriorNumber:
+          type: string
+          description: Exterior street number.
+        interiorNumber:
+          type: string
+          description: Interior street number.
+        addressLine1:
+          type: string
+          description: The primary line in the address that contains the most essential details for locating a place.
+        streetType:
+          type: string
+          description: Street type
+    Regime:
+      type: object
+      properties:
+        title:
+          type: string
+        startDate:
+          type: integer
+          format: int64
+        endDate:
+          type: integer
+          format: int64
+    RegistralSituation:
+      type: object
+      properties:
+        tipoSituacionRegistral:
+          type: string
+        tipoReporteRoboExtravio:
+          type: string
+    ColombiaRutFormDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+      - type: object
+        properties:
+          name:
+            $ref: '#/components/schemas/NameBean'
+          taxIdNumber:
+            type: string
+          identificationNumber:
+            type: string
+          issueDate:
+            type: integer
+            format: int64
+          generationDate:
+            type: integer
+            format: int64
+          mainActivityCode:
+            type: string
+          secondaryActivityCode:
+            type: string
+          otherActivityCode1:
+            type: string
+          otherActivityCode2:
+            type: string
+          validationErrors:
+            type: array
+            items:
+              $ref: '#/components/schemas/ValidationErrorSchema'
+    CreditFileDetails:
+      type: object
+      properties:
+        creditFileNumber:
+          type: string
+        creditFileCreationDate:
+          type: string
+    CustomFieldValid:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: boolean
+    ExposureParams:
+      type: object
+      properties:
+        applyConstraintsTime:
+          type: integer
+          format: int32
+        exposureType:
+          type: string
+          enum:
+          - INITIAL
+          - MIN
+          - MAX
+          - TOGGLE
+        exposureMode:
+          type: string
+          enum:
+          - CONTINUOUS
+          - MANUAL
+        exposureCompensation:
+          type: number
+          format: float
+        exposureTime:
+          type: number
+          format: float
+        brightness:
+          type: number
+          format: float
+        isTimeoutReached:
+          type: boolean
+    BusinessVerificationRequest:
+      type: object
+      properties:
+        plugins:
+          type: array
+          items:
+            type: string
+        businessName:
+          type: string
+        addressLine1:
+          type: string
+        street:
+          type: string
+        houseNo:
+          type: string
+        addressLine2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
+          enum:
+          - US
+          - BR
+          - CA
+          - CN
+          - UK
+          - GB
+          - DE
+          - FR
+          - RO
+          - ES
+          - IT
+          - IL
+          - AR
+          - IE
+          - JP
+          - SE
+          - 'NO'
+          - VN
+          - NL
+          - NG
+          - KE
+          - CM
+          - HK
+          - IN
+          - MX
+          - DK
+          - BG
+          - MT
+          - LT
+          - KM
+          - TR
+          - EG
+          - AE
+          - SA
+          - AU
+          - GR
+          - PT
+          - BE
+          - AT
+        taxId:
+          type: string
+        uboNames:
+          type: array
+          items:
+            type: string
+        directors:
+          type: array
+          items:
+            type: string
+    Employment:
+      type: object
+      properties:
+        status:
+          type: string
+        type:
+          type: string
+        sector:
+          type: string
+    FinanceSettlementDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+      - type: object
+        properties:
+          name:
+            $ref: '#/components/schemas/NameBean'
+          settlementDate:
+            type: integer
+            format: int64
+          settlementFigure:
+            type: number
+          agreementReference:
+            type: string
+          vehicleRegistrationNumber:
+            type: string
+          financeCompany:
+            type: string
+          accountNumber:
+            type: string
+          sortCode:
+            type: string
+          validationErrors:
+            type: array
+            items:
+              $ref: '#/components/schemas/ValidationErrorSchema'
+    ExternalVerificationRequest:
+      type: object
+      properties:
+        plugins:
+          type: array
+          items:
+            type: string
+        source:
+          type: string
+          enum:
+          - US_DRIVERS_LICENSE_1
+          - US_TELCO_1
+          - US_TELCO_2
+          - US_TELCO_4
+          - US_TELCO_5
+          - US_CREDIT_BUREAU_1
+          - US_CREDIT_BUREAU_3
+          - US_ADDRESS_1
+          - US_CONSUMER_1
+          - MX_CONSUMER_1
+          - MX_CONSUMER_2
+          - BR_GOVT_1
+          - BR_CPF_1
+          - CA_RES_CREDIT
+          - CA_CREDIT_FINTRAC
+          - UK_CREDIT_BUREAU_1
+          - UK_VOTER_REGISTER
+          - ES_PHONE_REGISTER_2
+          - CL_1
+          - AR_1
+          - AR_RES_REGISTER
+          - AR_CREDIT_BUR_1
+          - GR_1
+          - GT_1
+          - CR_1
+          - CO_1
+          - PHONE_RISK_1
+          - PHONE_RISK_2
+          - PHONE_PROFILE
+          - EMAIL_RISK_1
+          - RISK_ADDONS_ONLY
+          - GH_CARD_VERIFY_1
+          - PE_MIGRATION_INSTITUTE
+          - KE_IDENTIFYAFRICA
+          - INDIA_PAN
+          - IN_DMV
+          - NG_MONO_BVN
+          - NG_MONO_NIN
+          - US_CREDIT_TELCO
+          - PH_RES_CREDIT
+          - VE_CIVIL_REGISTER
+          - CO_CIVIL_REGISTER_1
+          - MX_CIVIL_REGISTER_2
+          - BR_TAX_PHONE_REGISTER
+          - NL_CONSUMER_POP_REG_TELCO
+          - NL_CIVIL_REG_CREDIT_TELCO
+          - FI_NATIONAL_ID
+          - FI_CONSUMER_POP_REG_TELCO
+          - BE_CREDIT_TELCO
+          - DK_CIVIL_REG_CREDIT_TELCO
+          - GB_2X2
+          - PE_CIVIL_REGISTER_2
+          - NO_CONS_POP_REG
+          - DE_PHONE_MOBILE_REGISTER
+          - IT_CIVIL_REG_CREDIT_TELCO
+        fullName:
+          type: string
+        firstName:
+          type: string
+        middleName:
+          type: string
+        surName:
+          type: string
+        email:
+          type: string
+        street:
+          type: string
+        houseNo:
+          type: string
+        postalCode:
+          type: string
+        countryCode:
+          type: string
+        phone:
+          type: string
+        state:
+          type: string
+        city:
+          type: string
+        ssn:
+          type: string
+        dateOfBirth:
+          type: string
+        ipAddress:
+          type: string
+        taxIdStatus:
+          type: string
+        nationality:
+          type: string
+        dlNumber:
+          type: string
+        dlExpireAt:
+          type: string
+        dlState:
+          type: string
+        last4SSN:
+          type: string
+        idNumber:
+          type: string
+        panNumber:
+          type: string
+    EntityType:
+      type: object
+      properties:
+        entityType:
+          type: string
+    PoaDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+      - type: object
+        properties:
+          name:
+            type: string
+          address:
+            type: string
+          timestamp:
+            type: integer
+            format: int64
+          addressStatementTimestamps:
+            type: array
+            items:
+              $ref: '#/components/schemas/AddressStatementDate'
+          issuer:
+            type: string
+            enum:
+            - a1
+            - aggm
+            - apg
+            - energieAg
+            - cre
+            - aforeAzteca
+            - amd
+            - amicsa
+            - att
+            - axtel
+            - bancoppel
+            - bancoAzteca
+            - banorte
+            - bbva
+            - cab
+            - caev
+            - capa
+            - cea
+            - cfe
+            - citibanamex
+            - cmapa
+            - cmapaGrande
+            - cmapas
+            - cmas
+            - cmasBlue
+            - comapa
+            - comapaRed
+            - coppel
+            - dapa
+            - dhc
+            - drenaje
+            - ecogas
+            - engie
+            - gasNatural
+            - h
+            - hsbc
+            - inbursa
+            - infonavit
+            - interapas
+            - isagas
+            - izzi
+            - jad
+            - japam
+            - japama
+            - japami
+            - japay
+            - jiapaz
+            - jmas
+            - jras
+            - jumapac
+            - jumapam
+            - lerdo
+            - liverpool
+            - mas
+            - megacable
+            - naturgy
+            - oapas
+            - odapas
+            - ooapas
+            - opdm
+            - oroapa
+            - sacmex
+            - sacmexCdmx
+            - santander
+            - sapa
+            - sapal
+            - sapamuy
+            - sapasa
+            - sapasma
+            - scotiabank
+            - seapal
+            - siapa
+            - simapag
+            - simapas
+            - simas
+            - smapa
+            - smapac
+            - smapam
+            - smapas
+            - spectrum
+            - stori
+            - sura
+            - tam
+            - telcel
+            - telmex
+            - totalplay
+            - veolia
+            - victoria
+            - wizz
+            - asylumSeeker
+            - refugeeId
+            - refugeeStatus
+            - ute
+            - telkom
+            - tmobile
+            - verizon
+            - xfinity
+            - aforeCoppel
+            - americanExpress
+            - ap
+            - telnor
+            - wellsFargo
+            - otherPoa
+          addressComponents:
+            $ref: '#/components/schemas/AddressBean'
+          parsedAddressComponents:
+            $ref: '#/components/schemas/AddressBean'
+    Interview:
+      type: object
+      properties:
+        get_version:
+          type: integer
+          format: int64
+        secondDocumentInterviewId:
+          type: string
+        parentInterviewId:
+          type: string
+        name:
+          type: string
+        fullNameMrz:
+          type: string
+        displayName:
+          type: string
+        phone:
+          type: string
+        birthDate:
+          type: string
+        address:
+          type: string
+        location:
+          type: string
+        longitude:
+          type: number
+          format: float
+        latitude:
+          type: number
+          format: float
+        gender:
+          type: string
+        typeOfId:
+          type: string
+        externalId:
+          type: string
+        flowWalletAddress:
+          type: string
+        email:
+          type: string
+        mrz1:
+          type: string
+        mrz2:
+          type: string
+        mrz3:
+          type: string
+        street:
+          type: string
+        colony:
+          type: string
+        postalCode:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        stateCode:
+          type: string
+        countryCode:
+          type: string
+        cic:
+          type: string
+        ocr:
+          type: string
+        claveDeElector:
+          type: string
+        numeroEmisionCredencial:
+          type: string
+        personalNumber:
+          type: string
+        nationalNumber:
+          type: string
+        personalIdNumber:
+          type: string
+        taxIdNumber:
+          type: string
+        issueFront:
+          type: integer
+          format: int32
+        issueBack:
+          type: integer
+          format: int32
+        issuingCountry:
+          type: string
+        registrationDate:
+          type: integer
+          format: int32
+        documentId:
+          type: string
+        deviceType:
+          type: string
+          enum:
+          - IOS
+          - ANDROID
+          - WEBAPP
+        height:
+          type: string
+        birthPlace:
+          type: string
+        bloodType:
+          type: string
+        curp:
+          type: string
+        recognitionConfidence:
+          type: number
+          format: float
+        nfcRecognitionConfidence:
+          $ref: '#/components/schemas/NfcRecognitionConfidence'
+        spoofConfidence:
+          type: number
+          format: float
+          deprecated: true
+        idValidationScore:
+          type: string
+        tamperedConfidence:
+          type: number
+          format: float
+        tamperedModelVersion:
+          type: string
+        fakeIdConfidence:
+          type: number
+          format: float
+        retouchFrontConfidence:
+          type: number
+          format: float
+        frontClassification:
+          type: string
+          enum:
+          - Unknown
+          - Passport
+          - Visa
+          - DriversLicense
+          - IdentificationCard
+          - Permit
+          - Currency
+          - ResidenceDocument
+          - TravelDocument
+          - BirthCertificate
+          - VehicleRegistration
+          - Other
+          - WeaponLicense
+          - TribalIdentification
+          - VoterIdentification
+          - Military
+          - TaxIdentification
+          - FederalID
+          - MedicalCard
+        backClassification:
+          type: string
+          enum:
+          - Unknown
+          - Passport
+          - Visa
+          - DriversLicense
+          - IdentificationCard
+          - Permit
+          - Currency
+          - ResidenceDocument
+          - TravelDocument
+          - BirthCertificate
+          - VehicleRegistration
+          - Other
+          - WeaponLicense
+          - TribalIdentification
+          - VoterIdentification
+          - Military
+          - TaxIdentification
+          - FederalID
+          - MedicalCard
+        frontIdFaceCount:
+          type: integer
+          format: int32
+        manualIdCheckNeeded:
+          type: boolean
+        manualSelfieCheckNeeded:
+          type: boolean
+        frontSharpness:
+          type: integer
+          format: int32
+        frontGlare:
+          type: integer
+          format: int32
+        frontHorizontalResolution:
+          type: integer
+          format: int32
+        frontShadowConfidence:
+          type: number
+          format: float
+        backSharpness:
+          type: integer
+          format: int32
+        backGlare:
+          type: integer
+          format: int32
+        backHorizontalResolution:
+          type: integer
+          format: int32
+        backShadowConfidence:
+          type: number
+          format: float
+        issueDate:
+          type: integer
+          format: int32
+        expirationDate:
+          type: integer
+          format: int32
+        qr:
+          type: boolean
+        manualCorrectionBy:
+          type: string
+        waitingTime:
+          type: integer
+          format: int64
+        logRecognitionConfidence:
+          type: number
+          format: float
+        readabilityConfidence:
+          type: number
+          format: float
+        frontSeccion:
+          type: string
+        printingNumber:
+          type: string
+        duplicateNumber:
+          type: string
+        preparationNumber:
+          type: string
+        confSelfieConfidence:
+          type: number
+          format: float
+        confSelfieLogConfidence:
+          type: number
+          format: float
+        confFrontIDConfidence:
+          type: number
+          format: float
+        confFrontIDLogConfidence:
+          type: number
+          format: float
+        notes:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+        croppedIDFaceRef:
+          type: string
+        croppedNfcFaceRef:
+          type: string
+        fullFrameFrontIDRef:
+          type: string
+        fullFrameBackIDRef:
+          type: string
+        croppedFrontIDRef:
+          type: string
+        croppedBackIDRef:
+          type: string
+        croppedFaceRef:
+          type: string
+        confSelfieRef:
+          type: string
+        confFrontIDRef:
+          type: string
+        confBackIDRef:
+          type: string
+        additionalNames:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalName'
+        additionalAttrs:
+          type: array
+          items:
+            type: string
+            enum:
+            - DOCUMENTO_INFANTIL
+            - IDADE_PRE_ESCOLAR
+            - MENOR_DE_ANOS
+            - NAO_ASSINA
+            - EM_FASE_DE_ALFABETIZACAO
+            - IMPOSSIBILITADO_DE_ASSINAR
+            - LIMITED_TERM
+            - FEDERAL_LIMITS_APPLY
+            - PERMISO_PARA_TRABAJAR
+            - EXTRANJERO
+            - INDIA_DIGITAL_VID
+            - VETERAN
+            - MOTORCYCLE_LICENSE
+            - NON_DOMICILED
+            - COMMERCIAL_LICENSE
+            - RESIDENTE
+            - MIGRANTE
+            - TEMPORAL
+            - VISITANTE
+            - TRAMITE
+            - RUEX
+            - INDIGENA
+            - AFROMEXICANA
+            - INDIA_DIGITAL_TAXID
+        additionalTimestamps:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomDate'
+        religion:
+          type: string
+        customFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomField'
+        customFieldsValid:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomFieldValid'
+        expirationDateCheckDigit:
+          type: string
+        streetName:
+          type: string
+        exteriorNumber:
+          type: string
+        interiorNumber:
+          type: string
+        district:
+          type: string
+        addressCountryCode:
+          type: string
+        issuerCode:
+          type: string
+        redirectionUrl:
+          type: string
+        maritalStatus:
+          type: string
+        race:
+          type: string
+        notExtractedDetails:
+          type: array
+          items:
+            type: string
+        issuingAuthority:
+          type: string
+        qrContents:
+          type: array
+          items:
+            type: string
+        qrFrontContents:
+          type: array
+          items:
+            type: string
+        qrBackContents:
+          type: array
+          items:
+            type: string
+        conferenceFeedback:
+          type: string
+        barcodeRawData:
+          type: string
+        nameParsed:
+          type: boolean
+        backClassificationFailReason:
+          type: string
+          enum:
+          - UNKNOWN_DOCUMENT_TYPE
+          - WRONG_DOCUMENT_SIDE
+          - WRONG_ONE_SIDED_DOCUMENT
+          - UNFOLDED_DOCUMENT_PAGE_MISMATCH
+          - WRONG_UNFOLDED_DOCUMENT
+          - DOCUMENT_NOT_READABLE
+          - UNABLE_TO_ALIGN_DOCUMENT
+          - ID_TYPE_UNACCEPTABLE
+          - UNEXPECTED_ERROR_OCCURRED
+          - DIGITAL_ID_REQUESTED_BUT_OTHER_PROVIDED
+        nameBean:
+          $ref: '#/components/schemas/NameBean'
+        backTypeOfId:
+          type: string
+        documentFrontSubtype:
+          type: string
+        documentFrontState:
+          type: string
+        documentBackSubtype:
+          type: string
+        documentBackState:
+          type: string
+        documentNumberCheckDigit:
+          type: string
+        dateOfBirthCheckDigit:
+          type: string
+        expireAt:
+          type: string
+        issuedAt:
+          type: string
+        issuingCountryBack:
+          type: string
+        finishStatus:
+          type: boolean
+        videoSelfieTypeOfIdMatch:
+          type: boolean
+        videoSelfieBackTypeOfIdMatch:
+          type: boolean
+        videoSelfieFaceMatched:
+          type: boolean
+        videoSelfieNameOcrMatched:
+          type: boolean
+        videoSelfieBacksideOcrMatched:
+          type: boolean
+        videoSelfieVoiceConsentFaceMatched:
+          type: boolean
+        vendorValidationScore:
+          type: number
+          format: double
+        videoSelfieRecognitionConfidence:
+          type: number
+          format: float
+        videoSelfieLogRecognitionConfidence:
+          type: number
+          format: float
+        videoSelfieSpoofConfidence:
+          type: number
+          format: float
+        paperConfidence:
+          type: number
+          format: float
+        screenConfidence:
+          type: number
+          format: float
+        screenModelVersion:
+          type: string
+        paperModelVersion:
+          type: string
+        idAlterationConfidence:
+          type: number
+          format: float
+        frontClassificationFailReason:
+          type: string
+          enum:
+          - UNKNOWN_DOCUMENT_TYPE
+          - WRONG_DOCUMENT_SIDE
+          - WRONG_ONE_SIDED_DOCUMENT
+          - UNFOLDED_DOCUMENT_PAGE_MISMATCH
+          - WRONG_UNFOLDED_DOCUMENT
+          - DOCUMENT_NOT_READABLE
+          - UNABLE_TO_ALIGN_DOCUMENT
+          - ID_TYPE_UNACCEPTABLE
+          - UNEXPECTED_ERROR_OCCURRED
+          - DIGITAL_ID_REQUESTED_BUT_OTHER_PROVIDED
+        frontCroppingError:
+          type: string
+          enum:
+          - ID_IS_CUT
+          - ID_NOT_DETECTED
+        backCroppingError:
+          type: string
+          enum:
+          - ID_IS_CUT
+          - ID_NOT_DETECTED
+        frontSharpnessSource:
+          type: string
+          enum:
+          - ML_BACKEND
+          - CLIENT
+        frontGlareSource:
+          type: string
+          enum:
+          - ML_BACKEND
+          - CLIENT
+        backSharpnessSource:
+          type: string
+          enum:
+          - ML_BACKEND
+          - CLIENT
+        backGlareSource:
+          type: string
+          enum:
+          - ML_BACKEND
+          - CLIENT
+        isRealId:
+          type: boolean
+        barcodeMeta:
+          $ref: '#/components/schemas/BarcodeMeta'
+        barcodeReader:
+          type: string
+        barcodeSignatureVerified:
+          type: boolean
+        fullFrameFrontIDRefs:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageAttempt'
+        fullFrameBackIDRefs:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageAttempt'
+        refCroppedFrontIDRef:
+          type: string
+        refCroppedBackIDRef:
+          type: string
+        croppedOriginalFrontIDRef:
+          type: string
+          deprecated: true
+        croppedOriginalBackIDRef:
+          type: string
+          deprecated: true
+        voiceConsentSelfieRefs:
+          type: array
+          items:
+            $ref: '#/components/schemas/VoiceConsentSelfieAttempt'
+        voiceConsentSelfieRef:
+          type: string
+        confPoaRef:
+          type: string
+        idSegmentImagesRefs:
+          type: object
+          additionalProperties:
+            type: string
+        ocrResultsId:
+          type: string
+        interviewerId:
+          type: string
+        interviewerName:
+          type: string
+        interviewSessionId:
+          type: string
+        interviewCode:
+          type: string
+        oldInterviewId:
+          type: string
+        externalCustomerId:
+          type: string
+        nue:
+          type: string
+        nss:
+          type: string
+        sessionStatus:
+          type: string
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+        closedAt:
+          type: integer
+          format: int64
+        deletedAt:
+          type: integer
+          format: int64
+        speechOpentokSessionId:
+          type: string
+        speechOpentokArchiveId:
+          type: string
+        speechOffset:
+          type: number
+          format: float
+        language:
+          type: string
+        signingCeremonyUrl:
+          type: string
+        videoSelfieFileIsPresent:
+          type: string
+          enum:
+          - PRESENT
+          - NOT_PRESENT
+          - UNKNOWN
+        videoSelfieHasVideo:
+          type: string
+          enum:
+          - 'YES'
+          - 'NO'
+          - UNKNOWN
+        videoSelfieHasAudio:
+          type: string
+          enum:
+          - 'YES'
+          - 'NO'
+          - UNKNOWN
+        videoSelfieFileNotEmpty:
+          type: string
+          enum:
+          - NOT_EMPTY
+          - EMPTY
+          - UNKNOWN
+        videoWidth:
+          type: integer
+          format: int32
+        videoHeight:
+          type: integer
+          format: int32
+        videoBitRate:
+          type: integer
+          format: int32
+        videoDuration:
+          type: number
+          format: float
+        videoQuality:
+          type: boolean
+        speechTranscript:
+          type: string
+        speechTranscriptWhisper:
+          type: string
+        processSpeechResultWhisper:
+          type: boolean
+        processSpeechResult:
+          type: boolean
+        processSpeechResultGoogleLLM:
+          type: boolean
+        sessionRecordingRefs:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ImageAttempt'
+          deprecated: true
+        additionalDocumentAttempts:
+          type: array
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/AsylumSeekerDocumentAttempt'
+            - $ref: '#/components/schemas/BankCheckDocumentAttempt'
+            - $ref: '#/components/schemas/BankStatementDocumentAttempt'
+            - $ref: '#/components/schemas/CarInvoiceDocumentAttempt'
+            - $ref: '#/components/schemas/CirculationCardDocumentAttempt'
+            - $ref: '#/components/schemas/ColombiaRutFormDocumentAttempt'
+            - $ref: '#/components/schemas/ColombianBirthCertificateDocumentAttempt'
+            - $ref: '#/components/schemas/CurpDocumentAttempt'
+            - $ref: '#/components/schemas/FinanceSettlementDocumentAttempt'
+            - $ref: '#/components/schemas/GenericDocumentAttempt'
+            - $ref: '#/components/schemas/IneMexDocumentAttempt'
+            - $ref: '#/components/schemas/LetterOfAuthorizationDocumentAttempt'
+            - $ref: '#/components/schemas/MexicanTaxDeclarationDocumentAttempt'
+            - $ref: '#/components/schemas/MexicanTaxStatusDocumentAttempt'
+            - $ref: '#/components/schemas/PoaDocumentAttempt'
+            - $ref: '#/components/schemas/RefugeeIdDocumentAttempt'
+            - $ref: '#/components/schemas/RefugeeStatusDocumentAttempt'
+            - $ref: '#/components/schemas/RfcDocumentAttempt'
+            - $ref: '#/components/schemas/UnknownDocumentAttempt'
+            - $ref: '#/components/schemas/V5CLogbookDocumentAttempt'
+            - $ref: '#/components/schemas/W8BenDocumentAttempt'
+            - $ref: '#/components/schemas/W8BenEDocumentAttempt'
+        poaName:
+          type: string
+        proofOfAddress:
+          type: string
+        proofOfAddressScore:
+          type: number
+          format: float
+        addressStatementTimestamp:
+          type: integer
+          format: int64
+        addressStatementTimestamps:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressStatementDate'
+        documentType:
+          type: string
+          enum:
+          - a1
+          - aggm
+          - apg
+          - energieAg
+          - cre
+          - aforeAzteca
+          - amd
+          - amicsa
+          - att
+          - axtel
+          - bancoppel
+          - bancoAzteca
+          - banorte
+          - bbva
+          - cab
+          - caev
+          - capa
+          - cea
+          - cfe
+          - citibanamex
+          - cmapa
+          - cmapaGrande
+          - cmapas
+          - cmas
+          - cmasBlue
+          - comapa
+          - comapaRed
+          - coppel
+          - dapa
+          - dhc
+          - drenaje
+          - ecogas
+          - engie
+          - gasNatural
+          - h
+          - hsbc
+          - inbursa
+          - infonavit
+          - interapas
+          - isagas
+          - izzi
+          - jad
+          - japam
+          - japama
+          - japami
+          - japay
+          - jiapaz
+          - jmas
+          - jras
+          - jumapac
+          - jumapam
+          - lerdo
+          - liverpool
+          - mas
+          - megacable
+          - naturgy
+          - oapas
+          - odapas
+          - ooapas
+          - opdm
+          - oroapa
+          - sacmex
+          - sacmexCdmx
+          - santander
+          - sapa
+          - sapal
+          - sapamuy
+          - sapasa
+          - sapasma
+          - scotiabank
+          - seapal
+          - siapa
+          - simapag
+          - simapas
+          - simas
+          - smapa
+          - smapac
+          - smapam
+          - smapas
+          - spectrum
+          - stori
+          - sura
+          - tam
+          - telcel
+          - telmex
+          - totalplay
+          - veolia
+          - victoria
+          - wizz
+          - asylumSeeker
+          - refugeeId
+          - refugeeStatus
+          - ute
+          - telkom
+          - tmobile
+          - verizon
+          - xfinity
+          - aforeCoppel
+          - americanExpress
+          - ap
+          - telnor
+          - wellsFargo
+          - otherPoa
+        poaFields:
+          $ref: '#/components/schemas/AddressBean'
+        poaSuccessfullyClassified:
+          type: boolean
+        fullAddress:
+          type: boolean
+        checkedAddress:
+          type: string
+        checkedAddressBean:
+          $ref: '#/components/schemas/AddressBean'
+        classifier:
+          type: string
+          enum:
+          - INCODE
+        bankLoginSuccess:
+          type: boolean
+        governmentRecognitionConfidence:
+          type: number
+          format: float
+        governmentRecognitionConfidence2:
+          type: number
+          format: float
+        governmentFingerprintConfidence:
+          $ref: '#/components/schemas/GovernmentFingerprintsBean'
+        governmentValidationStatus:
+          type: string
+          enum:
+          - PROCESSING
+          - PROCESSING_DATA
+          - PROCESSING_FACE
+          - PROCESSING_INE
+          - OK
+          - VALIDATION_ERROR
+          - INE_CONNECTION_ERROR
+          - INE_INFRASTRUCTURE_ERROR
+          - MODULE_NOT_SUPPORTED
+          - MISSING_DOCUMENT_ID
+          - MISSING_SELFIE
+          - USER_NOT_FOUND
+          - USER_NOT_FOUND_IN_INE_DB
+          - NOT_ENOUGH_DATA
+          - LIVENESS_FAIL
+          - INE_NOT_CURRENT
+          - INE_REPORTED_LOST
+          - INE_REPORTED_STOLEN
+          - INE_SIGNATURE_ERROR
+          - INE_NOT_VALID
+          - CPF_NUMBER_INVALID_OR_MISSING
+          - CONNECTION_ERROR
+          - INFRASTRUCTURE_ERROR
+          - PROVIDER_NOT_CONFIGURED
+          - DOCUMENT_TYPE_NOT_SUPPORTED
+          - PROVIDER_UNAVAILABLE
+          - COUNTRY_NOT_SUPPORTED
+          - STATE_NOT_SUPPORTED
+          - PROVISIONING_NOT_EXECUTED
+          - COUNTRY_SETTINGS_NOT_CONFIGURED
+          - EMPTY_INTERFACE_PROVIDER
+          - SELFIE_CHECKS_FAILED
+          - NO_INFORMATION
+          - TRANSACTION_LIMIT_REACHED
+          - USER_IN_RISK_WATCHLIST
+          - FACE_COMPARISON_FAILED
+          - INVALID_EXPIRATION_DATE
+          - DOCUMENT_NUMBER_MISMATCH
+          - FACE_COMPARISON_UNAVAILABLE
+          - IMAGE_QUALITY_INVALID
+          - USER_DENIED
+          - SESSION_EXPIRED
+          - MISSING_FINGERPRINTS
+        governmentRecognitionThreshold:
+          type: number
+          format: double
+        registralSituation:
+          $ref: '#/components/schemas/RegistralSituation'
+        curpCecobanValidation:
+          $ref: '#/components/schemas/CurpCecobanValidation'
+        ineTransactionId:
+          type: string
+        existingUser:
+          type: boolean
+        nameMatched:
+          type: boolean
+        existingInterviewId:
+          type: string
+        existingExternalId:
+          type: string
+        customerId:
+          type: string
+        parentCustomerId:
+          type: string
+        incodeIdCustomer:
+          type: string
+        faceAuthCustomerId:
+          type: string
+        incodeIdConsentGiven:
+          type: boolean
+        onlyFront:
+          type: boolean
+        onlyBack:
+          type: boolean
+        forceBackForDob:
+          type: boolean
+        hasNfcChip:
+          type: boolean
+        barcodeCapture:
+          type: boolean
+        usSmartCapture:
+          type: boolean
+        alignment:
+          type: boolean
+          deprecated: true
+        frontAlignment:
+          type: boolean
+        frontAlignmentForced:
+          type: boolean
+        backAlignmentForced:
+          type: boolean
+        alreadyApprovedCustomerConfidence:
+          type: number
+          format: float
+        punchedHolesConfidence:
+          type: number
+          format: float
+        fakeIdInternalConfidence:
+          type: number
+          format: float
+        mandatoryConsentGiven:
+          type: boolean
+        frontDocumentIsOnTheEdge:
+          type: boolean
+        backDocumentIsOnTheEdge:
+          type: boolean
+        backAlignment:
+          type: boolean
+        surveyData:
+          type: string
+        frontIdAttempts:
+          type: integer
+          format: int32
+        backIdAttempts:
+          type: integer
+          format: int32
+        selfieAttempts:
+          type: integer
+          format: int32
+        authenticationAttempts:
+          type: integer
+          format: int32
+        onboardingAttempts:
+          type: integer
+          format: int32
+        sessionContinuationCount:
+          type: integer
+          format: int32
+        failedAttemptsCounter:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+        idValidationFinished:
+          type: boolean
+        faceValidationFinished:
+          type: boolean
+        idFaceExtractionSkipped:
+          type: boolean
+        faceMatchingType:
+          type: string
+          enum:
+          - selfieVsId
+          - selfieVsNfc
+          - idVsNfc
+          - nfc3Way
+        partialOnboarding:
+          type: boolean
+        frontCaptureRedacted:
+          type: boolean
+        backCaptureRedacted:
+          type: boolean
+        multipleDocumentsInFrame:
+          type: boolean
+        callbackUrl:
+          type: string
+          deprecated: true
+        governmentValidationFinished:
+          type: boolean
+        conferenceStatus:
+          type: string
+          enum:
+          - NO_CONFERENCE
+          - APPROVED
+          - REJECTED
+          - ABANDONED
+          - NEEDS_REVIEW
+          - REJECTED_BY_RISK
+          - COMPLETED
+        termsAccepted:
+          type: boolean
+        creditBureauConsentGiven:
+          type: boolean
+        applicantDataConfirmed:
+          type: boolean
+        configurationId:
+          type: string
+        configurationName:
+          type: string
+        configurationVersion:
+          type: integer
+          format: int32
+        flowType:
+          type: string
+          enum:
+          - configuration
+          - flow
+          - workflow
+        queueName:
+          type: string
+        gdcAddressScore:
+          type: string
+          enum:
+          - FullMatch
+          - PartialMatch
+          - NoMatch
+        gdcIdentityScore:
+          type: string
+          enum:
+          - FullMatch
+          - PartialMatch
+          - NoMatch
+        subscribedToWatchlistUpdates:
+          type: boolean
+        onboardingStatus:
+          type: string
+          enum:
+          - UNKNOWN
+          - ID_VALIDATION_FINISHED
+          - POST_PROCESSING_FINISHED
+          - FACE_VALIDATION_FINISHED
+          - GOVERNMENT_VALIDATION_FINISHED
+          - EKYC_VALIDATION_FINISHED
+          - ONBOARDING_FINISHED
+          - MANUAL_REVIEW_APPROVED
+          - MANUAL_REVIEW_REJECTED
+          - MANUAL_REVIEW_PENDING
+          - EXPIRED
+          - DELETED
+          - QES_FINISHED
+        deletedWithMode:
+          type: string
+          enum:
+          - BIOMETRICS
+          - PII
+          - FULL
+        retentionRegion:
+          $ref: '#/components/schemas/RetentionRegion'
+        onboardingCompleteTimestamp:
+          type: integer
+          format: int64
+        sessionExpiredAt:
+          type: integer
+          format: int64
+        loginHint:
+          type: string
+        authUuid:
+          type: string
+        integrationReference:
+          type: string
+        validationArchiveRef:
+          type: string
+        validationArchiveNom151:
+          type: string
+        selfieRef:
+          type: string
+        selfieRefs:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageAttempt'
+        sorSelfieRef:
+          type: string
+        videoSelfieRef:
+          type: string
+        documentRef:
+          type: string
+        documentRefs:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageAttempt'
+        signatureRef:
+          type: string
+        initialsRef:
+          type: string
+        secondIdRef:
+          type: string
+        thirdIdRef:
+          type: string
+        medicalDocImgRef:
+          type: string
+        videoSelfieCompareIDRef:
+          type: string
+        videoSelfieCompareOcrRef:
+          type: string
+        videoSelfieCompareBackIDRef:
+          type: string
+        videoSelfieCompareBackOcrRef:
+          type: string
+        otherDocument1Ref:
+          type: string
+        otherDocument2Ref:
+          type: string
+        otherDocument3Ref:
+          type: string
+        paymentProofRef:
+          type: string
+        consentRef:
+          type: string
+        renaperCroppedRef:
+          type: string
+        signatureRefs:
+          type: array
+          items:
+            $ref: '#/components/schemas/SignatureAttempt'
+        initialsRefs:
+          type: array
+          items:
+            $ref: '#/components/schemas/SignatureAttempt'
+        contractRefs:
+          type: array
+          items:
+            type: string
+        signedContractRefs:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+        governmentValidationProvider:
+          type: string
+          enum:
+          - QUERTIUM
+          - RENAPER
+          - RENAPER_PREMIUM
+          - METAMAP_RENAPER
+          - MM_ARGENTINA_RENAPER_EXTENDED
+          - METAMAP_RENAPER_PREMIUM
+          - MM_RENAPER
+          - NATIONALCRIMECHECK
+          - SERPRO
+          - SERPRO_FACE
+          - UNICO
+          - SINACOFI
+          - INCODE_SCRAPER_CHL
+          - TUSDATOS
+          - BECOME_DIGITAL
+          - GSE
+          - OPERATOR_BTC
+          - OLIMPIA
+          - OLIMPIA_TUSDATOS
+          - AUTHBRIDGE
+          - AUTHBRIDGE_FACE
+          - WITHTRUSTLINK
+          - INE
+          - INE_CECOBAN
+          - INE_TELCEL
+          - INE_FIMPE
+          - INE_HSBC
+          - INCODE_SCRAPER_MEX
+          - INCODE_SCRAPER_ASYNC_MEX
+          - MEX_PASSPORT_PILOT
+          - TOC
+          - PE_MIGRATION_INSTITUTE
+          - VERIFYID
+          - AAMVA
+          - PA_DLDV
+          - AAMVA_V3
+          - PA_DLDV_V3
+          - AAMVA_V3_PHOTOMATCH
+          - NY_VERIFIABLE_CREDENTIAL
+          - CA_DMV
+          - CA_MDL
+          - FL_GOVALIDATE
+          - FL_GOVALIDATE_PROD
+          - GA_DDS
+          - GA_DDS_THIRD_PARTIES
+          - VA_DMV
+          - WI_CIS
+          - MD_MVA_INTERNAL
+          - INCODE_DMV_INTERNAL_DEMO_ONLY
+          - INCODE_SCRAPER_PHILIPPINES_PHILSYS
+          - IDFY_PHILSYS_PHILIPPINES
+          - FRANKIE_ONE
+          - METAMAP_GUATEMALA_TSE
+          - METAMAP_COSTA_RICA_CCSS
+          - CR_TSE
+          - METAMAP_COLOMBIA_BDUA
+          - METAMAP_COLOMBIA_NIT
+          - CO_PPT
+          - METAMAP_DOMINICAN_RNC
+          - METAMAP_DOMINICAN_JCE
+          - METAMAP_PHILIPPINES_UMID_SSN
+          - CHILE_RUT
+          - AZ_IDEMIA
+          - DE_IDEMIA
+          - MS_IDEMIA
+          - MM_ARGENTINIAN_RENAPER_FACEMATCH
+          - AGY_LA_GOVALIDATE
+          - AGY_MS_GOVALIDATE
+          - AGY_TX_GOVALIDATE
+          - MONO_BVN
+          - MONO_NIN
+          - BO_OEP
+          - SHRINQ_AVE
+          - PA_TSE
+          - EC_SRI
+        governmentValidationWorkflow:
+          type: string
+        governmentValidationShadowMode:
+          type: boolean
+        governmentValid:
+          type: boolean
+        governmentValidationResponse:
+          type: object
+          additionalProperties:
+            type: object
+        governmentValidationRequest:
+          type: object
+          additionalProperties:
+            type: object
+        paternalLastNameValid:
+          type: boolean
+        maternalLastNameValid:
+          type: boolean
+        firstNameValid:
+          type: boolean
+        middleNameValid:
+          type: boolean
+        suffixNameValid:
+          type: boolean
+        fullNameValid:
+          type: boolean
+        curpValid:
+          type: boolean
+        ineCurpValid:
+          type: boolean
+        curpValidationResponse:
+          $ref: '#/components/schemas/CurpResponse'
+        curpDataMatch:
+          type: boolean
+        renapoCurp:
+          type: string
+        ineScrapingValid:
+          type: boolean
+        ineValidationResponse:
+          $ref: '#/components/schemas/IneResult'
+        fiscalQrUrlResponse:
+          $ref: '#/components/schemas/AddFiscalQrUrlResponse'
+        ocrValid:
+          type: boolean
+        claveDeElectorValid:
+          type: boolean
+        numeroEmisionCredencialValid:
+          type: boolean
+        registrationDateValid:
+          type: boolean
+        issueDateValid:
+          type: boolean
+        birthDateValid:
+          type: boolean
+        documentNumberValid:
+          type: boolean
+        sexValid:
+          type: boolean
+        heightValid:
+          type: boolean
+        weightValid:
+          type: boolean
+        eyeColorValid:
+          type: boolean
+        addressValid:
+          type: boolean
+        addressLine2Valid:
+          type: boolean
+        cityValid:
+          type: boolean
+        stateCodeValid:
+          type: boolean
+        zipCodeValid:
+          type: boolean
+        genderValid:
+          type: boolean
+        personalNumberValid:
+          type: boolean
+        placeOfBirthValid:
+          type: boolean
+        expirationDateValid:
+          type: boolean
+        totalScore:
+          type: number
+          format: float
+        livenessScore:
+          type: number
+          format: float
+        faceRecognitionScore:
+          type: number
+          format: float
+        incodeIdValidationScore:
+          type: number
+          format: float
+        idOcrValidationScore:
+          type: number
+          format: float
+        governmentScore:
+          type: number
+          format: float
+        videoConferenceScore:
+          type: number
+          format: float
+        totalScoreStatus:
+          type: string
+          enum:
+          - OK
+          - WARN
+          - FAIL
+          - UNKNOWN
+          - MANUAL
+          - MANUAL_OK
+          - MANUAL_FAIL
+          - MANUAL_PENDING
+        livenessScoreStatus:
+          type: string
+          enum:
+          - OK
+          - WARN
+          - FAIL
+          - UNKNOWN
+          - MANUAL
+          - MANUAL_OK
+          - MANUAL_FAIL
+          - MANUAL_PENDING
+        faceRecognitionScoreStatus:
+          type: string
+          enum:
+          - OK
+          - WARN
+          - FAIL
+          - UNKNOWN
+          - MANUAL
+          - MANUAL_OK
+          - MANUAL_FAIL
+          - MANUAL_PENDING
+        incodeIdValidationScoreStatus:
+          type: string
+          enum:
+          - OK
+          - WARN
+          - FAIL
+          - UNKNOWN
+          - MANUAL
+          - MANUAL_OK
+          - MANUAL_FAIL
+          - MANUAL_PENDING
+        idOcrValidationScoreStatus:
+          type: string
+          enum:
+          - OK
+          - WARN
+          - FAIL
+          - UNKNOWN
+          - MANUAL
+          - MANUAL_OK
+          - MANUAL_FAIL
+          - MANUAL_PENDING
+        governmentScoreStatus:
+          type: string
+          enum:
+          - OK
+          - WARN
+          - FAIL
+          - UNKNOWN
+          - MANUAL
+          - MANUAL_OK
+          - MANUAL_FAIL
+          - MANUAL_PENDING
+        videoConferenceStatus:
+          type: string
+          enum:
+          - OK
+          - WARN
+          - FAIL
+          - UNKNOWN
+          - MANUAL
+          - MANUAL_OK
+          - MANUAL_FAIL
+          - MANUAL_PENDING
+        customWatchlistModuleEnabled:
+          type: boolean
+        incodeWatchlistScore:
+          type: number
+          format: float
+        watchlistDataMatches:
+          type: array
+          items:
+            type: string
+        incodeWatchlistId:
+          type: string
+        externalVerificationRequest:
+          $ref: '#/components/schemas/ExternalVerificationRequest'
+        premiumExternalVerification:
+          $ref: '#/components/schemas/PremiumExternalVerification'
+        externalVerificationThirdPartyRequest:
+          type: object
+          additionalProperties:
+            type: object
+        externalVerificationThirdPartyResponse:
+          type: object
+          additionalProperties:
+            type: object
+        businessVerificationRequest:
+          $ref: '#/components/schemas/BusinessVerificationRequest'
+        businessVerification:
+          $ref: '#/components/schemas/BusinessVerificationResult'
+        bavHolders:
+          type: array
+          items:
+            $ref: '#/components/schemas/BavHolder'
+        bavLinkId:
+          type: string
+        bavNumberOfRetries:
+          type: integer
+          format: int32
+        rfc:
+          type: string
+        rfcValidationResponse:
+          $ref: '#/components/schemas/RfcValidationResponse'
+        federalRevenueNumber:
+          type: string
+        mothersName:
+          type: string
+        mothersIdNumber:
+          type: string
+        originDocumentId:
+          type: string
+        fathersName:
+          type: string
+        fathersIdNumber:
+          type: string
+        spouseName:
+          type: string
+        driversLicenseCategory:
+          type: string
+        controlNumber:
+          type: string
+        renach:
+          type: string
+        eyeColor:
+          type: string
+        classes:
+          type: string
+        cond:
+          type: string
+        mentions:
+          type: string
+        refNumber:
+          type: string
+        restrictions:
+          type: string
+        weight:
+          type: string
+        hairColor:
+          type: string
+        nationality:
+          type: string
+        nationalityMrz:
+          type: string
+        nationalityAlpha3:
+          type: string
+        jurisdictionCode:
+          type: string
+        medicalOcrData:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        interviewRejected:
+          type: boolean
+        approvalSource:
+          type: string
+          enum:
+          - AUTOAPPROVE
+          - CONFERENCE
+          - MANUAL
+        manualReviewStatus:
+          type: string
+          enum:
+          - UNSET
+          - REQUIRED
+          - APPROVED
+          - REJECTED
+          - PENDING
+        manualReviewReasons:
+          type: array
+          items:
+            type: string
+        manualReviewComment:
+          type: string
+        faceLenses:
+          type: boolean
+        hasFaceClosedEyes:
+          type: boolean
+        hasFaceHeadCover:
+          type: boolean
+        hasFaceMask:
+          type: boolean
+        faceIsBright:
+          type: boolean
+        faceAge:
+          type: integer
+          format: int32
+        hasVideoSelfieLenses:
+          type: boolean
+        hasVideoSelfieClosedEyes:
+          type: boolean
+        hasVideoSelfieHeadCover:
+          type: boolean
+        hasVideoSelfieMask:
+          type: boolean
+        digitalAttack:
+          type: boolean
+          deprecated: true
+        digitalAttackSeverity:
+          type: string
+          deprecated: true
+          enum:
+          - ultra low
+          - low
+          - medium
+          - high
+          - llava
+        digitalAttackVersion:
+          type: string
+          deprecated: true
+        evasionAttack:
+          type: boolean
+          deprecated: true
+        evasionAttackSeverity:
+          type: string
+          deprecated: true
+          enum:
+          - ultra low
+          - low
+          - medium
+          - high
+          - llava
+        evasionAttackVersion:
+          type: string
+          deprecated: true
+        spoofDetectionResult:
+          $ref: '#/components/schemas/SpoofDetectionResult'
+        faceCaptureAttemptId:
+          type: string
+        faceCaptureRecordingAttemptId:
+          type: string
+        videoSelfieCaptureAttemptId:
+          type: string
+        authenticationAttemptId:
+          type: string
+        onboardingAttemptId:
+          type: string
+        frontIdCaptureMetadata:
+          $ref: '#/components/schemas/CaptureMetadata'
+        backIdCaptureMetadata:
+          $ref: '#/components/schemas/CaptureMetadata'
+        ocrDataConfidence:
+          $ref: '#/components/schemas/OcrDataConfidence'
+        userConsentTitle:
+          type: string
+        userConsentText:
+          type: string
+        userConsentStatus:
+          type: boolean
+        mlConsentStatus:
+          type: boolean
+        signedConsents:
+          type: array
+          items:
+            $ref: '#/components/schemas/SignedConsent'
+        frontIdCaptureType:
+          type: string
+          enum:
+          - AUTO
+          - MANUAL
+          - NATIVE
+          - UPLOAD
+        backIdCaptureType:
+          type: string
+          enum:
+          - AUTO
+          - MANUAL
+          - NATIVE
+          - UPLOAD
+        selfieCaptureType:
+          type: string
+          enum:
+          - AUTO
+          - MANUAL
+          - NATIVE
+          - UPLOAD
+        omniVersion:
+          type: string
+        clientId:
+          type: string
+        scoresInfoId:
+          type: string
+        shadowScoresInfoId:
+          type: string
+        idAlreadyUsed:
+          type: boolean
+        idAlreadyUsedInterviewId:
+          type: string
+        appliedTotalRule:
+          $ref: '#/components/schemas/FlowRule'
+        needsReviewReason:
+          type: string
+          enum:
+          - MANUAL_CAPTURE
+          - RULE_APPLIED
+          - OLD_ID
+          - FLOW_CONFIGURATION
+          - FRONT_ID_CAPTURE_ATTEMPTS
+          - BACK_ID_CAPTURE_ATTEMPTS
+          - SELFIE_CAPTURE_ATTEMPTS
+          - ANTIFRAUD
+          - MISSING_DEPTH_DATA
+          - CUSTOM
+        documentSubmissionMethod:
+          type: string
+          enum:
+          - CAPTURED_DOCUMENT
+          - UPLOADED_FILE
+          - IMPORTED_CREDENTIAL
+        credentialsProvider:
+          type: string
+          enum:
+          - APPLE
+          - GOOGLE
+          - DIGILOCKER
+          - SAMSUNG
+          - TRINSIC
+          - NETHERLANDS_IDIN
+          - FINNISH_TRUST_NETWORK
+        formName:
+          type: string
+        formFirstName:
+          type: string
+        formLastName:
+          type: string
+        formCpf:
+          type: string
+        documentNumberSource:
+          type: string
+          enum:
+          - FORM
+          - OCR
+        antifraudResult:
+          $ref: '#/components/schemas/AntifraudResult'
+        scannerSignals:
+          $ref: '#/components/schemas/ScannerSignals'
+        elUnsignedDocuments:
+          type: array
+          items:
+            $ref: '#/components/schemas/EUnsignedDocument'
+          uniqueItems: true
+        elSignedDocuments:
+          type: array
+          items:
+            $ref: '#/components/schemas/ESignedDocument'
+          uniqueItems: true
+        elSignedSignerKeyName:
+          type: string
+        otpPhoneVerified:
+          type: boolean
+        otpEmailVerified:
+          type: boolean
+        tamperedSeverity:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+        paperSeverity:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+        screenSeverity:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+        idAlterationModelVersion:
+          type: string
+        idAlterationSeverity:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+        fontAlterationConfidence:
+          type: number
+          format: float
+        fontAlterationModelVersion:
+          type: string
+        fontAlterationSeverity:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+        punchedHolesModelVersion:
+          type: string
+        punchedHolesSeverity:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+        idLaminationModelVersion:
+          type: string
+        idLaminationSeverity:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+        idLaminationConfidence:
+          type: number
+          format: float
+        idDamageDetectionModelVersion:
+          type: string
+        idDamageDetectionSeverity:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+        idDamageDetectionConfidence:
+          type: number
+          format: float
+        aiGeneratedDocumentSeverity:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+        aiGeneratedDocumentModelVersion:
+          type: string
+        aiGeneratedDocumentConfidence:
+          type: number
+          format: float
+        documentVisualAnomalySeverity:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+        documentVisualAnomalyModelVersion:
+          type: string
+        documentVisualAnomalyConfidence:
+          type: number
+          format: float
+        fakeIdSeverity:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+        fakeIdModelVersion:
+          type: string
+        fakeIdInternalSeverity:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+        fakeIdInternalModelVersion:
+          type: string
+        batchId:
+          type: string
+        tamperedConfidenceCorrected:
+          type: number
+          format: float
+        fakeIdConfidenceCorrected:
+          type: number
+          format: float
+        paperConfidenceCorrected:
+          type: number
+          format: float
+        screenConfidenceCorrected:
+          type: number
+          format: float
+        faceSpoofCorrected:
+          type: boolean
+        faceMismatchCorrected:
+          type: boolean
+        labelingComplete:
+          type: boolean
+        personalIdentificationNumberProvider:
+          type: string
+          enum:
+          - UNKNOWN
+          - FIMPE_CURP
+          - CECOBAN_CURP
+          - INCODE_CURP_SCRAPPER
+          - INCODE_CURP_MANUAL
+        ineReferenceId:
+          type: string
+        isReportedAsFraud:
+          type: boolean
+        fraudCandidateId:
+          type: string
+        cleanedExceptAuthData:
+          type: boolean
+        isPartOfExperimentGroup:
+          type: boolean
+        featureGates:
+          type: object
+          additionalProperties:
+            type: boolean
+        userProvidedName:
+          type: string
+        userProvidedBirthDate:
+          type: string
+        paperFrontConfidence:
+          type: number
+          format: float
+          deprecated: true
+        paperFrontModelVersion:
+          type: string
+          deprecated: true
+        screenFrontConfidence:
+          type: number
+          format: float
+          deprecated: true
+        screenFrontModelVersion:
+          type: string
+          deprecated: true
+        paperBackConfidence:
+          type: number
+          format: float
+          deprecated: true
+        paperBackModelVersion:
+          type: string
+          deprecated: true
+        screenBackConfidence:
+          type: number
+          format: float
+          deprecated: true
+        screenBackModelVersion:
+          type: string
+          deprecated: true
+        paperFrontConfidenceCorrected:
+          type: number
+          format: float
+          deprecated: true
+        screenFrontConfidenceCorrected:
+          type: number
+          format: float
+          deprecated: true
+        paperBackConfidenceCorrected:
+          type: number
+          format: float
+          deprecated: true
+        screenBackConfidenceCorrected:
+          type: number
+          format: float
+          deprecated: true
+        idAlterationFrontConfidence:
+          type: number
+          format: float
+          deprecated: true
+        idAlterationBackConfidence:
+          type: number
+          format: float
+          deprecated: true
+        frontPunchedHoles:
+          $ref: '#/components/schemas/PunchedHoles'
+          deprecated: true
+        backPunchedHoles:
+          $ref: '#/components/schemas/PunchedHoles'
+          deprecated: true
+        faceBrightness:
+          type: number
+          format: float
+          deprecated: true
+        dlClassRestrictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DLClassRestriction'
+        idValidationDeepCheck:
+          type: boolean
+        acuantId:
+          type: string
+        mAdminArea:
+          type: string
+        mSubAdminArea:
+          type: string
+        mLocality:
+          type: string
+        mSubLocality:
+          type: string
+        mThoroughfare:
+          type: string
+        mSubThoroughfare:
+          type: string
+        mPostalCode:
+          type: string
+        mCountryCode:
+          type: string
+        mCountryName:
+          type: string
+        gWatchlistType:
+          type: string
+          enum:
+          - person
+          - company
+        gWatchlistShareUrl:
+          type: string
+        gWatchlistMatchStatus:
+          type: string
+          enum:
+          - no_match
+          - false_positive
+          - potential_match
+          - true_positive
+          - unknown
+          - true_positive_approve
+          - true_positive_reject
+        gWatchlistRiskLevel:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+          - unknown
+        gWatchlistTotalHits:
+          type: integer
+          format: int32
+        gWatchlistTotalMatches:
+          type: integer
+          format: int32
+        gWatchlistSanctionsMatchScore:
+          type: number
+          format: float
+        gWatchlistWarningMatchScore:
+          type: number
+          format: float
+    MexicanTaxDeclarationDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+      - type: object
+        properties:
+          rfcNumber:
+            type: string
+          corporateName:
+            type: string
+          fullName:
+            type: string
+          declarationType:
+            type: string
+          fiscalYear:
+            type: integer
+            format: int32
+          submissionDate:
+            type: integer
+            format: int64
+          hasIncomeStatement:
+            type: boolean
+          hasFinancialPositionStatement:
+            type: boolean
+          totalIncome:
+            type: number
+          capitalFromContributions:
+            type: number
+          capitalFromCapitalization:
+            type: number
+          accumulatedLosses:
+            type: number
+          currentYearLosses:
+            type: number
+          accumulatedProfits:
+            type: number
+          currentYearProfits:
+            type: number
+          amountToPay:
+            type: number
+          amountDue:
+            type: number
+          operationNumber:
+            type: string
+    FlowRule:
+      type: object
+      properties:
+        name:
+          type: string
+        expression:
+          type: string
+        ruleType:
+          type: string
+          enum:
+          - idValidation
+          - secondIdValidation
+          - faceValidation
+          - liveness
+          - deepsight
+          - eKyc
+          - videoselfie
+          - faceAuthentication
+          - total
+          - phoneRisk
+          - emailRisk
+          - governmentValidation
+        status:
+          type: string
+          enum:
+          - OK
+          - WARN
+          - FAIL
+          - UNKNOWN
+          - MANUAL
+          - MANUAL_OK
+          - MANUAL_FAIL
+          - MANUAL_PENDING
+        triggered:
+          type: boolean
+    Income:
+      type: object
+      properties:
+        status:
+          type: string
+        range:
+          type: string
+    UnknownDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+    MexicanTaxStatusDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+      - type: object
+        properties:
+          issueDate:
+            type: integer
+            format: int64
+          rfcNumber:
+            type: string
+          corporateName:
+            type: string
+          fullName:
+            type: string
+          registryStatus:
+            type: string
+          capitalRegime:
+            type: string
+          legalName:
+            type: string
+          addressComponents:
+            $ref: '#/components/schemas/AddressBean'
+          economicActivities:
+            type: array
+            items:
+              $ref: '#/components/schemas/EconomicActivity'
+          regimes:
+            type: array
+            items:
+              $ref: '#/components/schemas/Regime'
+          barcodes:
+            type: array
+            items:
+              $ref: '#/components/schemas/PoaBarcode'
+    EnvironmentIntegrity:
+      type: object
+      properties:
+        rootDetected:
+          type: boolean
+        storageTamperingDetected:
+          type: boolean
+        environmentHookingDetected:
+          type: boolean
+        wasmTamperingDetected:
+          type: boolean
+        challengeInterruptionDetected:
+          type: boolean
+        debugModeDetected:
+          type: boolean
+        rootDetectionLevel:
+          type: integer
+          format: int32
+    LetterOfAuthorizationDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+      - type: object
+        properties:
+          name:
+            type: string
+          businessName:
+            type: string
+          address:
+            type: string
+    ReplayAttackData:
+      type: object
+      properties:
+        collisionCount:
+          type: integer
+          format: int32
+        isTimeoutReached:
+          type: boolean
+        intraSessionLoop:
+          type: boolean
+        intraSessionLookahead:
+          type: boolean
+        interSessionLookahead:
+          type: boolean
+        totalFrames:
+          type: integer
+          format: int32
+        uniqueHashes:
+          type: integer
+          format: int32
+        maxConsecutiveRun:
+          type: integer
+          format: int32
+        maxOccurrenceCount:
+          type: integer
+          format: int32
+        storedSessionsCount:
+          type: integer
+          format: int32
+        storedHashesCount:
+          type: integer
+          format: int32
+        storedSessionSizes:
+          type: array
+          items:
+            type: integer
+            format: int32
+        intraIncodeSessionLoop:
+          type: boolean
+        interIncodeSessionLoop:
+          type: boolean
+    RetentionRegion:
+      type: object
+      properties:
+        ipRegion:
+          type: string
+        ocrRegion:
+          type: string
+    CurpResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        curp:
+          type: string
+          description: Curp
+        sex:
+          type: string
+          description: Sex
+          enum:
+          - Mujer
+          - Hombre
+          - X
+        nationality:
+          type: string
+          description: Nationality
+        result:
+          type: string
+        transactionId:
+          type: string
+        renapo_valid:
+          type: boolean
+          description: Flag indicating if CURP validation passed - tipoError present in response
+        names:
+          type: string
+          description: Names
+        paternal_surname:
+          type: string
+          description: Paternal surname
+        mothers_maiden_name:
+          type: string
+          description: Mother maiden name
+        birthdate:
+          type: string
+          description: Birth Date in format DD/MM/YYYY
+        entity_birth:
+          type: string
+          description: Birth State
+        probation_document:
+          type: string
+          description: Probation Document
+        probation_document_data:
+          type: object
+          additionalProperties:
+            type: object
+          description: 'Key/Value structure. All keys are type of string. Available Key values:
+
+            - anioReg
+
+            - foja
+
+            - tomo
+
+            - libro
+
+            - numActa
+
+            - CRIP
+
+            - numEntidadReg
+
+            - cveMunicipioReg
+
+            - NumRegExtranjeros
+
+            - FolioCarta
+
+            - cveEntidadNac
+
+            - cveEntidadEmisora
+
+            '
+        status_curp:
+          type: string
+          description: Status Curp
+        deceasedStatus:
+          type: string
+          description: Deceased Status
+    IadInfo:
+      type: object
+      properties:
+        isDeepsightEnabled:
+          type: boolean
+        deepsightLiveness:
+          type: string
+          enum:
+          - SINGLE_FRAME
+          - MULTIMODAL
+          - VIDEOLIVENESS
+        zoomCheck:
+          type: string
+          enum:
+          - PASS
+          - FAIL
+          - UNCLEAR
+        exposureCompensationCheck:
+          type: string
+          enum:
+          - PASS
+          - FAIL
+          - UNCLEAR
+        cctCheck:
+          type: string
+          enum:
+          - PASS
+          - FAIL
+          - UNCLEAR
+        genericCheck:
+          type: string
+          enum:
+          - PASS
+          - FAIL
+          - UNCLEAR
+        mobileTemporalCheck:
+          type: string
+          enum:
+          - PASS
+          - FAIL
+          - UNCLEAR
+        contrastSharpnessSaturationCheck:
+          type: string
+          enum:
+          - PASS
+          - FAIL
+          - UNCLEAR
+        frontBackCameraCheck:
+          type: string
+          enum:
+          - PASS
+          - FAIL
+          - UNCLEAR
+        frameDuplicationCheck:
+          type: string
+          enum:
+          - PASS
+          - FAIL
+          - UNCLEAR
+        exposureCheck:
+          type: string
+          enum:
+          - PASS
+          - FAIL
+          - UNCLEAR
+        replayAttackCheck:
+          type: string
+          enum:
+          - PASS
+          - FAIL
+          - UNCLEAR
+        environmentIntegrityCheck:
+          type: string
+          enum:
+          - PASS
+          - FAIL
+          - UNCLEAR
+        extendedDeviceAndBrowserClassificationData:
+          type: object
+        deviceEmulationCheck:
+          type: string
+          enum:
+          - PASS
+          - FAIL
+          - UNCLEAR
+        contrastSharpnessSaturationData:
+          $ref: '#/components/schemas/ContrastSharpnessSaturationData'
+        genericInjectionData:
+          $ref: '#/components/schemas/GenericInjectionData'
+        iosInjectionData:
+          $ref: '#/components/schemas/IosInjectionData'
+        cctInjectionData:
+          $ref: '#/components/schemas/CctInjectionData'
+        androidInjectionData:
+          $ref: '#/components/schemas/AndroidInjectionData'
+        frontBackCameraData:
+          $ref: '#/components/schemas/FrontBackCameraData'
+        frameDuplicationData:
+          $ref: '#/components/schemas/FrameDuplicationData'
+        zoomData:
+          $ref: '#/components/schemas/ZoomData'
+        exposureData:
+          $ref: '#/components/schemas/ExposureData'
+        replayAttackData:
+          $ref: '#/components/schemas/ReplayAttackData'
+        environmentIntegrity:
+          $ref: '#/components/schemas/EnvironmentIntegrity'
+        isMotionEnabled:
+          type: boolean
+        sensorDataReference:
+          type: string
+    VerificationReasonCodes:
+      type: object
+      properties:
+        key:
+          type: string
+        reasonCodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReasonCode'
+    ValidationErrorSchema:
+      type: object
+      description: Document validation error schema.
+      properties:
+        kind:
+          type: string
+          description: 'Validation error kind. Known values: documentIntegrity, layoutMismatch (see ValidationErrorKind). Kept as a free-form string for forward-compatibility with future kinds.'
+        error:
+          type: string
+          description: Error message
+        loc:
+          type: string
+          description: Location of the error(s)
+        explanation:
+          type: string
+          description: Error explanation
+      required:
+      - error
+      - explanation
+      - kind
+      - loc
+    GetUserMediaAvailability:
+      type: object
+      properties:
+        webkit:
+          type: boolean
+        mozilla:
+          type: boolean
+        opera:
+          type: boolean
+        microsoft:
+          type: boolean
+    ImageAttempt:
+      type: object
+      properties:
+        imageRef:
+          type: string
+        timestamp:
+          type: integer
+          format: int64
+        exifMetadata:
+          $ref: '#/components/schemas/ExifMetadata'
+    CaptureMetadata:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+        sdkPlatform:
+          type: string
+          enum:
+          - WEBAPP
+          - IOS
+          - ANDROID
+        sdkVersion:
+          type: string
+        callerId:
+          type: string
+        device:
+          $ref: '#/components/schemas/MetadataDeviceInfo'
+        browser:
+          $ref: '#/components/schemas/BrowserInfo'
+        camera:
+          $ref: '#/components/schemas/CameraInfo'
+        iad:
+          $ref: '#/components/schemas/IadInfo'
+        behavior:
+          $ref: '#/components/schemas/BehaviorInfo'
+        captureMode:
+          type: string
+          enum:
+          - AUTO
+          - MANUAL
+        hasDepth:
+          type: boolean
+        expectedDepth:
+          type: boolean
+        mediaInfo:
+          $ref: '#/components/schemas/MediaInfo'
+        clientLogs:
+          type: string
+    RfcDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+      - type: object
+        properties:
+          fullName:
+            type: string
+          rfcNumber:
+            type: string
+          idCIF:
+            type: string
+    NameBean:
+      type: object
+      properties:
+        fullName:
+          type: string
+        fullNameNativeScript:
+          type: string
+        firstNameNativeScript:
+          type: string
+        paternalLastNameNativeScript:
+          type: string
+        maternalLastNameNativeScript:
+          type: string
+        machineReadableFullName:
+          type: string
+          description: Full name from Barcode or MRZ
+        firstName:
+          type: string
+        middleName:
+          type: string
+        givenName:
+          type: string
+        givenNameMrz:
+          type: string
+        initials:
+          type: string
+          description: Initials as returned by bank-ID schemes (e.g. iDIN) — the only given-name evidence they provide
+        nameSuffix:
+          type: string
+        paternalLastName:
+          type: string
+        maternalLastName:
+          type: string
+        lastNameMrz:
+          type: string
+        familyName:
+          type: string
+    CustomDate:
+      type: object
+      properties:
+        dateType:
+          type: string
+          description: Description of timestamp.
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp.
+    AsylumSeekerDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+      - type: object
+        properties:
+          firstName:
+            type: string
+          lastName:
+            type: string
+          countryOfOrigin:
+            type: string
+          dateOfBirth:
+            type: integer
+            format: int64
+          expiryDate:
+            type: integer
+            format: int64
+          issueDate:
+            type: integer
+            format: int64
+          gender:
+            type: string
+            enum:
+            - MALE
+            - FEMALE
+          nationality:
+            type: string
+          placeOfIssue:
+            type: string
+          referenceNumber:
+            type: string
+          residentialAddressLines:
+            type: array
+            items:
+              type: string
+    PoaBarcode:
+      type: object
+      properties:
+        format:
+          type: string
+        contentType:
+          type: string
+        text:
+          type: string
+        error:
+          type: string
+    VerificationMessages:
+      type: object
+      properties:
+        tinVerificationMessage:
+          type: string
+    W8SubstantialUsOwner:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the substantial U.S. owner (W-8BEN-E Part XXIX)
+        address:
+          type: string
+          description: Address of the substantial U.S. owner as a single string
+        tin:
+          type: string
+          description: U.S. TIN of the substantial U.S. owner
+    OcrDataConfidence:
+      type: object
+      description: Structure containing ocr reliability confidence for each extracted ocr field. Confidence values are Floats between 0 and 1.
+      properties:
+        birthDateConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nameNativeScriptConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        firstNameNativeScriptConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        paternalLastNameNativeScriptConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        maternalLastNameNativeScriptConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        givenNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        firstNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        middleNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nameSuffixConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mothersSurnameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        fathersSurnameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nickNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        fullNameMrzConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mothersNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        fathersNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mothersIdNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        fathersIdNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        spouseNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        birthNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        addressConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        streetConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        colonyConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        postalCodeConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        cityConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        stateConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        districtConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        stateCodeConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        countryCodeConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        genderConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        issueDateConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        expirationDateConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        issuedAtConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        expireAtConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        issuingAuthorityConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mrz1Confidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mrz2Confidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mrz3Confidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mrzFullConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        documentNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        backNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        personalNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nationalNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        claveDeElectorConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        numeroEmisionCredencialConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        curpConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nueConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        registrationDateConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        heightConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        birthPlaceConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        bloodTypeConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        eyeColorConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        classesConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        condConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mentionsConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        refNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        weightConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        hairConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        restrictionsConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nationalityConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nationalityMrzConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nationalityAlpha3Confidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        maritalStatusConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        raceConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        taxIdNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        jurisdictionCodeConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+    ESignedDocument:
+      type: object
+      properties:
+        uuid:
+          type: string
+        s3location:
+          type: string
+        createdTime:
+          type: integer
+          format: int64
+        signerKeyName:
+          type: string
+        externalFileId:
+          type: string
+        qesAttemptId:
+          type: string
+    Page:
+      type: object
+      properties:
+        size:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int64
+        currentPageNumber:
+          type: integer
+          format: int32
+    PoaAntiSpoofResult:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - PASS
+          - FAIL
+          - NOT_EXECUTED
+        kinds:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+        confidence:
+          type: number
+          format: float
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/Detail'
+    Pageable:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int32
+          minimum: 0
+        size:
+          type: integer
+          format: int32
+          minimum: 1
+        sort:
+          type: array
+          items:
+            type: string
+    BusinessVerificationResult:
+      type: object
+      properties:
+        businessName:
+          type: string
+        businessClassification:
+          type: string
+        addressVerification:
+          type: string
+        cityVerification:
+          type: string
+        postalCodeVerification:
+          type: string
+        addressPropertyType:
+          type: string
+        addressDeliverability:
+          type: string
+        tinVerification:
+          type: string
+        uboNameMatch:
+          type: string
+        registrationStatus:
+          type: string
+          enum:
+          - Active
+          - Inactive
+          - Unknown
+        entityType:
+          $ref: '#/components/schemas/EntityType'
+        verificationMessages:
+          $ref: '#/components/schemas/VerificationMessages'
+        uboNameVerificationResults:
+          type: array
+          items:
+            $ref: '#/components/schemas/UboNameVerificationResult'
+        directorsVerificationResults:
+          type: array
+          items:
+            $ref: '#/components/schemas/UboNameVerificationResult'
+        people:
+          type: array
+          items:
+            $ref: '#/components/schemas/People'
+    CurpCecobanValidation:
+      type: object
+      properties:
+        returnCode:
+          type: string
+        description:
+          type: string
+        uniquePopulationRegistrationKeyMatch:
+          type: boolean
+    Coordinate:
+      type: object
+      properties:
+        x:
+          type: number
+          format: float
+        y:
+          type: number
+          format: float
+    CustomField:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+    SpoofDetectionErrorDetails:
+      type: object
+      properties:
+        error:
+          type: string
+          enum:
+          - BAD_REQUEST
+          - UNAUTHORIZED
+          - PAYMENT_REQUIRED
+          - FORBIDDEN
+          - NOT_FOUND
+          - METHOD_NOT_ALLOWED
+          - NOT_ACCEPTABLE
+          - PROXY_AUTHENTICATION_REQUIRED
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - GONE
+          - LENGTH_REQUIRED
+          - PRECONDITION_FAILED
+          - PAYLOAD_TOO_LARGE
+          - URI_TOO_LONG
+          - UNSUPPORTED_MEDIA_TYPE
+          - REQUESTED_RANGE_NOT_SATISFIABLE
+          - EXPECTATION_FAILED
+          - I_AM_A_TEAPOT
+          - UNPROCESSABLE_ENTITY
+          - LOCKED
+          - FAILED_DEPENDENCY
+          - UPGRADE_REQUIRED
+          - PRECONDITION_REQUIRED
+          - TOO_MANY_REQUESTS
+          - REQUEST_HEADER_FIELDS_TOO_LARGE
+          - UNAVAILABLE_FOR_LEGAL_REASONS
+          - CONFIGURATION_ERROR
+          - INTERNAL_SERVER_ERROR
+          - BAD_GATEWAY
+          - SERVICE_UNAVAILABLE
+          - USER_NOT_ENROLLED
+          - FACE_CROPPING_FAILED
+          - FACE_TOO_SMALL
+          - FACE_TOO_BLURRY
+          - FACE_TOO_DARK
+          - BAD_PHOTO_QUALITY
+          - INVALID_DEPTH_IMAGE
+          - INVALID_VIDEO
+          - USER_BLACKLISTED
+          - NONEXISTENT_CUSTOMER
+          - SPOOF_ATTEMPT_DETECTED
+          - USER_ALREADY_EXISTS
+          - OMNICHANNEL_NOT_SUPPORTED
+          - UUID_ALREADY_USED
+          - MULTIPLE_FACES_DETECTED
+          - SIGNATURE_DOES_NOT_MATCH
+          - INVALID_LOGIN_CREDENTIALS
+          - USER_IS_NOT_APPROVED
+          - INVALID_INTERVIEW_CODE
+          - USER_IS_NOT_RECOGNIZED
+          - INVALID_API_KEY_USAGE
+          - INVALID_IMAGE
+          - MODULE_NOT_SUPPORTED
+          - FACE_NOT_FOUND
+          - IMAGE_NOT_FOUND
+          - TOO_MANY_RECORDS
+          - INVALID_PHONE_FORMAT
+          - DUPLICATE_EMAIL
+          - DUPLICATE_PHONE_NUMBER
+          - DUPLICATE_MAC_ADDRESS
+          - INVALID_UUID_PARAMETER
+          - INVALID_CONFIGURATION_ID_PARAMETER
+          - FLOW_NOT_ACTIVATED
+          - INVALID_EVENT_NAME
+          - FLOW_NAME_EXISTS
+          - INVALID_REDIRECTION_URL
+          - INVALID_RULE_CONFIGURED
+          - TWO_GOV_VALIDATION_MODULES
+          - MULTIPLE_ELECTRONIC_SIGNATURE_MODULES
+          - INVALID_CLIENT_ID_FOR_OAUTH2_SECURED
+          - REDIRECT_URI_REQUIRED_FOR_OAUTH2_SECURED
+          - REDIRECT_URI_INVALID_FOR_OAUTH2_SECURED
+          - WORKFLOW_ASYNC_RESOLUTION_NODE_MISSING
+          - WORKFLOW_ASYNC_MODULE_MISSING_FOR_RESOLUTION
+          - WORKFLOW_NAME_EXISTS
+          - WORKFLOW_NODE_WRONG_TYPE
+          - WORKFLOW_ROOT_NODE_NOT_SINGLE
+          - WORKFLOW_ROOT_NODE_ID_NOT_MATCH_ROOT_NODE
+          - WORKFLOW_CONDITION_NODE_NOT_COMPLETE
+          - WORKFLOW_NODE_SUCCESSOR_NOT_FOUND
+          - WORKFLOW_GRAPH_NOT_CONNECTED
+          - WORKFLOW_RESULT_NODE_NOT_FINISH
+          - WORKFLOW_TEMPLATE
+          - WORKFLOW_TEMPLATE_NOT_FOUND
+          - MODULE_CONFIGURATION_INCOMPLETE
+          - ORGANIZATION_NAME_EXISTS
+          - WORKFLOW_NODE_ALREADY_HAS_PARENT
+          - WORKFLOW_NODE_BELONGS_TO_DIFFERENT_WORKFLOW
+          - WORKFLOW_ASYNC_RESOLUTION_REQUIRES_ASYNC_MODULE_BEFORE
+          - WORKFLOW_MODULE_CANNOT_BE_ADDED_AFTER_ASYNC_RESOLUTION
+          - ORGANIZATION_VANITY_URL_SLUG_EXISTS
+          - ENTITY_INSERT_FAILED
+          - ENTITY_UPDATE_FAILED
+          - ENTITY_ALREADY_EXISTS
+          - INVALID_EMAIL_FORMAT
+          - SELFIE_IMAGE_MISSING
+          - INVALID_MODULE_CONFIGURATION
+          - INVALID_DATE_FORMAT
+          - INVALID_TAX_ID_FORMAT
+          - INVALID_US_STATE_CODE
+          - INVALID_CA_REGION_CODE
+          - SELFIE_IMAGE_LOW_QUALITY
+          - SELFIE_FACE_OCCLUDED
+          - QR_PHISHING_INVALID_VALIDATION
+          - START_ENHANCED_SECURITY_VALIDATION
+          - ONBOARDING_URL_ALREADY_USED
+          - ID_FACE_EXTRACTION_SKIPPED
+          - ID_IMAGE_TOO_SMALL
+          - SESSION_CONTINUATION_PERIOD_EXCEEDED
+          - SESSION_CONTINUATION_LIMIT_REACHED
+          - SESSION_NOT_ACTIVE
+          - SESSION_CONTINUATION_INVALID_IDENTIFIER
+          - CAPTURE_ATTEMPT_CONTEXT_NOT_FOUND
+          - INSUFFICIENT_ACCESS_LEVEL
+          - API_KEY_NAME_EXISTS
+          - WEBHOOK_TYPE_DEFINED
+          - BAV_ATTEMPTS_EXCEEDED
+          - INVALID_CREDIT_DATA
+          - BATCH_ALREADY_RUNNING
+          - CONSENT_ALREADY_EXISTS
+          - CONSENT_NOT_GRANTED
+          - MODULE_NOT_PROVISIONED
+          - WATCHLIST_ID_CLASSIFICATION_FAILED
+          - AGE_ASSURANCE_VALIDATION_FAILED
+          - LOGIN_HINT_NOT_FOUND
+          - ESCALATION_ALREADY_OPENED_BY_INCODE
+          - EKYB_NO_RESULTS
+          - EKYB_TIN_VERIFICATION_FAILED
+          - INTEGRATION_NOT_FOUND_BY_REFERENCE
+          - INVALID_LOGIN_HINT
+          - LOGIN_HINT_ATTEMPTS_EXCEEDED
+          - CONTACT_ALREADY_VERIFIED
+          - TRIAL_ORGANIZATION_SESSION_LIMIT_REACHED
+          - DOCUMENT_NOT_FOUND
+          - DOCUMENT_TOO_LARGE
+          - MAC_ALGORITHM_REQUIRED_CLIENT_SECRET_JWT
+          - SIGNATURE_ALGORITHM_REQUIRED_PRIVATE_KEY_JWT
+          - JWK_SET_URL_NEEDED_FOR_PRIVATE_KEY_JWT
+          - NON_UNIQUE_CLIENT_NAME
+          - SINGLE_INTEGRATION_NOT_FOUND_BY_TYPE
+          - MULTIPLE_INTEGRATIONS_FOUND_BY_TYPE
+          - VERIFICATION_CANNOT_BE_STARTED
+          - PROCESSING_ERROR
+          - EXTERNAL_API_ERROR
+        detailMessage:
+          type: string
+    ContrastSharpnessSaturation:
+      type: object
+      properties:
+        contrast:
+          type: integer
+          format: int32
+        sharpness:
+          type: integer
+          format: int32
+        saturation:
+          type: integer
+          format: int32
+        metrics:
+          type: number
+          format: float
+        isTimeoutReached:
+          type: boolean
+        framePixelDelta:
+          type: number
+          format: float
+    FrontBackCameraData:
+      type: object
+      properties:
+        cameraCheckData:
+          type: array
+          items:
+            $ref: '#/components/schemas/CameraCheckData'
+        phashMinRotHamming:
+          type: integer
+          format: int32
+        colorHistChiSqr:
+          type: number
+          format: float
+        noiseMaeRatio:
+          type: number
+          format: float
+        noiseDistroChiSqr:
+          type: number
+          format: float
+        initialFrameCount:
+          type: integer
+          format: int32
+        oppositeFrameCount:
+          type: integer
+          format: int32
+        oppositeWithinPhashHammingMean:
+          type: number
+          format: float
+        oppositeWithinPhashHammingMax:
+          type: number
+          format: float
+        oppositeWithinNoiseMaeStdev:
+          type: number
+          format: float
+        oppositeWithinBrightnessStdev:
+          type: number
+          format: float
+        crossPhashHammingMean:
+          type: number
+          format: float
+        crossPhashHammingMin:
+          type: number
+          format: float
+        crossPhashHammingMax:
+          type: number
+          format: float
+        crossColorHistChiSqrMean:
+          type: number
+          format: float
+        crossNoiseMaeDelta:
+          type: number
+          format: float
+        crossNoiseDistroChiSqrMean:
+          type: number
+          format: float
+        crossBrightnessDelta:
+          type: number
+          format: float
+        initialSceneFeatures:
+          type: array
+          items:
+            type: number
+            format: float
+        oppositeSceneFeatures:
+          type: array
+          items:
+            type: number
+            format: float
+        crossSceneFeatureDeltas:
+          type: array
+          items:
+            type: number
+            format: float
+        oppositeTemporalKurtosis:
+          type: number
+          format: float
+        oppositeTemporalKsToGaussian:
+          type: number
+          format: float
+        oppositeTemporalLevelsRatio:
+          type: number
+          format: float
+        oppositeTemporalVarianceMean:
+          type: number
+          format: float
+        oppositeTemporalVarianceStdev:
+          type: number
+          format: float
+        initialDeviceId:
+          type: string
+        oppositeDeviceId:
+          type: string
+        initialGroupId:
+          type: string
+        oppositeGroupId:
+          type: string
+        initialFacingMode:
+          type: string
+        oppositeFacingMode:
+          type: string
+        initialWidth:
+          type: integer
+          format: int32
+        initialHeight:
+          type: integer
+          format: int32
+        oppositeWidth:
+          type: integer
+          format: int32
+        oppositeHeight:
+          type: integer
+          format: int32
+        initialFrameRate:
+          type: number
+          format: float
+        oppositeFrameRate:
+          type: number
+          format: float
+        deviceIdsDiffer:
+          type: boolean
+        groupIdsMatch:
+          type: boolean
+        experimentIncomplete:
+          type: boolean
+    PerPhaseStats:
+      type: object
+      properties:
+        invalidDuplicateCount:
+          type: integer
+          format: int32
+        totalFrames:
+          type: integer
+          format: int32
+        uniqueHashes:
+          type: integer
+          format: int32
+        maxOccurrencePercentage:
+          type: number
+          format: float
+    BehaviorInfo:
+      type: object
+      properties:
+        detectionValuesDeviation:
+          type: string
+          enum:
+          - PASS
+          - FAIL
+          - UNCLEAR
+        monotonicBorder:
+          type: string
+          enum:
+          - PASS
+          - FAIL
+          - UNCLEAR
+        motionStatus:
+          type: string
+          enum:
+          - PASS
+          - FAIL
+          - UNCLEAR
+    ScannerSignals:
+      type: object
+      properties:
+        b900InkCheck:
+          type: boolean
+        uvDullnessFront:
+          type: boolean
+        uvDullnessBack:
+          type: boolean
+        motionDetectionFront:
+          type: boolean
+        motionDetectionBack:
+          type: boolean
+    BankStatementDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+      - type: object
+        properties:
+          fullName:
+            type: string
+          address:
+            type: string
+          accountNumber:
+            type: string
+          bankName:
+            type: string
+          documentDate:
+            type: string
+    ExecutiveCognitoLoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          minLength: 1
+        password:
+          type: string
+          minLength: 1
+      required:
+      - email
+      - password
+    ExecutiveEventDto:
+      type: object
+      properties:
+        id:
+          type: string
+        code:
+          type: string
+          enum:
+          - SESSION_DELETED
+          - IDENTITY_DELETED
+          - SESSION_FACE_ADDED
+          - IDENTITY_FACE_ADDED
+          - SESSION_MANUALLY_APPROVED
+          - SESSION_MANUALLY_REJECTED
+          - SESSION_VIEWED
+          - SESSIONS_VIEWED
+          - SESSION_PDF_DOWNLOADED
+          - LOGIN_ATTEMPT
+          - LOGOUT
+          - USER_CREATED
+          - USER_DELETED
+          - USER_UPDATED
+          - USER_API_ACCESS_BLOCKED
+          - USER_API_ACCESS_UNBLOCKED
+          - CONFIGURATION_CREATE
+          - CONFIGURATION_CLONED
+          - CONFIGURATION_RESET
+          - CONFIGURATION_UPDATE
+          - FLOW_CREATE
+          - FLOW_UPDATE
+          - FLOW_DELETE
+          - FLOW_CLONE
+          - IDENTITIES_REPORT_GENERATED
+          - SESSIONS_REPORT_GENERATED
+          - AUTHENTICATIONS_REPORT_GENERATED
+          - WATCH_LISTS_REPORT_GENERATED
+          - USERS_REPORT_GENERATED
+          - DOUBLE_CHECK_RECORD_FETCHED
+          - DOUBLE_CHECK_RECORD_UPDATED
+          - DOUBLE_CHECK_FINISHED
+          - SESSION_ANTIFRAUD_RESOLVED
+          - WATCH_LISTS_ENTRY_CREATED
+          - GOVERNMENT_VERIFICATION_PROVIDERS_UPDATED
+          - GOVERNMENT_VERIFICATION_PROVIDERS_CREATED
+          - GOVERNMENT_VERIFICATION_PROVIDERS_DELETED
+          - WATCHLIST_PROVIDER_SETTINGS_CREATED
+          - WATCHLIST_PROVIDER_SETTINGS_UPDATED
+          - WATCHLIST_PROVIDER_SETTINGS_DELETED
+          - PAYMENTS_PROVIDER_SETTINGS_CREATED
+          - PAYMENTS_PROVIDER_SETTINGS_UPDATED
+          - PAYMENTS_PROVIDER_SETTINGS_DELETED
+          - PERSONAL_IDENTIFICATION_NUMBER_PROVIDERS_UPDATED
+          - PERSONAL_IDENTIFICATION_NUMBER_PROVIDERS_DELETED
+          - PERSONAL_IDENTIFICATION_NUMBER_PROVIDERS_CREATED
+          - EKYB_PROVIDERS_UPDATED
+          - EKYB_PROVIDERS_CREATED
+          - EKYB_PROVIDERS_DELETED
+          - EKYC_PROVIDERS_CREATED
+          - EKYC_PROVIDERS_UPDATED
+          - EKYC_PROVIDERS_DELETED
+          - QES_PROVIDERS_UPDATED
+          - QES_PROVIDERS_DELETED
+          - QES_PROVIDERS_CREATED
+          - GENERAL_PROVISIONING_SETTINGS_UPDATED
+          - MODULES_PROVISIONING_SETTINGS_UPDATED
+          - WORKFLOW_CREATED
+          - WORKFLOW_IMPORTED
+          - WORKFLOW_EDITED
+          - WORKFLOW_UPDATED
+          - WORKFLOW_DELETED
+          - WORKFLOW_ACTIVATED
+          - WORKFLOW_PAUSED
+          - CONSENT_CREATED
+          - CONSENT_UPDATED
+          - CONSENT_DELETED
+          - FRAUD_REPORTED
+          - FRAUD_REPORT_REVOKED
+          - WEBHOOK_CREATED
+          - WEBHOOK_UPDATE
+          - WEBHOOK_DELETE
+          - WEBHOOK_AUTH_CONFIG_CREATE
+          - WEBHOOK_AUTH_CONFIG_UPDATE
+          - DATA_DELETION_UPDATE
+          - WATCHLIST_ENTRY_DELETED
+          - WATCHLIST_ENTRY_UPDATED
+          - WATCHLIST_LIST_VIEWED
+          - AUTHENTICATION_LIST_VIEWED
+          - IDENTITY_VIEWED
+          - SESSION_LIST_VIEWED
+          - IDENTITY_LIST_VIEWED
+          - AUDIT_LOG_REPORT_GENERATED
+          - SINGLE_SESSION_REPORT_GENERATED
+          - DATA_DELETION_DISABLE
+          - FACE_ADDED_TO_DATABASE
+          - SELFIE_ADDED_TO_IDENTITY_TEMPLATE
+          - FRAUD_RING_RENAMED
+          - FRAUD_RING_NOTE_ADDED
+          - TRUSTGRAPH_SESSION_EXCLUDED
+          - TRUSTGRAPH_SESSION_EXCLUSION_REVOKED
+        timestamp:
+          type: string
+          format: date-time
+        executiveId:
+          type: string
+        managedEntityType:
+          type: string
+          enum:
+          - SESSION
+          - IDENTITY
+          - EXECUTIVE
+          - FLOW
+          - CONFIGURATION
+          - WORKFLOW
+          - WATCHLIST
+          - PROVISIONING
+          - CONSENT
+          - DATA
+          - WEBHOOK
+          - AUDIT_LOG
+          - AUTHENTICATION
+          - USER
+          - FRAUD_RING
+        managedEntityId:
+          type: string
+        payload:
+          type: object
+          additionalProperties:
+            type: object
+        apiKey:
+          type: string
+        role:
+          type: string
+          enum:
+          - OPEN
+          - STATISTICS
+          - LIMITED
+          - INCODE_IDENTITY
+          - INCODE_ID_USER
+          - ACCESS
+          - AUTHENTICATOR
+          - REFRESH
+          - REGISTER
+          - INCODE_ID_CLIENT
+          - EXECUTIVE
+          - ADMIN
+          - SCIM_ADMIN
+          - MULTI_ORG_ADMIN
+          - INTEGRATOR
+          - INCODE_EXECUTIVE
+          - INCODE_ADMIN
+          - WIDGET_CLIENT
+          - INTERNAL_SERVICE
+          - AUTHORIZATION_SERVER
+          - KEYCLOAK_SESSION
+          - HIPAA_ADMIN
+          - HIPAA_VIEWER
+          - WORKFORCE_ADMIN
+          - WORKFORCE_HELPDESK_STAFF
+          - WORKFORCE_RECRUITER
+          - SERVER
+          - IDENTITY_SERVICE
+          - TRUST_GRAPH_DATA_LOADER
+        application:
+          type: string
+          enum:
+          - USER_SERVICE
+        ipAddress:
+          type: string
+        userAgent:
+          type: string
+        email:
+          type: string
+    ExecutiveEventFilter:
+      type: object
+      description: Provides filter for audit logs.
+      properties:
+        codes:
+          type: array
+          items:
+            type: string
+            enum:
+            - SESSION_DELETED
+            - IDENTITY_DELETED
+            - SESSION_FACE_ADDED
+            - IDENTITY_FACE_ADDED
+            - SESSION_MANUALLY_APPROVED
+            - SESSION_MANUALLY_REJECTED
+            - SESSION_VIEWED
+            - SESSIONS_VIEWED
+            - SESSION_PDF_DOWNLOADED
+            - LOGIN_ATTEMPT
+            - LOGOUT
+            - USER_CREATED
+            - USER_DELETED
+            - USER_UPDATED
+            - USER_API_ACCESS_BLOCKED
+            - USER_API_ACCESS_UNBLOCKED
+            - CONFIGURATION_CREATE
+            - CONFIGURATION_CLONED
+            - CONFIGURATION_RESET
+            - CONFIGURATION_UPDATE
+            - FLOW_CREATE
+            - FLOW_UPDATE
+            - FLOW_DELETE
+            - FLOW_CLONE
+            - IDENTITIES_REPORT_GENERATED
+            - SESSIONS_REPORT_GENERATED
+            - AUTHENTICATIONS_REPORT_GENERATED
+            - WATCH_LISTS_REPORT_GENERATED
+            - USERS_REPORT_GENERATED
+            - DOUBLE_CHECK_RECORD_FETCHED
+            - DOUBLE_CHECK_RECORD_UPDATED
+            - DOUBLE_CHECK_FINISHED
+            - SESSION_ANTIFRAUD_RESOLVED
+            - WATCH_LISTS_ENTRY_CREATED
+            - GOVERNMENT_VERIFICATION_PROVIDERS_UPDATED
+            - GOVERNMENT_VERIFICATION_PROVIDERS_CREATED
+            - GOVERNMENT_VERIFICATION_PROVIDERS_DELETED
+            - WATCHLIST_PROVIDER_SETTINGS_CREATED
+            - WATCHLIST_PROVIDER_SETTINGS_UPDATED
+            - WATCHLIST_PROVIDER_SETTINGS_DELETED
+            - PAYMENTS_PROVIDER_SETTINGS_CREATED
+            - PAYMENTS_PROVIDER_SETTINGS_UPDATED
+            - PAYMENTS_PROVIDER_SETTINGS_DELETED
+            - PERSONAL_IDENTIFICATION_NUMBER_PROVIDERS_UPDATED
+            - PERSONAL_IDENTIFICATION_NUMBER_PROVIDERS_DELETED
+            - PERSONAL_IDENTIFICATION_NUMBER_PROVIDERS_CREATED
+            - EKYB_PROVIDERS_UPDATED
+            - EKYB_PROVIDERS_CREATED
+            - EKYB_PROVIDERS_DELETED
+            - EKYC_PROVIDERS_CREATED
+            - EKYC_PROVIDERS_UPDATED
+            - EKYC_PROVIDERS_DELETED
+            - QES_PROVIDERS_UPDATED
+            - QES_PROVIDERS_DELETED
+            - QES_PROVIDERS_CREATED
+            - GENERAL_PROVISIONING_SETTINGS_UPDATED
+            - MODULES_PROVISIONING_SETTINGS_UPDATED
+            - WORKFLOW_CREATED
+            - WORKFLOW_IMPORTED
+            - WORKFLOW_EDITED
+            - WORKFLOW_UPDATED
+            - WORKFLOW_DELETED
+            - WORKFLOW_ACTIVATED
+            - WORKFLOW_PAUSED
+            - CONSENT_CREATED
+            - CONSENT_UPDATED
+            - CONSENT_DELETED
+            - FRAUD_REPORTED
+            - FRAUD_REPORT_REVOKED
+            - WEBHOOK_CREATED
+            - WEBHOOK_UPDATE
+            - WEBHOOK_DELETE
+            - WEBHOOK_AUTH_CONFIG_CREATE
+            - WEBHOOK_AUTH_CONFIG_UPDATE
+            - DATA_DELETION_UPDATE
+            - WATCHLIST_ENTRY_DELETED
+            - WATCHLIST_ENTRY_UPDATED
+            - WATCHLIST_LIST_VIEWED
+            - AUTHENTICATION_LIST_VIEWED
+            - IDENTITY_VIEWED
+            - SESSION_LIST_VIEWED
+            - IDENTITY_LIST_VIEWED
+            - AUDIT_LOG_REPORT_GENERATED
+            - SINGLE_SESSION_REPORT_GENERATED
+            - DATA_DELETION_DISABLE
+            - FACE_ADDED_TO_DATABASE
+            - SELFIE_ADDED_TO_IDENTITY_TEMPLATE
+            - FRAUD_RING_RENAMED
+            - FRAUD_RING_NOTE_ADDED
+            - TRUSTGRAPH_SESSION_EXCLUDED
+            - TRUSTGRAPH_SESSION_EXCLUSION_REVOKED
+          uniqueItems: true
+        before:
+          type: string
+          format: date-time
+        after:
+          type: string
+          format: date-time
+        executiveIds:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+        entityTypes:
+          type: array
+          items:
+            type: string
+            enum:
+            - SESSION
+            - IDENTITY
+            - EXECUTIVE
+            - FLOW
+            - CONFIGURATION
+            - WORKFLOW
+            - WATCHLIST
+            - PROVISIONING
+            - CONSENT
+            - DATA
+            - WEBHOOK
+            - AUDIT_LOG
+            - AUTHENTICATION
+            - USER
+            - FRAUD_RING
+          uniqueItems: true
+        entityIds:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+        applications:
+          type: array
+          items:
+            type: string
+            enum:
+            - USER_SERVICE
+          uniqueItems: true
+        email:
+          type: string
+        ipAddress:
+          type: string
+        userAgent:
+          type: string
+    BankCheckDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+      - type: object
+        properties:
+          accountNumber:
+            type: string
+          routingNumber:
+            type: string
+          unparsedCheckNumber:
+            type: string
+    ContrastSharpnessSaturationData:
+      type: object
+      properties:
+        initialValues:
+          $ref: '#/components/schemas/ContrastSharpnessSaturation'
+        appliedValues:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContrastSharpnessSaturation'
+    SpoofResultOptions:
+      type: object
+      properties:
+        cameraFacingMode:
+          type: string
+          enum:
+          - FRONTAL
+          - BACK
+          - UNKNOWN
+        source:
+          type: string
+          enum:
+          - MOBILE
+          - DESKTOP
+          - UNKNOWN
+        enforceQSV:
+          type: boolean
+        strictVideoChecks:
+          type: boolean
+    NfcRecognitionConfidence:
+      type: object
+      properties:
+        nfcVsSelfieConfidence:
+          type: number
+          format: float
+        nfcVsSelfieLogConfidence:
+          type: number
+          format: float
+        nfcVsIdConfidence:
+          type: number
+          format: float
+        nfcVsIdLogConfidence:
+          type: number
+          format: float
+    CirculationCardDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+      - type: object
+        properties:
+          name:
+            $ref: '#/components/schemas/NameBean'
+          vin:
+            type: string
+          engineNumber:
+            type: string
+          carModelYear:
+            type: integer
+            format: int32
+          licensePlates:
+            type: array
+            items:
+              type: string
+          color:
+            type: string
+          vehicleUse:
+            type: string
+          validationErrors:
+            type: array
+            items:
+              $ref: '#/components/schemas/ValidationErrorSchema'
+    IosInjectionData:
+      type: object
+      properties:
+        createStreamTime:
+          type: array
+          items:
+            type: integer
+            format: int32
+        frameStats:
+          type: array
+          items:
+            $ref: '#/components/schemas/FrameStats'
+        appliedConstraints:
+          type: object
+        isTimeoutReached:
+          type: boolean
+    IneMexDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+      - type: object
+        properties:
+          name:
+            type: string
+          address:
+            type: string
+          addressList:
+            type: array
+            items:
+              type: string
+          voterIDNumber:
+            type: string
+          curpNumber:
+            type: string
+          dateOfBirth:
+            type: integer
+            format: int64
+          gender:
+            type: string
+          birthPlace:
+            type: string
+          nationality:
+            type: string
+          validFrom:
+            type: integer
+            format: int64
+          validTo:
+            type: integer
+            format: int64
+          registrationDate:
+            type: integer
+            format: int64
+          cicNumber:
+            type: string
+          ocrNumber:
+            type: string
+          idNumber:
+            type: string
+          credentialIssueNumber:
+            type: string
+    AdditionalName:
+      type: object
+      properties:
+        refNumber:
+          type: integer
+          format: int32
+        name:
+          type: string
+    EUnsignedDocument:
+      type: object
+      properties:
+        uuid:
+          type: string
+        s3location:
+          type: string
+        createdTime:
+          type: integer
+          format: int64
+        documentName:
+          type: string
+    SpoofDetectionResult:
+      type: object
+      properties:
+        overallConfidence:
+          type: number
+          format: float
+        isSpoof:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - passed
+          - failed
+          - notExecuted
+        physicalAttack:
+          $ref: '#/components/schemas/SpoofCheckResult'
+        digitalAttack:
+          $ref: '#/components/schemas/SpoofCheckResult'
+        evasionAttack:
+          $ref: '#/components/schemas/SpoofCheckResult'
+        motionAttack:
+          $ref: '#/components/schemas/SpoofCheckResult'
+        deepfakeAttack:
+          $ref: '#/components/schemas/SpoofCheckResult'
+        digitalManipulationAttack:
+          $ref: '#/components/schemas/SpoofCheckResult'
+        mediaQualityResults:
+          type: array
+          items:
+            $ref: '#/components/schemas/MediaQualityResult'
+        options:
+          $ref: '#/components/schemas/SpoofResultOptions'
+        method:
+          type: string
+          enum:
+          - SINGLE_FRAME
+          - SINGLE_FRAME_MULTIMODAL
+          - SINGLE_FRAME_MULTIMODAL_VIDEO
+        explanation:
+          $ref: '#/components/schemas/SpoofResultExplanation'
+        spoofDetectionErrorDetails:
+          $ref: '#/components/schemas/SpoofDetectionErrorDetails'
+    ExecutiveLoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: Access token for next calls
+          example: eyJhbGciOasfasiJ9.eyJleHRl2OTg5NX0.zdbAC-kE-I71
+          maxLength: 2048
+    V5CLogbookDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+      - type: object
+        properties:
+          fullName:
+            type: string
+          address:
+            type: string
+          addressList:
+            type: array
+            items:
+              type: string
+          registrationNumber:
+            type: string
+          v5cNumber:
+            type: string
+          referenceNumber:
+            type: string
+          vin:
+            type: string
+          validationErrors:
+            type: array
+            items:
+              $ref: '#/components/schemas/ValidationErrorSchema'
+    AddressStatementDate:
+      type: object
+      properties:
+        get_version:
+          type: integer
+          format: int64
+        dateType:
+          type: string
+          description: Description of timestamp.
+        addressStatementTimestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp.
+    ExifMetadata:
+      type: object
+      properties:
+        timestampOriginal:
+          type: integer
+          format: int64
+        software:
+          type: string
+    CameraInfo:
+      type: object
+      properties:
+        facingMode:
+          type: string
+          enum:
+          - FRONTAL
+          - BACK
+        settings:
+          type: object
+          additionalProperties:
+            type: object
+        capabilities:
+          type: object
+        labels:
+          type: array
+          items:
+            type: string
+    IneResult:
+      type: object
+      properties:
+        get_version:
+          type: integer
+          format: int64
+        scrapingStatus:
+          type: string
+          description: Scraping status
+          enum:
+          - IN_PROGRESS
+          - FINISHED
+          - ERROR
+        success:
+          type: boolean
+          description: Flag indicating if the process finished successfully.
+        result:
+          type: string
+          description: Result
+          enum:
+          - success
+          - error
+        resultDetails:
+          type: string
+        screenshotUrl:
+          type: string
+        cic:
+          type: string
+          description: Cic value.
+        claveElector:
+          type: string
+          description: Clave de elector.
+        numeroEmision:
+          type: string
+          description: Emission number.
+        ocr:
+          type: string
+          description: Ocr number.
+        anioRegistro:
+          type: string
+          description: Registration year.
+        anioEmision:
+          type: string
+          description: Emission year.
+    MediaInfo:
+      type: object
+      properties:
+        videoChecksum:
+          type: string
+    W8BenEDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+      - type: object
+        properties:
+          legalEntityName:
+            type: string
+          countryOfIncorporationOrOrganization:
+            type: string
+          chapter3Status:
+            type: object
+            additionalProperties:
+              type: boolean
+          chapter3AmbiguousOptions:
+            type: object
+            additionalProperties:
+              type: boolean
+          hybridEntityTreatyClaim:
+            type: string
+          chapter4Status:
+            type: object
+            additionalProperties:
+              type: boolean
+          chapter4AmbiguousOptions:
+            type: object
+            additionalProperties:
+              type: boolean
+          permanentResidenceAddress:
+            $ref: '#/components/schemas/W8Address'
+          mailingAddress:
+            $ref: '#/components/schemas/W8Address'
+          ein:
+            type: string
+          giin:
+            type: string
+          foreignTin:
+            type: string
+          ftinNotLegallyRequired:
+            type: boolean
+          substantialUsOwners:
+            type: array
+            items:
+              $ref: '#/components/schemas/W8SubstantialUsOwner'
+          signaturePresent:
+            type: boolean
+          dateSigned:
+            type: integer
+            format: int64
+          signerName:
+            type: string
+          revisionDetected:
+            type: string
+          formStatus:
+            $ref: '#/components/schemas/W8FormStatus'
+    SpoofResultExplanation:
+      type: object
+      properties:
+        description:
+          type: string
+        keywords:
+          $ref: '#/components/schemas/SpoofResultExplanationKeywords'
+    EconomicActivity:
+      type: object
+      properties:
+        title:
+          type: string
+        percentage:
+          type: integer
+          format: int32
+        startDate:
+          type: integer
+          format: int64
+        endDate:
+          type: integer
+          format: int64
+    BrowserInfo:
+      type: object
+      properties:
+        userAgent:
+          type: string
+        getUserMediaAvailability:
+          $ref: '#/components/schemas/GetUserMediaAvailability'
+        webglFingerprint:
+          type: string
+        inspectorOpened:
+          type: boolean
+        isMockedBrowser:
+          type: boolean
+    RefugeeStatusDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+      - type: object
+        properties:
+          fullName:
+            type: string
+          gender:
+            type: string
+            enum:
+            - MALE
+            - FEMALE
+          dateOfBirth:
+            type: integer
+            format: int64
+          issueDate:
+            type: integer
+            format: int64
+          countryOfBirth:
+            type: string
+          nationality:
+            type: string
+          maritalStatus:
+            type: string
+          documentNumber:
+            type: string
+    MediaQualityResult:
+      type: object
+      properties:
+        modality:
+          type: string
+          enum:
+          - depth
+        name:
+          type: string
+          enum:
+          - depthQuality
+        result:
+          type: string
+          enum:
+          - passed
+          - failed
+        parameters:
+          type: string
+    UboNameVerificationResult:
+      type: object
+      properties:
+        name:
+          type: string
+        uboNameMatch:
+          type: string
+        matchId:
+          type: string
+        ownershipPercentage:
+          type: string
+    CurpDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+      - type: object
+        properties:
+          fullName:
+            type: string
+          curpNumber:
+            type: string
+          registrationDate:
+            type: integer
+            format: int64
+          registrationEntity:
+            type: string
+          idNumber:
+            type: string
+    ColombianBirthCertificateDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+      - type: object
+        properties:
+          nationalNumber:
+            type: string
+          paternalLastname:
+            type: string
+          maternalLastname:
+            type: string
+          fullName:
+            type: string
+          dateOfBirth:
+            type: integer
+            format: int64
+          motherFullName:
+            type: string
+          motherNationalNumber:
+            type: string
+          fatherFullName:
+            type: string
+          fatherNationalNumber:
+            type: string
+          birthPlace:
+            type: string
+    FrameDuplicationData:
+      type: object
+      properties:
+        validDuplicateCount:
+          type: integer
+          format: int32
+        invalidDuplicateCount:
+          type: integer
+          format: int32
+        continuousValidDuplicateCount:
+          type: integer
+          format: int32
+        continuousInvalidDuplicateCount:
+          type: integer
+          format: int32
+        isTimeoutReached:
+          type: boolean
+        initialDuplicateFramesDetected:
+          type: boolean
+        initialOpenCaptureDuplicateFramesDetected:
+          type: boolean
+        invalidInitialDuplicateFramesDetected:
+          type: boolean
+        continuousDuplicateFramesDetected:
+          type: boolean
+        numInitialDuplicateInstances:
+          type: integer
+          format: int32
+        numInitialOpenCaptureDuplicateInstances:
+          type: integer
+          format: int32
+        numInvalidInitialDuplicateInstances:
+          type: integer
+          format: int32
+        numContinuousDuplicateInstances:
+          type: integer
+          format: int32
+        preCaptureTotalFrames:
+          type: integer
+          format: int32
+        preCaptureUniqueHashes:
+          type: integer
+          format: int32
+        preCaptureMaxConsecutiveRun:
+          type: integer
+          format: int32
+        preCaptureMaxOccurrenceCount:
+          type: integer
+          format: int32
+        preCaptureMaxOccurrencePercentage:
+          type: number
+          format: float
+        frameStats:
+          type: array
+          items:
+            $ref: '#/components/schemas/FrameStats'
+        perPhaseStats:
+          type: array
+          items:
+            $ref: '#/components/schemas/PerPhaseStats'
+    MetadataDeviceInfo:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum:
+          - MOBILE
+          - DESKTOP
+        model:
+          type: string
+        os:
+          type: string
+        osVersion:
+          type: string
+        screenDimensions:
+          $ref: '#/components/schemas/ScreenDimensions'
+        numTouchPoints:
+          type: integer
+          format: int32
+        fingerprintHash:
+          type: string
+        ip:
+          type: string
+        backgroundMode:
+          type: boolean
+        hookDetected:
+          type: boolean
+        emulatorDetected:
+          type: boolean
+        rootDetected:
+          type: boolean
+        virtualEnvironmentDetected:
+          type: boolean
+        jailbreakDetectionDisabled:
+          type: boolean
+    RefugeeIdDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+      - type: object
+        properties:
+          firstNames:
+            type: string
+          lastName:
+            type: string
+          gender:
+            type: string
+            enum:
+            - MALE
+            - FEMALE
+          countryOfBirth:
+            type: string
+          dateOfBirth:
+            type: integer
+            format: int64
+          nationality:
+            type: string
+          maritalStatus:
+            type: string
+          issueDate:
+            type: integer
+            format: int64
+          expiryDate:
+            type: integer
+            format: int64
+          idNumber:
+            type: string
+    ExposureData:
+      type: object
+      properties:
+        exposureParams:
+          type: array
+          items:
+            type: array
+            items:
+              $ref: '#/components/schemas/ExposureParams'
+        frames:
+          type: array
+          items:
+            type: array
+            items:
+              $ref: '#/components/schemas/ExposureFrame'
+        sessionDiagnostics:
+          type: array
+          items:
+            $ref: '#/components/schemas/SessionDiagnostics'
+    PunchedHoles:
+      type: object
+      properties:
+        confidence:
+          type: number
+          format: float
+    BarcodeMeta:
+      type: object
+      properties:
+        ecLevel:
+          type: integer
+          format: int32
+        noSegments:
+          type: integer
+          format: int32
+        segmentWidth:
+          type: number
+          format: float
+        corners:
+          type: array
+          items:
+            $ref: '#/components/schemas/Coordinate'
+        cornersFullFrame:
+          type: array
+          items:
+            $ref: '#/components/schemas/Coordinate'
+        rawBytes:
+          type: string
+        pdf417RowNumber:
+          type: integer
+          format: int32
+        pdf417ColumnNumber:
+          type: integer
+          format: int32
+        pdf417CodewordLengthMin:
+          type: integer
+          format: int32
+        pdf417CodewordLengthMax:
+          type: integer
+          format: int32
+        pdf417CorrectedErrorsCount:
+          type: integer
+          format: int32
+    ZoomParams:
+      type: object
+      properties:
+        applicationTime:
+          type: integer
+          format: int32
+        appliedConstraints:
+          type: object
+        appliedZoom:
+          type: number
+          format: float
+        isTimeoutReached:
+          type: boolean
+    W8BenDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+      - type: object
+        properties:
+          beneficialOwnerName:
+            type: string
+          beneficialOwnerFirstName:
+            type: string
+          beneficialOwnerLastName:
+            type: string
+          countryOfCitizenship:
+            type: string
+          permanentResidenceAddress:
+            $ref: '#/components/schemas/W8Address'
+          mailingAddress:
+            $ref: '#/components/schemas/W8Address'
+          ssnOrItin:
+            type: string
+          foreignTin:
+            type: string
+          ftinNotLegallyRequired:
+            type: boolean
+          dateOfBirth:
+            type: integer
+            format: int64
+          treatyResidenceCountry:
+            type: string
+          signaturePresent:
+            type: boolean
+          dateSigned:
+            type: integer
+            format: int64
+          signerName:
+            type: string
+          revisionDetected:
+            type: string
+          formStatus:
+            $ref: '#/components/schemas/W8FormStatus'
+    W8Address:
+      type: object
+      properties:
+        street:
+          type: string
+          description: Street line as printed on the W-8 form
+        cityStateProvincePostalCode:
+          type: string
+          description: Combined city or town, state or province, and postal code line as printed on the W-8 form
+        country:
+          type: string
+          description: Country name as printed on the W-8 form
+        raw:
+          type: string
+          description: Full address as a single string
+    W8FormStatus:
+      type: object
+      properties:
+        dateSigned:
+          type: integer
+          format: int64
+          description: Date the form was signed, epoch millis at UTC midnight
+        expiresOn:
+          type: integer
+          format: int64
+          description: Date the form expires (Dec 31 of the third year after signing), epoch millis at UTC midnight
+        expired:
+          type: boolean
+          description: Whether the form has expired
+        missingRequiredFields:
+          type: array
+          description: Required fields missing from the form; empty when the form is complete
+          items:
+            type: string
+        complete:
+          type: boolean
+          description: Whether all required fields are present on the form
+    AdditionalVerificationInfo:
+      type: object
+      properties:
+        creditFileDetails:
+          $ref: '#/components/schemas/CreditFileDetails'
+    PremiumExternalVerification:
+      type: object
+      properties:
+        level:
+          type: string
+        verifications:
+          type: object
+          additionalProperties:
+            type: string
+        income:
+          $ref: '#/components/schemas/Income'
+        employment:
+          $ref: '#/components/schemas/Employment'
+        reasonCodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/VerificationReasonCodes'
+        additionalVerificationInfo:
+          $ref: '#/components/schemas/AdditionalVerificationInfo'
+    SignatureAttempt:
+      type: object
+      properties:
+        imageRef:
+          type: string
+        signatureType:
+          type: string
+    AdditionalDocumentAttempt:
+      type: object
+      discriminator:
+        propertyName: documentType
+      properties:
+        documentType:
+          type: string
+          enum:
+          - ASYLUM_SEEKER
+          - BANK_STATEMENT
+          - COLOMBIAN_BIRTH_CERTIFICATE
+          - CURP
+          - GENERIC
+          - MEXICAN_TAX_DECLARATION
+          - MEXICAN_TAX_STATUS
+          - POA
+          - REFUGEE_ID
+          - REFUGEE_STATUS
+          - RFC
+          - V5C_LOGBOOK
+          - CAR_INVOICE
+          - CIRCULATION_CARD
+          - BANK_CHECK
+          - LETTER_OF_AUTHORIZATION
+          - FINANCE_SETTLEMENT
+          - INE_MEX
+          - COLOMBIA_RUT_FORM
+          - W8_BEN
+          - W8_BEN_E
+          - UNKNOWN
+        format:
+          type: string
+          enum:
+          - IMAGE
+          - PDF
+        status:
+          type: string
+          enum:
+          - SUCCESS
+          - VALIDATION_ERROR
+          - FAIL
+        attemptTimestamp:
+          type: integer
+          format: int64
+        classificationConfidence:
+          type: number
+          format: float
+        image:
+          $ref: '#/components/schemas/ImageAttempt'
+        multiPageDocImages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageAttempt'
+        attemptType:
+          type: string
+          enum:
+          - POA
+          - DOCUMENT_CAPTURE
+        antiSpoofResult:
+          $ref: '#/components/schemas/PoaAntiSpoofResult'
+    GenericDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+      - type: object
+        properties:
+          fullName:
+            type: string
+          address:
+            type: string
+          issueDate:
+            type: integer
+            format: int64
+    BavHolder:
+      type: object
+      properties:
+        holder:
+          type: string
+        id:
+          type: string
+        balance:
+          type: number
+          format: float
+        currency:
+          type: string
+        address:
+          type: string
+        timestamp:
+          type: integer
+          format: int64
+    KeyValue:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: object
+    AndroidInjectionData:
+      type: object
+      properties:
+        constraintsApplicationTime:
+          type: array
+          items:
+            type: integer
+            format: int32
+        appliedConstraints:
+          type: array
+          items:
+            type: object
+    ExecutiveEventResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExecutiveEventDto'
+        page:
+          $ref: '#/components/schemas/Page'
+          deprecated: true
+        total:
+          type: integer
+          format: int64
+        more:
+          type: boolean
+    CctParams:
+      type: object
+      properties:
+        value:
+          type: integer
+          format: int32
+        applicationTime:
+          type: integer
+          format: int32
+        appliedConstraints:
+          type: object
+        isTimeoutReached:
+          type: boolean
+        framePixelDelta:
+          type: number
+          format: float
+    CarInvoiceDocumentAttempt:
+      allOf:
+      - $ref: '#/components/schemas/AdditionalDocumentAttempt'
+      - type: object
+        properties:
+          name:
+            $ref: '#/components/schemas/NameBean'
+          dealerLegalName:
+            type: string
+          vin:
+            type: string
+          invoiceIssuingDate:
+            type: integer
+            format: int64
+          invoiceCertificationDate:
+            type: integer
+            format: int64
+          engineNumber:
+            type: string
+          carModelYear:
+            type: integer
+            format: int32
+          issuerRFC:
+            type: string
+          recipientRFC:
+            type: string
+          digitalTaxStampUuid:
+            type: string
+          carPrice:
+            type: number
+          issuerTaxRegime:
+            type: string
+          recipientTaxRegime:
+            type: string
+          qrIssuerRFC:
+            type: string
+          qrRecipientRFC:
+            type: string
+          qrDigitalTaxStampUuid:
+            type: string
+          validationErrors:
+            type: array
+            items:
+              $ref: '#/components/schemas/ValidationErrorSchema'
+    GenericInjectionData:
+      type: object
+      properties:
+        streamInitializationTime:
+          type: array
+          items:
+            type: integer
+            format: int32
+        timeToFirstFrame:
+          type: array
+          items:
+            type: integer
+            format: int32
+        appliedConstraints:
+          type: object
+        isTimeoutReached:
+          type: boolean
+        sitAborted:
+          type: boolean
+        warmInitializationTime:
+          type: integer
+          format: int32
+    SpoofCheckResult:
+      type: object
+      properties:
+        confidence:
+          type: number
+          format: float
+        isSpoof:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - passed
+          - failed
+          - notExecuted
+        severity:
+          type: string
+          enum:
+          - ultra low
+          - low
+          - medium
+          - high
+          - llava
+        version:
+          type: string
+        checkName:
+          type: string
+          enum:
+          - physicalAttack
+          - digitalAttack
+          - evasionAttack
+          - motionAttack
+          - deepfakeAttack
+          - digitalManipulationAttack
+          - physicalAttack/constrained
+          - physicalAttack/assisted
+          - physicalAttack/unconstrained
+          - physicalAttack/webcam
+          - physicalAttack/constrained/multimodal
+        reason:
+          type: string
+          enum:
+          - FACE_CROPPING_FAILURE
+          - UNSATISFIED_FACE_SIZE
+          - UNSATISFIED_BLURRINESS_LEVEL
+          - UNSATISFIED_BRIGHTNESS_LEVEL
+          - UNSATISFIED_IMAGE_COMPRESSION_LEVEL
+    AddFiscalQrUrlResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+        rfc:
+          type: string
+        curp:
+          type: string
+        name:
+          type: string
+        firstLastName:
+          type: string
+        secondLastName:
+          type: string
+        birthdate:
+          type: string
+        denomination:
+          type: string
+        regime:
+          type: string
+        constitutionDate:
+          type: string
+        operationStartDate:
+          type: string
+        personStatus:
+          type: string
+        lastSituationChangeDate:
+          type: string
+        state:
+          type: string
+        delegation:
+          type: string
+        colony:
+          type: string
+        streetType:
+          type: string
+        streetName:
+          type: string
+        extNumber:
+          type: string
+        intNumber:
+          type: string
+        postalCode:
+          type: string
+        email:
+          type: string
+        al:
+          type: string
+        fiscalRegime:
+          type: string
+        fiscalStartDate:
+          type: string
+        error:
+          type: string
+        result:
+          type: string
+    CctInjectionData:
+      type: object
+      properties:
+        initialCct:
+          type: integer
+          format: int32
+        minColorTemperatureParameters:
+          type: array
+          items:
+            $ref: '#/components/schemas/CctParams'
+        maxColorTemperatureParameters:
+          type: array
+          items:
+            $ref: '#/components/schemas/CctParams'
+    FrameStats:
+      type: object
+      properties:
+        frameCount:
+          type: integer
+          format: int32
+        isBlack:
+          type: boolean
+        isUnique:
+          type: boolean
+        timestamp:
+          type: integer
+          format: int32
+        updatedPercentage:
+          type: number
+          format: float
+    Title:
+      type: object
+      properties:
+        title:
+          type: string
+    ScreenDimensions:
+      type: object
+      properties:
+        width:
+          type: integer
+          format: int32
+        height:
+          type: integer
+          format: int32
+    RfcValidationResponse:
+      type: object
+      properties:
+        validRFC:
+          type: boolean
+        status:
+          type: string
+        message:
+          type: string
+        rfcType:
+          type: string
+        messageCode:
+          type: string
+        errorMessage:
+          type: string
+    DLClassRestriction:
+      type: object
+      properties:
+        dlClass:
+          type: string
+        raw:
+          type: string
+        fullRaw:
+          type: string
+        baseCode:
+          type: string
+        subCode:
+          type: string
+        payload:
+          type: array
+          items:
+            type: string
+    GovernmentFingerprintsBean:
+      type: object
+      properties:
+        finger1:
+          type: number
+          format: float
+          description: Match confidence for finger 1 (right thumb).
+        finger2:
+          type: number
+          format: float
+          description: Match confidence for finger 2 (right index).
+        finger3:
+          type: number
+          format: float
+          description: Match confidence for finger 3 (right middle).
+        finger4:
+          type: number
+          format: float
+          description: Match confidence for finger 4 (right ring).
+        finger5:
+          type: number
+          format: float
+          description: Match confidence for finger 5 (right pinky).
+        finger6:
+          type: number
+          format: float
+          description: Match confidence for finger 6 (left thumb).
+        finger7:
+          type: number
+          format: float
+          description: Match confidence for finger 7 (left index).
+        finger8:
+          type: number
+          format: float
+          description: Match confidence for finger 8 (left middle).
+        finger9:
+          type: number
+          format: float
+          description: Match confidence for finger 9 (left ring).
+        finger10:
+          type: number
+          format: float
+          description: Match confidence for finger 10 (left pinky).
+    People:
+      type: object
+      properties:
+        name:
+          type: string
+        titles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Title'
+        memberType:
+          type: string
+    SessionDiagnostics:
+      type: object
+      properties:
+        exposureSupported:
+          type: boolean
+        exposureApplyConstraintError:
+          type: boolean
+        exposureApplyConstraintTimeout:
+          type: boolean
+        invalidTrackStateDetected:
+          type: boolean
+        exposureInconsistencyDetected:
+          type: boolean
+        interruptedCapture:
+          type: boolean
+        cameraCaptureStatus:
+          type: integer
+          format: int32
+        exposureMinDelay:
+          type: integer
+          format: int32
+        exposureInitialDelay:
+          type: integer
+          format: int32
+        baselineBrightness:
+          type: number
+          format: float
+    CameraCheckData:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - FRONT
+          - BACK
+        isAvailable:
+          type: boolean
+        faceDetected:
+          type: boolean
+        idDetected:
+          type: boolean
+        isTimeoutReached:
+          type: boolean
+    ReasonCode:
+      type: object
+      properties:
+        reasonCode:
+          type: string
+          enum:
+          - A40SS
+          - A70SS
+          - A4070SS
+          - AASE
+          - ACV
+          - ADC
+          - ADCMS
+          - ADCUD
+          - AFAEI
+          - AFM
+          - AFMNCC
+          - AFMSCC
+          - AHNI
+          - AHR
+          - AIA
+          - AII
+          - AIR
+          - AMCC
+          - AMI
+          - AMICC
+          - AMICCMM
+          - AMICCSE
+          - ANA
+          - AND
+          - ANF
+          - APA
+          - APAI
+          - APCC
+          - APNV
+          - ARNF
+          - ASC
+          - ASCV
+          - ASDL
+          - ASU
+          - AUICCM
+          - AWS
+          - EA1Y
+          - EA2Y
+          - EA4M
+          - EA4Y
+          - EA6M
+          - EAC1F
+          - EACMF
+          - EADP
+          - EAF1
+          - EAF2
+          - EAF3
+          - EAF4Y
+          - EAFC
+          - EAG1
+          - EAG2
+          - EAG3
+          - EAG4
+          - EAG5
+          - EAG6
+          - EAHF
+          - EALLI
+          - EALSM
+          - EALTW
+          - EAM
+          - EAMC
+          - EAMF
+          - EAMI
+          - EAMP
+          - EANA
+          - EANE
+          - EANI
+          - EANP
+          - EAPF
+          - EAQ3
+          - EAQ4
+          - EAQM
+          - EASI
+          - EAVQ
+          - EAW
+          - EAY
+          - ED4M
+          - EDCH
+          - EDCO
+          - EDDN
+          - EDHA
+          - EDHC
+          - EDHI
+          - EDHN
+          - EDI
+          - EDL
+          - EDLC
+          - EDM
+          - EDNP
+          - EDPR
+          - EDVH
+          - EDVHC
+          - EDVHI
+          - EE24
+          - EE90
+          - EEPEII
+          - EMA24
+          - EMA90
+          - ESG24
+          - ESG90
+          - EVS24
+          - EVS90
+          - P2OSOV
+          - P3OSOV
+          - P4OSOV
+          - P5OSOV
+          - PA2M
+          - PA3M
+          - PA15
+          - PA24
+          - PABA
+          - PABM
+          - PACF
+          - PADU
+          - PAE
+          - PAHR
+          - PAIN
+          - PALT
+          - PAM
+          - PAMA
+          - PAML
+          - PANN
+          - PANV
+          - PAPM
+          - PAPO
+          - PAUD
+          - PAV
+          - PAVN
+          - PAW
+          - PBL
+          - PBOT
+          - PCC
+          - PDI
+          - PDL
+          - PDLA
+          - PE24
+          - PE90
+          - PECD
+          - PELT
+          - PES90
+          - PES
+          - PFIS
+          - PFN
+          - PFOI
+          - PFOS
+          - PFRD
+          - PH90
+          - PHAI
+          - PHAO
+          - PHLT
+          - PHRL
+          - PHSLT
+          - PILE
+          - PINV
+          - PLEA
+          - PLLT
+          - PLS
+          - PLST
+          - PMA24
+          - PMA90
+          - PMAE
+          - PMAIC
+          - PMAOC
+          - PMAOP
+          - PMAOT
+          - PML
+          - PMNA
+          - PMO
+          - PMS
+          - PMST
+          - PMU
+          - PMVS
+          - PN3M
+          - PNC
+          - PNMB
+          - PNN
+          - PNNS
+          - PNO
+          - PNPB
+          - PNRR
+          - PNS
+          - PNU
+          - POD
+          - PPC3
+          - PPC5
+          - PPC6
+          - PPC9
+          - PPGR
+          - PPN
+          - PPPH
+          - PPRT
+          - PPV
+          - PRC
+          - PRCO
+          - PRM
+          - PROM
+          - PRP
+          - PRSA
+          - PRSK
+          - PRSV
+          - PSCD
+          - PSDBM
+          - PSFE
+          - PSG24
+          - PSG90
+          - PSHRSN
+          - PSM90
+          - PSMDB
+          - PSMRN
+          - PSMSN
+          - PSTF
+          - PTFN
+          - PTL
+          - PTO
+          - PVLA
+          - PVLS
+          - PVMN
+          - PVOIP
+          - PVRC
+          - PVS24
+          - PVS90
+          - PVST
+          - PVSTF
+          - TANO
+          - TDDA
+          - TFAD1
+          - TFADF
+          - TFADI
+          - TFVE
+          - TFVI
+          - TH3AA
+          - TH3AH
+          - TH3AI
+          - TH3AO
+          - TH3AS
+          - TH3BO
+          - TH3CH
+          - TH3DB
+          - TH3DI
+          - TH3ED
+          - TH3FG
+          - TH3FR
+          - TH3IT
+          - TH3MR
+          - TH3NN
+          - TH3OM
+          - TH3PB
+          - TH3PH
+          - TH3PR
+          - TH3RI
+          - TH3SA
+          - TH3SF
+          - TH3SM
+          - THAAA
+          - THAAH
+          - THAAI
+          - THAAO
+          - THAAS
+          - THABO
+          - THACH
+          - THADB
+          - THADI
+          - THAED
+          - THAFG
+          - THAFR
+          - THAIT
+          - THAMR
+          - THANN
+          - THAOM
+          - THAPB
+          - THAPH
+          - THAPR
+          - THARI
+          - THASA
+          - THASF
+          - THASM
+          - THPAA
+          - THPAH
+          - THPAI
+          - THPAO
+          - THPAS
+          - THPBO
+          - THPCH
+          - THPDB
+          - THPDI
+          - THPED
+          - THPFG
+          - THPFR
+          - THPIT
+          - THPMR
+          - THPNN
+          - THPOM
+          - THPPB
+          - THPPH
+          - THPPR
+          - THPRI
+          - THPSA
+          - THPSF
+          - THPSM
+          - THTAH
+          - THTAV
+          - THTBE
+          - THTBP
+          - THTDI
+          - THTED
+          - THTES
+          - THTFG
+          - THTFR
+          - THTGP
+          - THTHE
+          - THTIA
+          - THTIH
+          - THTIP
+          - THTMX
+          - THTNN
+          - THTOM
+          - THTPR
+          - THTRP
+          - THTSG
+          - THTVP
+          - TIAWB
+          - TIAWF
+          - TINO
+          - TL3AA
+          - TL3AH
+          - TL3AI
+          - TL3AO
+          - TL3AS
+          - TL3BO
+          - TL3CH
+          - TL3DB
+          - TL3DI
+          - TL3ED
+          - TL3FG
+          - TL3FR
+          - TL3IT
+          - TL3MR
+          - TL3NN
+          - TL3OM
+          - TL3PB
+          - TL3PH
+          - TL3PR
+          - TL3RI
+          - TL3SA
+          - TL3SF
+          - TL3SM
+          - TLAAA
+          - TLAAH
+          - TLAAI
+          - TLAAO
+          - TLAAS
+          - TLABO
+          - TLACH
+          - TLADB
+          - TLADI
+          - TLAED
+          - TLAFG
+          - TLAFR
+          - TLAIT
+          - TLAMR
+          - TLANN
+          - TLAOM
+          - TLAPB
+          - TLAPH
+          - TLAPR
+          - TLARI
+          - TLASA
+          - TLASF
+          - TLASM
+          - TLGPD
+          - TLPAA
+          - TLPAH
+          - TLPAI
+          - TLPAO
+          - TLPAS
+          - TLPBO
+          - TLPCH
+          - TLPDB
+          - TLPDI
+          - TLPED
+          - TLPFG
+          - TLPFR
+          - TLPIT
+          - TLPMR
+          - TLPNN
+          - TLPOM
+          - TLPPB
+          - TLPPH
+          - TLPPR
+          - TLPRI
+          - TLPSA
+          - TLPSF
+          - TLPSM
+          - TLTAH
+          - TLTAV
+          - TLTBE
+          - TLTBP
+          - TLTDI
+          - TLTED
+          - TLTES
+          - TLTFG
+          - TLTFR
+          - TLTGP
+          - TLTHE
+          - TLTIA
+          - TLTIH
+          - TLTIP
+          - TLTMX
+          - TLTNN
+          - TLTOM
+          - TLTPR
+          - TLTRP
+          - TLTSG
+          - TLTVP
+          - TMAI
+          - TMFSI
+          - TNAPD
+          - TNASM
+          - TNPID
+          - TNPIE
+          - TNPIN
+          - TNPIP
+          - TNPIR
+          - TNPIS
+          - TNPIZ
+          - TNPMS
+          - TOAB
+          - TOAF
+          - TPAI
+          - TPDNV
+          - TPSMT
+          - TSAC
+          - TSAF
+          - TSBF
+          - TSBG
+          - TSBH
+          - TSBI
+          - TSBJ
+          - TBK
+          - TSBN
+          - TSBO
+          - TSCG
+          - TSCH
+          - TSDC
+          - TSDD
+          - TSDE
+          - TSDF
+          - TSDG
+          - TSDH
+          - TSDI
+          - TSDJ
+          - TSDK
+          - TSDL
+          - TSDM
+          - TSDN
+          - TSDO
+          - TSDP
+          - TSMA
+          - TSMB
+          - TSMC
+          - TNSA
+          - TSNB
+          - TSNC
+          - TSOA
+          - TSKU
+          - TSLI
+          - TSLJ
+          - TSLK
+          - TSLN
+          - TSLO
+          - TSDV
+          - TSNA
+          - TSNV
+          - TSOD
+          - TSOP
+          - TSPNA
+          - TSPNM
+          - TSR
+          - TSRD
+          - TSRF
+          - TSSF
+          - TSTUT
+          - TTIQ
+          - TXHR
+          - TXMTW
+          - TXNA
+          - TXR
+          - TXTW
+          - TXVHR
+          - TSRP
+        description:
+          type: string
+    ZoomData:
+      type: object
+      properties:
+        initialConstraints:
+          type: object
+        initialZoom:
+          type: number
+          format: float
+        maxZoomParameters:
+          type: array
+          items:
+            $ref: '#/components/schemas/ZoomParams'
+        minZoomParameters:
+          type: array
+          items:
+            $ref: '#/components/schemas/ZoomParams'
+        zoomInconsistencyDetected:
+          type: boolean
+    SpoofResultExplanationKeywords:
+      type: object
+      properties:
+        category:
+          type: string
+        isDepthFlat:
+          type: boolean
+        isVideoCorrupted:
+          type: boolean
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

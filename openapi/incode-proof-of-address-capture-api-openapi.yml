@@ -1,0 +1,318 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Proof of address capture API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Proof of address capture
+paths:
+  /omni/finalize/document:
+    post:
+      tags:
+      - Proof of address capture
+      summary: Finalize document processing
+      description: Finalize document processing for multi-page documents with optional page capture
+      operationId: finalizeDocument
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FinalizeDocumentRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddDocumentResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/finalize-document/
+      x-incode-markdown: https://developer.incode.com/api-reference/finalize-document.md
+  /omni/add/address-statement/v2:
+    post:
+      tags:
+      - Proof of address capture
+      summary: Add proof of address v2
+      description: Add a proof of address statement as a base64 string. OCR data from statement will be automatically extracted
+      operationId: addproofofaddressv2
+      parameters:
+      - name: format
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - image
+          - pdf
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Base64ImageRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-address-statement-v2/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-address-statement-v2.md
+  /omni/add/address-statement:
+    post:
+      tags:
+      - Proof of address capture
+      summary: Add proof of address
+      description: Add a proof of address statement as a blob. OCR data from statement will be automatically extracted
+      operationId: addproofofaddress
+      parameters:
+      - name: format
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - image
+          - pdf
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+              format: byte
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-address-statement/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-address-statement.md
+components:
+  schemas:
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    BasicResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+    AddDocumentResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: AddDocumentStatus
+          enum:
+          - SUCCESS
+          - PROCESS_DOC_ERROR
+          - SESSION_ERROR
+          - ADD_NEXT_PAGE
+          - OPTIONAL_PAGE_CAPTURE
+          - CLASSIFICATION_ERROR
+          - MULTI_PAGE_CLASSIFICATION_ERROR
+          - V5C_REGISTRATION_NUMBER_MISMATCH
+          - V5C_REFERENCE_NUMBER_MISMATCH
+          - V5C_NUMBER_MISMATCH
+          - FSL_AGREEMENT_REFERENCE_MISMATCH
+          - FSL_NAME_MISMATCH
+          - NOT_W8_BEN
+          - NOT_W8_BEN_E
+          - MANDATORY_FIELD_MISSING
+          - UNSUPPORTED_PAGE_NUMBERS
+          - VALIDATION_ERROR
+          - UNEXPECTED_ERROR
+          - FINALIZE_ERROR_NO_PAGES
+          - UNSUPPORTED_MP_DOCUMENT_TYPE
+    FinalizeDocumentRequest:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Type of document image for which processing is being finalized.
+          enum:
+          - selfie
+          - authenticationSelfie
+          - sorSelfie
+          - videoSelfie
+          - externalFace
+          - croppedFace
+          - croppedAuthenticationSelfie
+          - croppedFrameAnalysisSelfie
+          - croppedExternalFace
+          - croppedIDFace
+          - croppedNfcFace
+          - document
+          - originalSignature
+          - signature
+          - initials
+          - fullFrameFrontID
+          - fullFrameBackID
+          - croppedFrontID
+          - refCroppedFrontID
+          - croppedBackID
+          - refCroppedBackID
+          - croppedOriginalFrontID
+          - croppedOriginalBackID
+          - confSelfie
+          - confFrontID
+          - confBackID
+          - confPoa
+          - addressStatement
+          - medicalDoc
+          - secondId
+          - thirdId
+          - contract
+          - signedContract
+          - videoSelfieCompareID
+          - videoSelfieCompareOcr
+          - videoSelfieCompareBackID
+          - videoSelfieCompareBackOcr
+          - otherDocument1
+          - otherDocument2
+          - otherDocument3
+          - paymentProof
+          - consent
+          - annotationImg
+          - externalScreen
+          - eSignDocument
+          - sessionExport
+          - zoomedFrontId
+          - zoomedBackId
+          - zoomedSelfie
+          - regionBasedTemplate
+          - renaperCropped
+          - voiceConsentSelfie
+          - v5cLogbook
+          - v5cMultiPageLogbook
+          - carInvoice
+          - circulationCard
+          - financeSettlement
+          - w8Ben
+          - w8BenE
+          - faceRecordingFrame
+          - signatureImageID
+          - ghostSignatureImageID
+          - ghostPortraitImageID
+          - fingerprintImageID
+          - documentNumberCropImageID
+          - ineMexScan
+      required:
+      - type
+    Base64ImageRequest:
+      type: object
+      properties:
+        base64Image:
+          type: string
+          description: Base64 string representation of the image
+          minLength: 1
+      required:
+      - base64Image
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,1244 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Ekyc API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Ekyc
+paths:
+  /omni/externalVerification/income:
+    post:
+      tags:
+      - Ekyc
+      summary: eKYC Income verification
+      description: This endpoint performs an eKYC income check
+      operationId: externalverificationincome
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        description: "**Example**\n\nCheck income:\n```\n{\n  \"country\": \"br\",\n  \"taxId\": \"32757350803\" // cpf 76433943853. 32757350803\n}\n```\n"
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EkycIncomeVerificationRequest'
+        required: true
+      responses:
+        '200':
+          description: "Example:\n```\n{\n    \"income\": [\n        {\n            \"key\": \"employment_type\",\n            \"status\": \"success\",\n            \"sub_label\": \"Type\",\n            \"message\": \"ENTREPRENEUR | BUSINESS OWNER\"\n        },\n        {\n            \"key\": \"employment_sector\",\n            \"status\": \"success\",\n            \"sub_label\": \"Sector\",\n            \"message\": \"PRIVATE - 4639701 - COMERCIO ATACADISTA DE PRODUTOS ALIMENTICIOS EM GERAL\"\n        },\n        {\n            \"key\": \"income_range\",\n            \"status\": \"success\",\n            \"sub_label\": \"Estimated Income Range\",\n            \"message\": \"9240-13200\"\n        }\n    ]\n}\n```\n"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EkycVerificationResponse'
+        '400':
+          description: "Example:\n```\n{\n    \"timestamp\": 1722948860110,\n    \"status\": 400,\n    \"error\": \"Both country and taxId are mandatory fields must be submitted for successful request\",\n    \"message\": \"Both country and taxId are mandatory fields must be submitted for successful request\",\n    \"path\": \"/omni/externalVerification/income\"\n}\n```\n"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/externalverification-income/
+      x-incode-markdown: https://developer.incode.com/api-reference/externalverification-income.md
+  /omni/externalVerification/ekyc/unified:
+    post:
+      tags:
+      - Ekyc
+      summary: Unified start + eKYC + finish (low-latency)
+      description: 'Runs session start and eKYC verification in parallel and fires finish-status asynchronously,
+
+        returning once both the start and eKYC legs have resolved.'
+      operationId: unifiedEkyc
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnifiedEkycRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnifiedEkycResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/externalverification-ekyc-unified/
+      x-incode-markdown: https://developer.incode.com/api-reference/externalverification-ekyc-unified.md
+  /omni/externalVerification/ekyc:
+    post:
+      tags:
+      - Ekyc
+      summary: External Verification (eKYC)
+      description: 'This endpoint verifies phone, email, address, date of birth and tax numbers, specifically social security number (ssn).
+
+        When making a request use "kyc" in the plugins array. To have the API return specific risk scores for phone, email, ssn (taxId)
+
+        and address, see examples below.'
+      operationId: externalverificationekyc
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        description: "**Note**: When fields are provided they will override field values derived from a document scan.\n\n**Examples**\n\nCheck address:\n```\n{\n    \"plugins\": [\"kyc\"],\n    \"firstName\": \"Jon\",\n    \"surName\": \"Hasselhoff\",\n    \"street\": \"101 Beach Highway\",\n    \"postalCode\": \"90210\",\n    \"state\": \"CA\",\n    \"city\": \"Beverly Hills\",\n    \"countryCode\": \"US\"\n}\n```\n\n\nCheck email:\n```\n{\n    \"plugins\": [\"kyc\"],\n    \"firstName\": \"Jon\",\n    \"surName\": \"Hasselhoff\",\n    \"email\": \"david.hasselhoff@email.com\"\n}\n```\n\nCheck phone:\n```\n{\n    \"plugins\": [\"kyc\"],\n    \"firstName\": \"Jon\",\n    \"surName\": \"Hasselhoff\",\n    \"phone\": \"+16504463444\"\n    \"street\": \"101 Beach Highway\",\n    \"postalCode\": \"90210\",\n    \"state\": \"CA\",\n    \"city\": \"Beverly Hills\",\n    \"countryCode\": \"US\"\n}\n```\n\nCheck SSN (taxId):\n```\n{\n    \"plugins\": [\"kyc\"],\n    \"firstName\": \"Jon\",\n    \"surName\": \"Hasselhoff\",\n    \"street\": \"101 Beach Highway\",\n    \"postalCode\": \"90210\",\n    \"state\": \"CA\",\n    \"city\": \"Beverly Hills\",\n    \"countryCode\": \"US\",\n    \"taxId\": \"123456789\",\n    \"dateOfBirth\": \"1980-06-01\"\n}\n```\n\nFull eKYC check:\n```\n{\n    \"plugins\": [\"kyc\"],\n    \"firstName\": \"Jon\",\n    \"middleName\": \"Michael\",\n    \"surName\": \"Hasselhoff\",\n    \"street\": \"101 Beach Highway\",\n    \"postalCode\": \"90210\",\n    \"state\": \"CA\",\n    \"city\": \"Beverly Hills\",\n    \"countryCode\": \"US\",\n    \"phone\": \"+16504463444\",\n    \"email\": \"david.hasselhoff@email.com\"\n    \"taxId\": \"123456789\",\n    \"dateOfBirth\": \"1980-06-01\"\n}\n```\n"
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EkycVerificationRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EkycVerificationResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/externalverification-ekyc/
+      x-incode-markdown: https://developer.incode.com/api-reference/externalverification-ekyc.md
+  /omni/externalVerification/ekyc/session:
+    get:
+      tags:
+      - Ekyc
+      summary: Get eKYC session data for the current session
+      description: Returns stored eKYC verification request/response data for the interview associated with the caller's session token.
+      operationId: externalVerificationEkycSession
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EkycDataResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/externalverification-ekyc-session/
+      x-incode-markdown: https://developer.incode.com/api-reference/externalverification-ekyc-session.md
+components:
+  schemas:
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    UnifiedEkycRequest:
+      type: object
+      properties:
+        start:
+          $ref: '#/components/schemas/StartRequest'
+          description: Fields used to initialize the onboarding session (same shape as /omni/start).
+        ekyc:
+          $ref: '#/components/schemas/EkycVerificationRequest'
+          description: Fields used for the eKYC verification (same shape as /omni/externalVerification/ekyc).
+        finishAsync:
+          type: boolean
+          description: When true (default), finish-session runs asynchronously after the response is sent.
+      required:
+      - ekyc
+      - start
+    EkycIncomeVerificationRequest:
+      type: object
+      properties:
+        taxId:
+          type: string
+          description: 11 digit CPF
+          example: 12345678910
+        country:
+          type: string
+          description: Two letter Alpha-2 country code. (Must be BR).
+          example: BR
+      required:
+      - country
+      - taxId
+    PhoneProfileAdditionalProfileResponse:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: First name of the alternate candidate identity.
+        lastName:
+          type: string
+          description: Last name of the alternate candidate identity.
+        dob:
+          type: string
+          description: Date of birth of the alternate candidate identity, yyyy-MM-dd, when the provider returns it.
+        addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/PhoneProfileAddressResponse'
+    StartRequest:
+      type: object
+      properties:
+        language:
+          type: string
+          description: 'Language code to be used when doing speech to text. Possible values: en-US, es-ES, pt-BR.'
+        externalId:
+          type: string
+          deprecated: true
+          description: Id that identifies user in clients system should be used for externalId. (Deprecated, use externalCustomerId instead)
+          example: client34598
+        externalCustomerId:
+          type: string
+          description: Id that identifies user in clients external system.
+          example: client123
+        uuid:
+          type: string
+          description: uuid key used in redis, can be used as an alternative to sending interviewId.
+        configurationId:
+          type: string
+          description: Id of the flow to be used for this onboarding.
+        redirectionUrl:
+          type: string
+          description: Url the user will be redirected to after finishing the onboarding successfully.
+          example: https://www.google.com
+        integrationReference:
+          type: string
+          description: Optional integration reference.
+        urlUuid:
+          type: string
+          description: Url uuid key used in redis. Will be validated in start if qrPhishingResistance is ON.
+        customFields:
+          type: object
+          additionalProperties:
+            type: string
+          description: 'Used to send any additional information in key value pair format. Max fields: {maxEntries}, max key length: {keyMaxLength}, max value length: {valueMaxLength}'
+          example:
+            firstName: Mike
+            lastName: Larson
+    EkycVerification:
+      type: object
+      properties:
+        key:
+          type: string
+          description: 'Indicates a type of risk, such as addressRiskLevel. The overallLevel key name is an aggregate risk score for all risk types.
+
+            It can be used to obtain a single risk score for a whole result set.
+
+            '
+        status:
+          type: string
+          description: 'Explains the risk level, ie "low", "medium", or "high". When doing a social security number check, the API will return status
+
+            values of nomatch, fuzzy or exact. Fuzzy means there is plausible match between the name and the social security number,
+
+            like Dave and David both resolve to the same SSN.
+
+            '
+        sub_label:
+          type: string
+          description: Additional info on the status.
+        message:
+          type: string
+        reasonCodes:
+          type: array
+          items:
+            type: string
+    EkycDataResponse:
+      type: object
+      properties:
+        userData:
+          $ref: '#/components/schemas/ExternalVerificationRequest'
+        riskData:
+          $ref: '#/components/schemas/PremiumExternalVerification'
+        riskAddons:
+          type: array
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/PhoneProfileRiskAddonResponse'
+    CreditFileDetails:
+      type: object
+      properties:
+        creditFileNumber:
+          type: string
+        creditFileCreationDate:
+          type: string
+    EkycRiskAddonResponse:
+      type: object
+      description: Result of one eKYC risk add-on. The type field carries the add-on name used in riskAddons of the request and selects the shape of the entry.
+      discriminator:
+        propertyName: type
+      properties:
+        type:
+          type: string
+          enum:
+          - phoneCheck
+          - advancedPhoneCheck
+          - emailCheck
+          - phoneProfile
+    Employment:
+      type: object
+      properties:
+        status:
+          type: string
+        type:
+          type: string
+        sector:
+          type: string
+    ExternalVerificationRequest:
+      type: object
+      properties:
+        plugins:
+          type: array
+          items:
+            type: string
+        source:
+          type: string
+          enum:
+          - US_DRIVERS_LICENSE_1
+          - US_TELCO_1
+          - US_TELCO_2
+          - US_TELCO_4
+          - US_TELCO_5
+          - US_CREDIT_BUREAU_1
+          - US_CREDIT_BUREAU_3
+          - US_ADDRESS_1
+          - US_CONSUMER_1
+          - MX_CONSUMER_1
+          - MX_CONSUMER_2
+          - BR_GOVT_1
+          - BR_CPF_1
+          - CA_RES_CREDIT
+          - CA_CREDIT_FINTRAC
+          - UK_CREDIT_BUREAU_1
+          - UK_VOTER_REGISTER
+          - ES_PHONE_REGISTER_2
+          - CL_1
+          - AR_1
+          - AR_RES_REGISTER
+          - AR_CREDIT_BUR_1
+          - GR_1
+          - GT_1
+          - CR_1
+          - CO_1
+          - PHONE_RISK_1
+          - PHONE_RISK_2
+          - PHONE_PROFILE
+          - EMAIL_RISK_1
+          - RISK_ADDONS_ONLY
+          - GH_CARD_VERIFY_1
+          - PE_MIGRATION_INSTITUTE
+          - KE_IDENTIFYAFRICA
+          - INDIA_PAN
+          - IN_DMV
+          - NG_MONO_BVN
+          - NG_MONO_NIN
+          - US_CREDIT_TELCO
+          - PH_RES_CREDIT
+          - VE_CIVIL_REGISTER
+          - CO_CIVIL_REGISTER_1
+          - MX_CIVIL_REGISTER_2
+          - BR_TAX_PHONE_REGISTER
+          - NL_CONSUMER_POP_REG_TELCO
+          - NL_CIVIL_REG_CREDIT_TELCO
+          - FI_NATIONAL_ID
+          - FI_CONSUMER_POP_REG_TELCO
+          - BE_CREDIT_TELCO
+          - DK_CIVIL_REG_CREDIT_TELCO
+          - GB_2X2
+          - PE_CIVIL_REGISTER_2
+          - NO_CONS_POP_REG
+          - DE_PHONE_MOBILE_REGISTER
+          - IT_CIVIL_REG_CREDIT_TELCO
+        fullName:
+          type: string
+        firstName:
+          type: string
+        middleName:
+          type: string
+        surName:
+          type: string
+        email:
+          type: string
+        street:
+          type: string
+        houseNo:
+          type: string
+        postalCode:
+          type: string
+        countryCode:
+          type: string
+        phone:
+          type: string
+        state:
+          type: string
+        city:
+          type: string
+        ssn:
+          type: string
+        dateOfBirth:
+          type: string
+        ipAddress:
+          type: string
+        taxIdStatus:
+          type: string
+        nationality:
+          type: string
+        dlNumber:
+          type: string
+        dlExpireAt:
+          type: string
+        dlState:
+          type: string
+        last4SSN:
+          type: string
+        idNumber:
+          type: string
+        panNumber:
+          type: string
+    PhoneProfileRiskAddonResponse:
+      allOf:
+      - $ref: '#/components/schemas/EkycRiskAddonResponse'
+      - type: object
+        properties:
+          type:
+            type: string
+            description: Add-on that produced this entry, always phoneProfile for this shape.
+            enum:
+            - phoneCheck
+            - advancedPhoneCheck
+            - emailCheck
+            - phoneProfile
+          checkStatus:
+            type: string
+            description: 'Outcome of the check for the provided phone number: found or notFound.'
+          message:
+            type: string
+            description: Explanation returned when checkStatus is notFound.
+          confidenceLevel:
+            type: string
+            description: 'Confidence in the returned identity match: low, medium or high.'
+          phoneFirstName:
+            type: string
+            description: First name on file for the phone number.
+          phoneLastName:
+            type: string
+            description: Last name on file for the phone number.
+          phoneDob:
+            type: string
+            description: Date of birth on file, yyyy-MM-dd. Availability varies by country.
+          phoneValid:
+            type: boolean
+            description: Whether the provider considers the phone number valid.
+          phoneCountry:
+            type: string
+            description: Country of the phone number as reported by the provider.
+          phoneAddresses:
+            type: array
+            items:
+              $ref: '#/components/schemas/PhoneProfileAddressResponse'
+          nameReturned:
+            type: boolean
+            description: True only when both phoneFirstName and phoneLastName were returned.
+          phonePersonAge:
+            type: integer
+            format: int32
+            description: Age computed from phoneDob at the time of the check. Absent when phoneDob is unavailable.
+          isAdult:
+            type: boolean
+            description: True when phonePersonAge is 18 or more, or, without a date of birth, when a name was returned.
+          additionalProfiles:
+            type: array
+            items:
+              $ref: '#/components/schemas/PhoneProfileAdditionalProfileResponse'
+          reasonCodes:
+            type: array
+            items:
+              type: string
+    EkycVerificationRequest:
+      type: object
+      properties:
+        plugins:
+          type: array
+          items:
+            type: string
+            enum:
+            - kyc
+        firstName:
+          type: string
+          description: 'The following special characters are not supported: `^±!@£$%&*_+¡€#¢§¶•ªº«<>?\/:;|=`'
+          example: Jon
+        surName:
+          type: string
+          description: 'The following special characters are not supported: `^±!@£$%&*_+¡€#¢§¶•ªº«<>?\/:;|=`'
+          example: Hasselhoff
+        middleName:
+          type: string
+          description: 'The following special characters are not supported: `^±!@£$%&*_+¡€#¢§¶•ªº«<>?\/:;|=`'
+          example: Michael
+        maternalSurname:
+          type: string
+          description: 'The following special characters are not supported: `^±!@£$%&*_+¡€#¢§¶•ªº«<>?\/:;|=`'
+          example: Ronaldo
+        email:
+          type: string
+          example: david.hasselhoff@email.com
+        street:
+          type: string
+          example: 101
+        streetNo:
+          type: string
+          example: 101
+        floor:
+          type: string
+          example: 1
+        apartment:
+          type: string
+          example: 6
+        postalCode:
+          type: string
+          example: 90210
+        countryCode:
+          type: string
+          description: ISO 3166-1 alpha-2 format
+          example: US
+        phone:
+          type: string
+          description: Use E.164 format. Hyphens are optional
+          example: '+14156067603'
+        state:
+          type: string
+          example: CA
+        city:
+          type: string
+          example: Beverly Hills
+        idNumber:
+          type: string
+          example: 123456789
+        idNumber1:
+          type: string
+          example: 123456789
+        idNum:
+          type: string
+          description: Brazilian CPF number for BR_TAX_PHONE_REGISTER (IDmerit BR1)
+          example: 12345678909
+        gender:
+          type: string
+          example: F
+        taxId:
+          type: string
+          example: 123456789
+        dateOfBirth:
+          type: string
+          format: YYYY-MM-DD
+          example: '1980-06-01'
+        dlExpireAt:
+          type: string
+          format: YYYY-MM-DD
+          example: '2024-04-04'
+        fullName:
+          type: string
+          example: Jon Hasselhoff
+        panNumber:
+          type: string
+          description: 'Indian Permanent Account Number (PAN), format: AAAAANNNNA'
+          example: ABCPM1234D
+        district:
+          type: string
+          description: District or Barangay (neighbourhood), used for Philippines KYC
+          example: Tangil
+        idType:
+          type: string
+          description: 'National ID type. Supported for Philippines KYC: SSS, TIN, GSIS'
+          example: SSS
+        issueDate:
+          type: string
+          format: YYYY-MM-DD
+          description: ID document issue date. Required for Colombia Civil Register (CO_CIVIL_REGISTER_1) KYC
+          example: '1991-08-02'
+    Income:
+      type: object
+      properties:
+        status:
+          type: string
+        range:
+          type: string
+    UnifiedEkycResponse:
+      type: object
+      properties:
+        interviewId:
+          type: string
+          description: Identifier of the onboarding session created by /start.
+        token:
+          type: string
+          description: JWT token for subsequent calls (X-Incode-Hardware-Id header).
+        interviewCode:
+          type: string
+          description: Short onboarding code from /start.
+        flowType:
+          type: string
+          description: Flow type of the configuration used.
+          enum:
+          - configuration
+          - flow
+          - workflow
+        ekyc:
+          $ref: '#/components/schemas/EkycVerificationResponse'
+          description: eKYC verification result.
+        ekycStatus:
+          type: string
+          description: 'Status of the eKYC verification: SUCCESS, TIMEOUT, or ERROR.'
+          enum:
+          - SUCCESS
+          - TIMEOUT
+          - ERROR
+        finishQueued:
+          type: boolean
+          description: True when finish-session was queued for asynchronous processing.
+    PhoneProfileAddressResponse:
+      type: object
+      properties:
+        address1:
+          type: string
+          description: Single concatenated address string, not split into street, city, state or postal code.
+    EkycVerificationResponse:
+      type: object
+      properties:
+        kyc:
+          type: array
+          items:
+            $ref: '#/components/schemas/EkycVerification'
+        income:
+          type: array
+          items:
+            $ref: '#/components/schemas/EkycVerification'
+        riskAddons:
+          type: array
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/PhoneProfileRiskAddonResponse'
+        additionalVerificationInfo:
+          $ref: '#/components/schemas/AdditionalVerificationInfo'
+        sot:
+          type: string
+    AdditionalVerificationInfo:
+      type: object
+      properties:
+        creditFileDetails:
+          $ref: '#/components/schemas/CreditFileDetails'
+    VerificationReasonCodes:
+      type: object
+      properties:
+        key:
+          type: string
+        reasonCodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReasonCode'
+    ReasonCode:
+      type: object
+      properties:
+        reasonCode:
+          type: string
+          enum:
+          - A40SS
+          - A70SS
+          - A4070SS
+          - AASE
+          - ACV
+          - ADC
+          - ADCMS
+          - ADCUD
+          - AFAEI
+          - AFM
+          - AFMNCC
+          - AFMSCC
+          - AHNI
+          - AHR
+          - AIA
+          - AII
+          - AIR
+          - AMCC
+          - AMI
+          - AMICC
+          - AMICCMM
+          - AMICCSE
+          - ANA
+          - AND
+          - ANF
+          - APA
+          - APAI
+          - APCC
+          - APNV
+          - ARNF
+          - ASC
+          - ASCV
+          - ASDL
+          - ASU
+          - AUICCM
+          - AWS
+          - EA1Y
+          - EA2Y
+          - EA4M
+          - EA4Y
+          - EA6M
+          - EAC1F
+          - EACMF
+          - EADP
+          - EAF1
+          - EAF2
+          - EAF3
+          - EAF4Y
+          - EAFC
+          - EAG1
+          - EAG2
+          - EAG3
+          - EAG4
+          - EAG5
+          - EAG6
+          - EAHF
+          - EALLI
+          - EALSM
+          - EALTW
+          - EAM
+          - EAMC
+          - EAMF
+          - EAMI
+          - EAMP
+          - EANA
+          - EANE
+          - EANI
+          - EANP
+          - EAPF
+          - EAQ3
+          - EAQ4
+          - EAQM
+          - EASI
+          - EAVQ
+          - EAW
+          - EAY
+          - ED4M
+          - EDCH
+          - EDCO
+          - EDDN
+          - EDHA
+          - EDHC
+          - EDHI
+          - EDHN
+          - EDI
+          - EDL
+          - EDLC
+          - EDM
+          - EDNP
+          - EDPR
+          - EDVH
+          - EDVHC
+          - EDVHI
+          - EE24
+          - EE90
+          - EEPEII
+          - EMA24
+          - EMA90
+          - ESG24
+          - ESG90
+          - EVS24
+          - EVS90
+          - P2OSOV
+          - P3OSOV
+          - P4OSOV
+          - P5OSOV
+          - PA2M
+          - PA3M
+          - PA15
+          - PA24
+          - PABA
+          - PABM
+          - PACF
+          - PADU
+          - PAE
+          - PAHR
+          - PAIN
+          - PALT
+          - PAM
+          - PAMA
+          - PAML
+          - PANN
+          - PANV
+          - PAPM
+          - PAPO
+          - PAUD
+          - PAV
+          - PAVN
+          - PAW
+          - PBL
+          - PBOT
+          - PCC
+          - PDI
+          - PDL
+          - PDLA
+          - PE24
+          - PE90
+          - PECD
+          - PELT
+          - PES90
+          - PES
+          - PFIS
+          - PFN
+          - PFOI
+          - PFOS
+          - PFRD
+          - PH90
+          - PHAI
+          - PHAO
+          - PHLT
+          - PHRL
+          - PHSLT
+          - PILE
+          - PINV
+          - PLEA
+          - PLLT
+          - PLS
+          - PLST
+          - PMA24
+          - PMA90
+          - PMAE
+          - PMAIC
+          - PMAOC
+          - PMAOP
+          - PMAOT
+          - PML
+          - PMNA
+          - PMO
+          - PMS
+          - PMST
+          - PMU
+          - PMVS
+          - PN3M
+          - PNC
+          - PNMB
+          - PNN
+          - PNNS
+          - PNO
+          - PNPB
+          - PNRR
+          - PNS
+          - PNU
+          - POD
+          - PPC3
+          - PPC5
+          - PPC6
+          - PPC9
+          - PPGR
+          - PPN
+          - PPPH
+          - PPRT
+          - PPV
+          - PRC
+          - PRCO
+          - PRM
+          - PROM
+          - PRP
+          - PRSA
+          - PRSK
+          - PRSV
+          - PSCD
+          - PSDBM
+          - PSFE
+          - PSG24
+          - PSG90
+          - PSHRSN
+          - PSM90
+          - PSMDB
+          - PSMRN
+          - PSMSN
+          - PSTF
+          - PTFN
+          - PTL
+          - PTO
+          - PVLA
+          - PVLS
+          - PVMN
+          - PVOIP
+          - PVRC
+          - PVS24
+          - PVS90
+          - PVST
+          - PVSTF
+          - TANO
+          - TDDA
+          - TFAD1
+          - TFADF
+          - TFADI
+          - TFVE
+          - TFVI
+          - TH3AA
+          - TH3AH
+          - TH3AI
+          - TH3AO
+          - TH3AS
+          - TH3BO
+          - TH3CH
+          - TH3DB
+          - TH3DI
+          - TH3ED
+          - TH3FG
+          - TH3FR
+          - TH3IT
+          - TH3MR
+          - TH3NN
+          - TH3OM
+          - TH3PB
+          - TH3PH
+          - TH3PR
+          - TH3RI
+          - TH3SA
+          - TH3SF
+          - TH3SM
+          - THAAA
+          - THAAH
+          - THAAI
+          - THAAO
+          - THAAS
+          - THABO
+          - THACH
+          - THADB
+          - THADI
+          - THAED
+          - THAFG
+          - THAFR
+          - THAIT
+          - THAMR
+          - THANN
+          - THAOM
+          - THAPB
+          - THAPH
+          - THAPR
+          - THARI
+          - THASA
+          - THASF
+          - THASM
+          - THPAA
+          - THPAH
+          - THPAI
+          - THPAO
+          - THPAS
+          - THPBO
+          - THPCH
+          - THPDB
+          - THPDI
+          - THPED
+          - THPFG
+          - THPFR
+          - THPIT
+          - THPMR
+          - THPNN
+          - THPOM
+          - THPPB
+          - THPPH
+          - THPPR
+          - THPRI
+          - THPSA
+          - THPSF
+          - THPSM
+          - THTAH
+          - THTAV
+          - THTBE
+          - THTBP
+          - THTDI
+          - THTED
+          - THTES
+          - THTFG
+          - THTFR
+          - THTGP
+          - THTHE
+          - THTIA
+          - THTIH
+          - THTIP
+          - THTMX
+          - THTNN
+          - THTOM
+          - THTPR
+          - THTRP
+          - THTSG
+          - THTVP
+          - TIAWB
+          - TIAWF
+          - TINO
+          - TL3AA
+          - TL3AH
+          - TL3AI
+          - TL3AO
+          - TL3AS
+          - TL3BO
+          - TL3CH
+          - TL3DB
+          - TL3DI
+          - TL3ED
+          - TL3FG
+          - TL3FR
+          - TL3IT
+          - TL3MR
+          - TL3NN
+          - TL3OM
+          - TL3PB
+          - TL3PH
+          - TL3PR
+          - TL3RI
+          - TL3SA
+          - TL3SF
+          - TL3SM
+          - TLAAA
+          - TLAAH
+          - TLAAI
+          - TLAAO
+          - TLAAS
+          - TLABO
+          - TLACH
+          - TLADB
+          - TLADI
+          - TLAED
+          - TLAFG
+          - TLAFR
+          - TLAIT
+          - TLAMR
+          - TLANN
+          - TLAOM
+          - TLAPB
+          - TLAPH
+          - TLAPR
+          - TLARI
+          - TLASA
+          - TLASF
+          - TLASM
+          - TLGPD
+          - TLPAA
+          - TLPAH
+          - TLPAI
+          - TLPAO
+          - TLPAS
+          - TLPBO
+          - TLPCH
+          - TLPDB
+          - TLPDI
+          - TLPED
+          - TLPFG
+          - TLPFR
+          - TLPIT
+          - TLPMR
+          - TLPNN
+          - TLPOM
+          - TLPPB
+          - TLPPH
+          - TLPPR
+          - TLPRI
+          - TLPSA
+          - TLPSF
+          - TLPSM
+          - TLTAH
+          - TLTAV
+          - TLTBE
+          - TLTBP
+          - TLTDI
+          - TLTED
+          - TLTES
+          - TLTFG
+          - TLTFR
+          - TLTGP
+          - TLTHE
+          - TLTIA
+          - TLTIH
+          - TLTIP
+          - TLTMX
+          - TLTNN
+          - TLTOM
+          - TLTPR
+          - TLTRP
+          - TLTSG
+          - TLTVP
+          - TMAI
+          - TMFSI
+          - TNAPD
+          - TNASM
+          - TNPID
+          - TNPIE
+          - TNPIN
+          - TNPIP
+          - TNPIR
+          - TNPIS
+          - TNPIZ
+          - TNPMS
+          - TOAB
+          - TOAF
+          - TPAI
+          - TPDNV
+          - TPSMT
+          - TSAC
+          - TSAF
+          - TSBF
+          - TSBG
+          - TSBH
+          - TSBI
+          - TSBJ
+          - TBK
+          - TSBN
+          - TSBO
+          - TSCG
+          - TSCH
+          - TSDC
+          - TSDD
+          - TSDE
+          - TSDF
+          - TSDG
+          - TSDH
+          - TSDI
+          - TSDJ
+          - TSDK
+          - TSDL
+          - TSDM
+          - TSDN
+          - TSDO
+          - TSDP
+          - TSMA
+          - TSMB
+          - TSMC
+          - TNSA
+          - TSNB
+          - TSNC
+          - TSOA
+          - TSKU
+          - TSLI
+          - TSLJ
+          - TSLK
+          - TSLN
+          - TSLO
+          - TSDV
+          - TSNA
+          - TSNV
+          - TSOD
+          - TSOP
+          - TSPNA
+          - TSPNM
+          - TSR
+          - TSRD
+          - TSRF
+          - TSSF
+          - TSTUT
+          - TTIQ
+          - TXHR
+          - TXMTW
+          - TXNA
+          - TXR
+          - TXTW
+          - TXVHR
+          - TSRP
+        description:
+          type: string
+    PremiumExternalVerification:
+      type: object
+      properties:
+        level:
+          type: string
+        verifications:
+          type: object
+          additionalProperties:
+            type: string
+        income:
+          $ref: '#/components/schemas/Income'
+        employment:
+          $ref: '#/components/schemas/Employment'
+        reasonCodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/VerificationReasonCodes'
+        additionalVerificationInfo:
+          $ref: '#/components/schemas/AdditionalVerificationInfo'
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,393 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Onboarding authentication API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Onboarding authentication
+paths:
+  /omni/stateless-authentications/provide/reference-selfie:
+    post:
+      tags:
+      - Onboarding authentication
+      summary: Provide selfie for stateless authentication
+      description: 'A method to provide a reference selfie for stateless authentication.
+
+        (A selfie of the original onboarding that was approved but later removed from Incode storage).
+
+        This selfie will be used in authentication process if it''s configured to be stateless.'
+      operationId: authenticate
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatelessAuthenticationSelfieRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatelessAuthenticationSelfieResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/stateless-authentications-provide-reference-selfie/
+      x-incode-markdown: https://developer.incode.com/api-reference/stateless-authentications-provide-reference-selfie.md
+  /omni/b2b/v1/authentications/add-selfie-to-identity:
+    post:
+      tags:
+      - Onboarding authentication
+      summary: Add selfie to identity template
+      description: Adds the selfie from the specified or latest authentication attempt to the user's identity template set.
+      operationId: addSelfieToIdentityTemplate
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddSelfieToIdentityRequestDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/b2b-v1-authentications-add-selfie-to-identity/
+      x-incode-markdown: https://developer.incode.com/api-reference/b2b-v1-authentications-add-selfie-to-identity.md
+  /omni/onboarding-authentications/authenticate/third-party:
+    post:
+      tags:
+      - Onboarding authentication
+      summary: Authentication with face/selfie image
+      description: 'Authenticate user by comparing base64 image from request and user''s existing face template.
+
+        In case of One to one authentication, user is first found in DB by hint from request. At least one of criteria parameter must be sent in request.
+
+        In case of One to N authentication, hint is not used.
+
+        In case face doesn''t match error response is returned.'
+      operationId: authenticate_3
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OnboardingAuthenticationRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OnboardingAuthenticationResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/onboarding-authentications-authenticate-third-party/
+      x-incode-markdown: https://developer.incode.com/api-reference/onboarding-authentications-authenticate-third-party.md
+  /omni/onboarding-authentications/authenticate:
+    post:
+      tags:
+      - Onboarding authentication
+      summary: Authentication with face/selfie image
+      description: 'Authenticate user by comparing base64 image from request and user''s existing face template.
+
+        In case of One to one authentication, user is first found in DB by hint from request. At least one of criteria parameter must be sent in request.
+
+        In case of One to N authentication, hint is not used.
+
+        In case face doesn''t match error response is returned.'
+      operationId: authenticate_4
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OnboardingAuthenticationRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OnboardingAuthenticationResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/onboarding-authentications-authenticate/
+      x-incode-markdown: https://developer.incode.com/api-reference/onboarding-authentications-authenticate.md
+components:
+  schemas:
+    OnboardingAuthenticationResponse:
+      type: object
+      properties:
+        overallStatus:
+          type: string
+          description: 'Authentication status: FAIL/PASS.'
+          enum:
+          - PASS
+          - FAIL
+        captureAttemptsLimit:
+          $ref: '#/components/schemas/CaptureAttemptsLimitDto'
+          description: Checked only if configured in the session flow. Shows remaining number of attempts, and maximum number of attempts allowed.
+        candidate:
+          type: string
+          description: Id of matched candidate.
+        error:
+          $ref: '#/components/schemas/OnboardingAuthenticationErrorDto'
+          description: "Error name and description pair.\nPossible error names are:\n    INACTIVE_SESSION,\n    NONEXISTENT_CUSTOMER,\n    LENSES_DETECTED,\n    FACE_MASK_DETECTED,\n    HEAD_COVER_DETECTED,\n    CLOSED_EYES_DETECTED,\n    FACE_TOO_DARK,\n    SPOOF_ATTEMPT_DETECTED,\n    USER_IS_NOT_RECOGNIZED,\n    SELFIE_IMAGE_LOW_QUALITY,\n    MULTIPLE_FACES_DETECTED,\n    HINT_NOT_PROVIDED,\n    FACE_NOT_FOUND,\n    FACE_CROPPING_FAILED,\n    FACE_TOO_SMALL,\n    FACE_TOO_BLURRY,\n    BAD_PHOTO_QUALITY,\n    PROCESSING_ERROR,\n    BAD_REQUEST\n"
+          example:
+            name: LENSES_DETECTED
+            message: Lenses detected.
+    OnboardingAuthenticationRequest:
+      type: object
+      properties:
+        base64Image:
+          type: string
+          description: Image of user's face represented in base64.
+          example: /9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEB...
+          minLength: 1
+        faceCoordinates:
+          $ref: '#/components/schemas/FaceCoordinatesDto'
+          description: Face coordinates
+        hint:
+          type: string
+          description: 'Customer hint. Possible hints are: customer id, email, phone number...'
+        recordingId:
+          type: string
+          description: Id of recording used in spoof detection.
+      required:
+      - base64Image
+    FaceCoordinatesDto:
+      type: object
+      properties:
+        leftEyeX:
+          type: number
+          format: float
+          description: Left eye coordinates for X
+          example: 1391.01
+        leftEyeY:
+          type: number
+          format: float
+          description: Left eye coordinates for Y
+          example: 1334.62
+        rightEyeX:
+          type: number
+          format: float
+          description: Right eye coordinates for X
+          example: 918.383
+        rightEyeY:
+          type: number
+          format: float
+          description: Right eye coordinates for Y
+          example: 1359.96
+        mouthX:
+          type: number
+          format: float
+          deprecated: true
+          description: 'Left mouth coordinates for X. Note: the field is deprecated, use leftMouthX instead'
+          example: 918.383
+        leftMouthX:
+          type: number
+          format: float
+          description: Left mouth coordinates for X
+          example: 918.383
+        mouthY:
+          type: number
+          format: float
+          deprecated: true
+          description: 'Left mouth coordinates for Y. Note: the field is deprecated, use leftMouthY instead'
+          example: 1359.96
+        leftMouthY:
+          type: number
+          format: float
+          description: Left mouth coordinates for Y
+          example: 1359.96
+        rightMouthX:
+          type: number
+          format: float
+          description: Right mouth coordinates for X
+          example: 918.383
+        rightMouthY:
+          type: number
+          format: float
+          description: Right mouth coordinates for Y
+          example: 1359.96
+        noseTipX:
+          type: number
+          format: float
+          description: Nose coordinates for X
+          example: 918.383
+        noseTipY:
+          type: number
+          format: float
+          description: Nose coordinates for Y
+          example: 1359.96
+        x:
+          type: number
+          format: float
+          description: X coordinate of face rectangle.
+          example: 448
+        y:
+          type: number
+          format: float
+          description: Y coordinate of face rectangle.
+          example: 778
+        width:
+          type: number
+          format: float
+          description: Width of face rectangle.
+          example: 1366
+        height:
+          type: number
+          format: float
+          description: Height of face rectangle.
+          example: 1366
+      required:
+      - height
+      - leftEyeX
+      - leftEyeY
+      - noseTipX
+      - noseTipY
+      - rightEyeX
+      - rightEyeY
+      - rightMouthX
+      - rightMouthY
+      - width
+      - x
+      - y
+    BasicResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+    AddSelfieToIdentityRequestDto:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          minLength: 1
+        attemptId:
+          type: string
+    StatelessAuthenticationSelfieRequest:
+      type: object
+      properties:
+        base64Image:
+          type: string
+          description: Image of user's face represented in base64.
+          example: /9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEB...
+          minLength: 1
+        customerId:
+          type: string
+          description: Customer Id.
+          minLength: 1
+        sessionId:
+          type: string
+          description: Session Id.
+          minLength: 1
+    CaptureAttemptsLimitDto:
+      type: object
+      properties:
+        max:
+          type: integer
+          format: int32
+          description: Maximum number of attempts to capture a photo.
+        remaining:
+          type: integer
+          format: int32
+          description: Number of remaining attempts to capture a photo.
+    StatelessAuthenticationSelfieResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Operation result.
+        candidate:
+          type: string
+          description: Id of the candidate for reference selfie.
+    OnboardingAuthenticationErrorDto:
+      type: object
+      properties:
+        name:
+          type: string
+        message:
+          type: string
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

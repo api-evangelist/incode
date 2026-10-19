@@ -1,65 +1,2560 @@
 openapi: 3.2.0
 info:
-  title: Incode Omni Government Validation API
-  description: REST API for the Incode Omni identity verification platform. Onboarding sessions capture and validate government IDs, run face match and passive liveness, perform government-database and watchlist/AML screening, and return scores, OCR data, and images. All calls require an x-api-key, and module calls additionally require the session token in the X-Incode-Hardware-Id header.
-  termsOfService: https://incode.com/legal/terms-of-service
+  title: Incode Omni Government validation API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
   contact:
-    name: Incode Support
+    name: Incode Developer Hub
     url: https://developer.incode.com/
-  version: '1.0'
 servers:
 - url: https://demo-api.incodesmile.com
-  description: Demo / sandbox
-- url: https://api.incodesmile.com
-  description: Production
+  description: Incode demo environment
 security:
 - ApiKeyAuth: []
-  SessionToken: []
+  IncodeHardwareIdAuth: []
 tags:
-- name: Government Validation
-  description: Validation against government databases.
+- name: Government validation
 paths:
   /omni/process/government-validation:
     post:
-      operationId: processGovernmentValidation
       tags:
-      - Government Validation
-      summary: Validate ID data against a government database
-      description: Validates captured ID data against the applicable government source based on the session country code (e.g. Mexico INE, Peru RENIEC), with optional fallback and selfie-to-government-image comparison.
+      - Government validation
+      summary: Process government validation
+      description: 'This endpoint reads the country code from the interview which can be set at the moment of calling the start endpoint or
+
+        is updated based on the processed id. Request body can optionally contain data from id in JSON. If omitted, data from
+
+        scanned ID is read. **Country codes**:
+
+
+        **MEX**: Mexico - INE Validation. When government face validation is enabled this method compares the user''s selfie against
+
+        the image in the INE database. The method should be called after add-face is over and
+
+        one of (process-id or document-id) is over. Request parameters:
+
+        - fallbackEnabled: Boolean, optional. If it is not sent, it will default to false. - scrapingMethod: Boolean, optional. If it is not sent, it will default to false. If parameter fallbackEnabled is true and there''s some connection or infrastructure error with the INE service, validation by
+
+        scraping will start. If parameter scrapingMethod is true, then direct connection to INE service won''t be attempted and
+
+        the scraping approach will be used instead. Request Body is optional - if not sent, data will be taken from the session:
+
+        - ocr: String, mandatory for INE and IFE. - cic: String, mandatory for INE. - nombre: String, optional. - apellidoPaterno: String, optional. - apellidoMaterno: String, optional. - anioRegistro: String, optional. - anioEmision: String, optional. - numeroEmisionCredencial: String, mandatory for ife. - claveElector: String, mandatory for ife. - curp: String, optional. **COL**: Colombia - Registraduría Validation. Currently there''s no option for face validation. Can validate registraduría or
+
+        extranjería (foreign citizens living in colombia). **Note**: Government Validations for Colombia acquired via TusDatos
+
+
+        Request Body is optional - if not sent data will be taken from the session:
+
+        - idNumber: String, mandatory. - fechaEmision: String, mandatory when Nationality is not Columbia. Format dd/mm/yyyy
+
+        - nombre: String, optional. - apellidoPaterno: String, optional. - apellidoMaterno: String, optional. **ARG**: Argentina - Renaper Validation. Currently there''s no option for face validation. Request Body:
+
+        - idNumber: String, mandatory. **PER**: Peru - Reniec Validation. Currently there''s no option for face validation. Can validate Reniec. **Note**: Government
+
+        Validations for Peru obtained by checking against TOC, a risk database. ID must include DNI in order to validate. Request Body is optional - if not sent data will be taken from the session. - idNumber: String, mandatory (corresponds to DNI number)
+
+        - nombre: String, optional - if not provided ocrValidation for FistName will be UNKNOWN
+
+        - apellidoPaterno: String, optional - if not provided ocrValidation for PaternalLastName will be UNKNOWN
+
+        - apellidoMaterno: String, optional - if not provided ocrValidation for MaternalLastName will be UNKNOWN
+
+        - birthDate: String, optional - if not provided ocrValidation for BirthDate will be UNKNOWN
+
+        - gender: String, optional - if not provided ocrValidation for Gender will be UNKNOWN
+
+
+        **CHL**: Chile - Sinacofi Validation. Currently there''s no option for face validation. Can validate Sinacofi. **Note**:
+
+        Government Validations for Chile obtained by checking against TOC, a risk database. ID must include DNI in order to validate. Request Body is optional - if not sent data will be taken from the session:
+
+        - idNumber: String, mandatory (corresponds Serie)
+
+        - personalNumber: String, mandatory (corresponds RUT/RUN)
+
+
+        **AUS**: Australia - Government Validation for Passport and Driver License. Request Body is optional - if not sent data will be taken from the OCR. For Passport validation:
+
+        - firstName: String, mandatory. - middleName: String, optional. - paternalLastName: String, mandatory. - cic: String, mandatory (corresponds to Passport number). - documentType: String, mandatory ("Passport"). - birthDate: String, mandatory. Format yyyy/MM/dd. - address: String, optional. For Driver License validation:
+
+        - firstName: String, mandatory. - middleName: String, optional.'
+      operationId: processgovernmentvalidation
       parameters:
-      - $ref: '#/components/parameters/ApiVersion'
-      - $ref: '#/components/parameters/HardwareId'
-      requestBody:
+      - name: fallbackEnabled
+        in: query
         required: false
+        schema:
+          type: boolean
+          default: false
+      - name: scrapingMethod
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: scrapingV2
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: scrapingV3
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: interviewId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: countryCode
+        in: query
+        required: false
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GovernmentValidationRequest'
+              $ref: '#/components/schemas/GovernmentValidationDataRequest'
+            examples:
+              Default Request:
+                summary: Default Validation Request
+                description: Default Request
+                value:
+                  ocr: string
+                  cic: string
+                  nombre: string
+                  apellidoPaterno: string
+                  apellidoMaterno: string
+                  anioRegistro: string
+                  anioEmision: string
+                  numeroEmisionCredencial: string
+                  claveElector: string
+                  curp: string
+                  base64Image: string
+                  idNumber: string
+                  fechaEmision: string
+                  personalNumber: string
+                  birthDate: string
+                  gender: string
+                  birthPlace: string
+                  address: string
+                  latitude: string
+                  longitude: string
+                  macAddress: string
+                  ip: string
+                  osVersion: string
+                  applicationName: string
+                  sufix: string
+                  firstName: string
+                  givenName: string
+                  middleName: string
+                  paternalLastName: string
+                  documentType: Unknown
+                  refNumber: string
+                  issuerState: string
+                  documentTypeId: 0
+                  issuedAt: string
+                  documentNumber: string
+                  expireAt: string
+                  eyeColor: string
+                  height: string
+                  weight: string
+                  city: string
+                  postalCode: string
+              It takes data from OCR document data (session data):
+                summary: Document OCR Validation Request
+                description: It takes data from OCR document data (session data)
+                value: {}
+              Brazil - CPF Request:
+                summary: Brazil - CPF Request
+                description: Brazil - CPF Request
+                value:
+                  idNumber: '88291306800'
+              AUS_Passport_Request:
+                summary: Australia Passport Validation Request
+                description: Example request for validating an Australian passport
+                value:
+                  firstName: VINCE
+                  middleName: ''
+                  paternalLastName: CITIZEN
+                  cic: PA0001317
+                  documentType: Passport
+                  birthDate: 2013/03/01
+              AUS_DriverLicense_Request:
+                summary: Australia Driver License Validation Request
+                description: Example request for validating an Australian driver license
+                value:
+                  firstName: TIM
+                  middleName: ''
+                  paternalLastName: CITIZEN
+                  documentType: DriversLicense
+                  birthDate: 1970/02/21
+                  refNumber: A968754
+                  cic: '1948573847'
+                  issuerState: NSW
+              COL_Cedula_Request:
+                summary: Colombia ANI Compliance Validation Request
+                description: Example request for validating a Colombian Cedula
+                value:
+                  documentNumber: '12345678'
+                  issuerState: VALLE
+                  issuedAt: '1990-03-15'
+                  issuingAuthority: CALI
+                  firstName: JUAN
+                  middleName: CARLOS
+                  paternalLastName: PEREZ
+                  maternalLastName: GOMEZ
+              Peru_ResidenceDocument_Request:
+                summary: Peru Residence Document Validation Request
+                description: Example request for validating a Residence Document
+                value:
+                  documentType: ResidenceDocument
+                  documentNumber: 012345678
+                  birthDate: '1990-01-01'
+                  fullName: ANA MARIA PEREZ GONZALEZ
       responses:
         '200':
-          description: Government validation result.
+          description: "Responses:\n**MEX**:\n- statusCode: Integer. Possible values:\n    - OK (0, \"ok\"),\n    - VALIDATION_ERROR (1, \"validationError\"),\n    - INE_CONNECTION_ERROR (2, \"ineConnectionError\"),\n    - INE_INFRASTRUCTURE_ERROR (3, \"ineInfrastructureError\"),\n    - MODULE_NOT_SUPPORTED (4, \"moduleNotSupported\"),\n    - MISSING_DOCUMENT_ID (5, \"missingDocumentId\"),\n    - MISSING_SELFIE (6, \"missingSelfie\"),\n    - USER_NOT_FOUND (7, \"userNotFound\");\n    - USER_NOT_FOUND_IN_INE_DB (8, \"userNotFoundInIneDb\"),\n    - NOT_ENOUGH_DATA (9, \"notEnoughData\"),\n    - LIVENESS_FAIL (10, \"livenessFail\")\n    - INE_NOT_CURRENT (11, \"ineNotCurrent\")\n    - INE_REPORTED_LOST (12, \"ineReportedLost\")\n    - INE_REPORTED_STOLEN (13, \"ineReportedStolen\")\n    - INE_SIGNATURE_ERROR (14, \"ineSignaturError\")\n    - INE_NOT_VALID (15, \"ineNotValid\")\n    - PROVIDER_UNAVAILABLE (98, \"providerUnavailable\"). Also returned for an INE-side service degradation (codigoRespuesta=0 with similitud1=null): the face comparison never produced a score, so recognitionConfidence stays null — distinct from a real face mismatch. In that case errorDescription identifies the cause.\n    - COUNTRY_NOT_SUPPORTED (99, \"countryNotSupported\")\n    - PROCESSING_INE (-1, \"processingIne\"). It only applies for Listas Nominales (INE Scraping).\n    - PROCESSING (-4, \"processing\")\n    - CONNECTION_ERROR (17, \"connectionError\")\n    - INFRASTRUCTURE_ERROR (18, \"infrastructureError\")\n    - TRANSACTION_LIMIT_REACHED (205, \"transactionLimitReached\")\n- valid: Boolean. Flag stating if request processed successfully.\n- registralSituation: Structure with following fields:\n    - tipoSituacionRegistral: String. Possible values: [ VIGENTE, NO_VIGENTE, DATOS_NO_ENCONTRADOS ]\n    - tipoReporteRoboExtravio: String, optional. Possible values: [ null, REPORTE_DE_EXTRAVIO, REPORTE_DE_ROBO, REPORTE_DE_ROBO_TEMPORAL, REPORTE_DE_EXTRAVIO_TEMPORAL ]\n- governmentValidation: Structure with following fields:\n    - validationStatus: Structure with following fields:\n        - value: Look statusCode\n        - status: Look statusCode\n        - key:\n            - ok: when value OK\n            - error: when value VALIDATION_ERROR, INE_INFRASTRUCTURE_ERROR, USER_NOT_FOUND_IN_INE_DB, INE_NOT_CURRENT, INE_REPORTED_LOST, INE_REPORTED_STOLEN, USER_NOT_FOUND, TRANSACTION_LIMIT_REACHED\n            - unknown: otherwise\n    - ocrValidation: Array of structure with following fields:\n        - value: Possible values - true false empty\n        - status: Possible values - OK FAIL UNKNOWN\n        - key: Possible values - issueDate firstName maternalLastName paternalLastName ocr personalId electorsKey emissionNumber registrationDate\n    - ocrValidationOverall: Structure with following fields:\n        - value: Calculated value based on Ocr Validation between 0 and 100\n        - status: OK or FAIL based on calculation\n    - overall: Same as ocrValidationOverall\n- ocrData: Look at fetch-OCR\n- deviceInfo: Look at fetch-deviceInfo\n- ineTransactionId: String\n\n**COL**:\n- statusCode: 0 - OK, other not OK*\n- governmentValidation - consists of the following fields:\n    - validationStatus - following values:\n        - OK (0, \"ok\"),\n        - VALIDATION_ERROR (1, \"validationError\"),\n        - CONNECTION_ERROR (17, \"connectionError\"),\n        - USER_NOT_FOUND (7, \"userNotFound\"),\n        - NOT_ENOUGH_DATA (9, \"notEnoughData\")\n    - ocrValidation: Array of structure with following fields:\n        - value: Possible values - true false empty\n        - status: Possible values - OK FAIL UNKNOWN\n        - key: Possible values - firstName maternalLastName paternalLastName ocr birthDate gender\n- governmentValidationResponse (DEPRECATED):\n    - COL1:\n        \"governmentValidationResponse\": {\n            \"codError\": \"0\",\n            \"contract_id\": 111,\n            \"departamentoExpedicion\": \"ATLANTICO\",\n            \"descripcionEstado\": \"VIGENTE\",\n            \"estadoCedula\": \"0\",\n            \"fechaExpedicion\": \"31/12/1990\",\n            \"fechaHoraConsulta\": \"2025-03-12 20:32:29\",\n            \"municipioExpedicion\": \"BARRANQUILLA\",\n            \"nuip\": \"000000000\",\n            \"particula\": \"DE\",\n            \"primerApellido\": \"Perez\",\n            \"primerNombre\": \"Jose\",\n            \"segundoApellido\": \"Perez\",\n            \"segundoNombre\": \"Juan\"\n        }\n    - COL2:\n        \"governmentValidationResponse\": {\n            \"data\": {\n                \"anio_resolucion\": 0,\n                \"codigo_error_datos_cedula\": 0,\n                \"codigo_respuesta\": \"\",\n                \"departamento_expedicion\": \"ATLANTICO\",\n                \"descripcion_estado\": \"Vigente\",\n                \"estado_cedula\": 0,\n                \"fecha_expedicion\": \"Mon, 31 Dec 1990 00:00:00 GMT\",\n                \"informacion_adicional\": \"\",\n                \"municipio_expedicion\": \"BARRANQUILLA\",\n                \"nombre_completo\": \"Jose Juan Perez Perez\",\n                \"nuip\": 000000000,\n                \"numero_resolucion\": 0,\n                \"particula\": \"DE\",\n                \"primer_apellido\": \"Perez\",\n                \"primer_nombre\": \"Jose\",\n                \"segundo_apellido\": \"Perez\",\n                \"segundo_nombre\": \"Juan\"\n            }\n        }\n\n- ocrValidationOverall:\n    - ocrValidationOverall: 100 - 15 each fail or unknown ocrValidation\n    - status: ocrValidationOverall > 55 => OK, else FAIL\n- overall: same as ocrValidationOverall\n\n**ARG**:\n- statusCode: Integer. Value 0 means verification Ok.\n- governmentValidation - consists of following fieds:\n    - validationStatus - following values:\n        - OK (0, \"ok\")\n        - FACE_COMPARISON_FAILED (207, \"faceComparisonFailed\")\n        - PROCESSING (-4, \"processing\")\n        - PROVIDER_NOT_CONFIGURED (96, \"providerNotConfigured\")\n        - PROVIDER_UNAVAILABLE (98, \"providerUnavailable\")\n        - USER_NOT_FOUND (7, \"userNotFound\")\n        - VALIDATION_ERROR (1, \"validationError\")\n        - NO_INFORMATION (204, \"noInformation\")\n\n**PER**:\n- statusCode: 0 - OK, other not OK\n- governmentValidation - consists of following fieds:\n    - validationStatus - following values:\n        - OK (0, \"ok\"),\n        - VALIDATION_ERROR (1, \"validationError\"),\n        - INE_CONNECTION_ERROR (2, \"ineConnectionError\"),\n        - USER_NOT_FOUND (7, \"userNotFound\"),\n        - NOT_ENOUGH_DATA (9, \"notEnoughData\")\n- ocrValidation: Array of structure with following fields:\n    - value: Possible values - true false empty\n    - status: Possible values - OK FAIL UNKNOWN\n    - key: Possible values - documentNumber firstName maternalLastName paternalLastName ocr birthDate gender\n- governmentValidationResponse: Response received from external source (see example)\n- ocrValidationOverall:\n    - ocrValidationOverall: 100 - 15*each fail or unknown ocrValidation\n    - status: ocrValidationOverall > 55 => OK, else FAIL\n- overall: same as ocrValidationOverall\n\n**CHL**:\n- statusCode: 0 - OK, other not OK\n- governmentValidation - consists of following fieds:\n    - validationStatus - following values:\n        - OK (0, \"ok\"),\n        - VALIDATION_ERROR (1, \"validationError\"),\n        - INE_CONNECTION_ERROR (2, \"ineConnectionError\"),\n        - USER_NOT_FOUND (7, \"userNotFound\"),\n        - NOT_ENOUGH_DATA (9, \"notEnoughData\")\n    - ocrValidation: Array of structure with following fields:\n        - value: Possible values - true false empty\n        - status: Possible values - OK FAIL UNKNOWN\n        - key: Possible values - documentNumber firstName maternalLastName paternalLastName ocr birthDate gender\n    - governmentValidationResponse: Response received from external source (see example)\n    - ocrValidationOverall:\n        - ocrValidationOverall: 100 - 15*each fail or unknown ocrValidation\n        - status: ocrValidationOverall > 55 => OK, else FAIL\n    - overall: same as ocrValidationOverall\n\n**AUS**:\n- statusCode: 0 - OK, other not OK\n- valid: Boolean. Flag stating if request processed successfully.\n- governmentValidation - consists of following fields:\n    - validationStatus - following values:\n        - OK (0, \"ok\"),\n        - USER_NOT_FOUND (7, \"userNotFound\"),\n        - NOT_ENOUGH_DATA (9, \"notEnoughData\"),\n        - CONNECTION_ERROR (17, \"connectionError\")\n    - ocrValidation: Array of structure with following fields:\n        - value: Possible values - true false\n        - status: Possible values - OK FAIL\n        - key: Possible values - documentNumber firstName paternalLastName birthDate expirationDate issueDate\n    - ocrValidationOverall:\n        - value: Calculated value between 0 and 100\n        - status: OK or FAIL based on calculation\n    - overall: Same as ocrValidationOverall\n- errorDescription: String. Present only in error responses with values like \"userNotFound\", \"notEnoughData\", \"connectionError\"\n\n**BRA**:\n- statusCode: 0 - OK, other not OK. Always mirrors validationStatus and is independent of the overall score.\n- valid: Boolean. True when validationStatus is OK (statusCode 0), i.e. CPF found. Note this tracks\n    validationStatus, NOT the overall score: an OCR-field mismatch or a SERPRO_FACE face mismatch\n    can leave valid=true while overall is FAIL.\n- governmentValidation - consists of following fields:\n    - validationStatus - following values:\n        - OK (0, \"ok\"): CPF found, data and/or face matched\n        - VALIDATION_ERROR (1, \"validationError\")\n        - MODULE_NOT_SUPPORTED (4, \"moduleNotSupported\")\n        - MISSING_SELFIE (6, \"missingSelfie\"): required for SERPRO_FACE\n        - USER_NOT_FOUND (7, \"userNotFound\"): CPF not found, or face not matched\n        - CPF_NUMBER_INVALID_OR_MISSING (16, \"cpfNumberInvalidOrMissing\")\n        - CONNECTION_ERROR (17, \"connectionError\")\n        - PROVIDER_NOT_CONFIGURED (96, \"providerNotConfigured\")\n        - PROVIDER_UNAVAILABLE (98, \"providerUnavailable\")\n        - GEOGRAPHIC_REGION_NOT_SUPPORTED (99, \"geographicRegionNotSupported\")\n    - recognitionConfidence: Present when government face validation is attempted (e.g. SERPRO_FACE).\n        - value: \"100.0\" when face matched, \"0.0\" when no match or face not in SERPRO DB\n        - status: OK when matched, FAIL otherwise\n    - ocrValidation: Array of structure with following fields (present for both SERPRO and SERPRO_FACE when validationStatus is OK):\n        - value: Possible values - true false\n        - status: Possible values - OK FAIL UNKNOWN\n        - key: Possible values - documentNumber fullName birthDate\n        Note: fullName is derived from firstName, paternalLastName, and maternalLastName,\n        which all map to the same SERPRO nome field and always share the same status.\n    - ocrValidationOverall:\n        - value: Calculated value between 0 and 100\n        - status: OK or FAIL based on calculation\n    - overall: Equals ocrValidationOverall for SERPRO. For SERPRO_FACE the face recognitionConfidence\n        can override it (e.g. face not in DB / not matched drives overall to 0.0 FAIL even when ocrValidationOverall is OK).\n- errorDescription: String. Present only in error responses\n"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProcessResponse'
+                $ref: '#/components/schemas/GovermentValidationResponseObject'
+              examples:
+                Default response:
+                  description: Default response
+                  value:
+                    valid: true
+                    statusCode: 0
+                    registralSituation:
+                      tipoSituacionRegistral: string
+                      tipoReporteRoboExtravio: string
+                    governmentValidation:
+                      recognitionConfidence:
+                        value: string
+                        status: OK
+                      validationStatus:
+                        value: string
+                        status: OK
+                        key: string
+                      ocrValidation:
+                      - value: string
+                        status: OK
+                        key: string
+                      ocrValidationOverall:
+                        value: string
+                        status: OK
+                      overall:
+                        value: string
+                        status: OK
+                    curpCecobanValidation:
+                      returnCode: string
+                      description: string
+                      uniquePopulationRegistrationKeyMatch: true
+                    customFields:
+                      additionalProp: string
+                    ocrData:
+                      name:
+                        fullName: string
+                        fullNameNativeScript: string
+                        machineReadableFullName: string
+                        firstName: string
+                        middleName: string
+                        givenName: string
+                        givenNameMrz: string
+                        nameSuffix: string
+                        paternalLastName: string
+                        maternalLastName: string
+                        lastNameMrz: string
+                      address: string
+                      addressFields:
+                        street: string
+                        colony: string
+                        postalCode: string
+                        city: string
+                        state: string
+                        stateName: string
+                        district: string
+                        stateCode: string
+                        addressCountryCode: string
+                        label: string
+                      fullAddress: true
+                      invalidAddress: true
+                      checkedAddress: string
+                      checkedAddressBean:
+                        street: string
+                        colony: string
+                        postalCode: string
+                        city: string
+                        state: string
+                        stateName: string
+                        district: string
+                        stateCode: string
+                        addressCountryCode: string
+                        label: string
+                      exteriorNumber: string
+                      interiorNumber: string
+                      addressFromStatement: string
+                      addressFieldsFromStatement:
+                        street: string
+                        colony: string
+                        postalCode: string
+                        city: string
+                        state: string
+                        stateName: string
+                        district: string
+                        stateCode: string
+                        addressCountryCode: string
+                        label: string
+                      invalidAddressFromStatement: true
+                      addressStatementEmissionDate: 0
+                      documentType: a1
+                      addressStatementTimestamps:
+                      - dateType: string
+                        addressStatementTimestamp: 0
+                      poaName: string
+                      typeOfId: string
+                      documentFrontSubtype: string
+                      documentBackSubtype: string
+                      birthDate: 0
+                      gender: M
+                      claveDeElector: string
+                      curp: string
+                      numeroEmisionCredencial: string
+                      cic: string
+                      ocr: string
+                      documentNumber: string
+                      documentNumberSource: FORM
+                      personalNumber: string
+                      nationalNumber: string
+                      refNumber: string
+                      taxIdNumber: string
+                      nue: string
+                      externalId: string
+                      issuedAt: string
+                      expireAt: string
+                      expirationDate: 0
+                      issueDate: 0
+                      registrationDate: 0
+                      dlClassDetails:
+                      - dlClass: string
+                        validFromDate: 0
+                        validToDate: 0
+                        additionalCodes: string
+                      issuingCountry: string
+                      issuingState: string
+                      birthPlace: string
+                      issuingAuthority: string
+                      height: string
+                      weight: string
+                      eyeColor: string
+                      hairColor: string
+                      bloodType: string
+                      maritalStatus: string
+                      nationality: string
+                      race: string
+                      nationalityMrz: string
+                      nationalityAlpha3: string
+                      governmentComparisonResults:
+                        paternalLastNameValid: true
+                        maternalLastNameValid: true
+                        firstNameValid: true
+                        curpValid: true
+                        ocrValid: true
+                        claveDeElectorValid: true
+                        numeroEmisionCredencialValid: true
+                        registrationDateValid: true
+                        issueDateValid: true
+                      notExtracted: 0
+                      notExtractedDetails:
+                      - string
+                      classes: string
+                      cond: string
+                      mentions: string
+                      restrictions: string
+                      mrz1: string
+                      mrz2: string
+                      mrz3: string
+                      fullNameMrz: string
+                      documentNumberCheckDigit: string
+                      dateOfBirthCheckDigit: string
+                      expirationDateCheckDigit: string
+                      barcodeRawData: string
+                      fathersName: string
+                      mothersName: string
+                      spouseName: string
+                      federalRevenueNumber: string
+                      originDocumentId: string
+                      driversLicenseCategory: string
+                      controlNumber: string
+                      renach: string
+                      additionalAttrs:
+                      - DOCUMENTO_INFANTIL
+                      ocrDataConfidence:
+                        birthDateConfidence: 0
+                        nameConfidence: 0
+                        nameNativeScriptConfidence: 0
+                        givenNameConfidence: 0
+                        firstNameConfidence: 0
+                        middleNameConfidence: 0
+                        nameSuffixConfidence: 0
+                        mothersSurnameConfidence: 0
+                        fathersSurnameConfidence: 0
+                        nickNameConfidence: 0
+                        fullNameMrzConfidence: 0
+                        mothersNameConfidence: 0
+                        fathersNameConfidence: 0
+                        spouseNameConfidence: 0
+                        addressConfidence: 0
+                        streetConfidence: 0
+                        colonyConfidence: 0
+                        postalCodeConfidence: 0
+                        cityConfidence: 0
+                        stateConfidence: 0
+                        districtConfidence: 0
+                        stateCodeConfidence: 0
+                        countryCodeConfidence: 0
+                        genderConfidence: 0
+                        issueDateConfidence: 0
+                        expirationDateConfidence: 0
+                        issuedAtConfidence: 0
+                        expireAtConfidence: 0
+                        issuingAuthorityConfidence: 0
+                        mrz1Confidence: 0
+                        mrz2Confidence: 0
+                        mrz3Confidence: 0
+                        mrzFullConfidence: 0
+                        documentNumberConfidence: 0
+                        backNumberConfidence: 0
+                        personalNumberConfidence: 0
+                        nationalNumberConfidence: 0
+                        claveDeElectorConfidence: 0
+                        numeroEmisionCredencialConfidence: 0
+                        curpConfidence: 0
+                        nueConfidence: 0
+                        registrationDateConfidence: 0
+                        heightConfidence: 0
+                        birthPlaceConfidence: 0
+                        bloodTypeConfidence: 0
+                        eyeColorConfidence: 0
+                        classesConfidence: 0
+                        condConfidence: 0
+                        mentionsConfidence: 0
+                        refNumberConfidence: 0
+                        weightConfidence: 0
+                        hairConfidence: 0
+                        restrictionsConfidence: 0
+                        nationalityConfidence: 0
+                        nationalityMrzConfidence: 0
+                        maritalStatusConfidence: 0
+                        raceConfidence: 0
+                        taxIdNumberConfidence: 0
+                        jurisdictionCodeConfidence: 0
+                      additionalDocumentAttempts:
+                      - status: SUCCESS
+                        attemptTimestamp: 0
+                        documentType: string
+                        firstName: string
+                        lastName: string
+                        countryOfOrigin: string
+                        dateOfBirth: 0
+                        expiryDate: 0
+                        issueDate: 0
+                        gender: MALE
+                        nationality: string
+                        placeOfIssue: string
+                        referenceNumber: string
+                        residentialAddressLines:
+                        - string
+                      - status: SUCCESS
+                        attemptTimestamp: 0
+                        documentType: string
+                        fullName: string
+                        address: string
+                        accountNumber: string
+                        bankName: string
+                        documentDate: string
+                      - status: SUCCESS
+                        attemptTimestamp: 0
+                        documentType: string
+                        fullName: string
+                        curpNumber: string
+                        registrationDate: 0
+                        registrationEntity: string
+                        idNumber: string
+                      - status: SUCCESS
+                        attemptTimestamp: 0
+                        documentType: string
+                        fullName: string
+                        address: string
+                        issueDate: 0
+                      - status: SUCCESS
+                        attemptTimestamp: 0
+                        documentType: string
+                        rfcNumber: string
+                        corporateName: string
+                        fullName: string
+                        declarationType: string
+                        fiscalYear: 0
+                        submissionDate: 0
+                        hasIncomeStatement: true
+                        hasFinancialPositionStatement: true
+                        totalIncome: 0
+                        capitalFromContributions: 0
+                        capitalFromCapitalization: 0
+                        accumulatedLosses: 0
+                        currentYearLosses: 0
+                        accumulatedProfits: 0
+                        currentYearProfits: 0
+                        amountToPay: 0
+                        amountDue: 0
+                        operationNumber: string
+                      - status: SUCCESS
+                        attemptTimestamp: 0
+                        documentType: string
+                        issueDate: 0
+                        rfcNumber: string
+                        corporateName: string
+                        fullName: string
+                        registryStatus: string
+                        addressComponents:
+                          street: string
+                          colony: string
+                          postalCode: string
+                          city: string
+                          state: string
+                          stateName: string
+                          district: string
+                          stateCode: string
+                          addressCountryCode: string
+                          label: string
+                        economicActivities:
+                        - title: string
+                          percentage: 0
+                          startDate: 0
+                          endDate: 0
+                        regimes:
+                        - title: string
+                          startDate: 0
+                          endDate: 0
+                        barcodes:
+                        - format: string
+                          contentType: string
+                          text: string
+                          error: string
+                      - status: SUCCESS
+                        attemptTimestamp: 0
+                        documentType: string
+                        name: string
+                        address: string
+                        timestamp: 0
+                        addressStatementTimestamps:
+                        - dateType: string
+                          addressStatementTimestamp: 0
+                        issuer: a1
+                        addressComponents:
+                          street: string
+                          colony: string
+                          postalCode: string
+                          city: string
+                          state: string
+                          stateName: string
+                          district: string
+                          stateCode: string
+                          addressCountryCode: string
+                          label: string
+                      - status: SUCCESS
+                        attemptTimestamp: 0
+                        documentType: string
+                        firstNames: string
+                        lastName: string
+                        gender: MALE
+                        countryOfBirth: string
+                        dateOfBirth: 0
+                        nationality: string
+                        maritalStatus: string
+                        issueDate: 0
+                        expiryDate: 0
+                        idNumber: string
+                      - status: SUCCESS
+                        attemptTimestamp: 0
+                        documentType: string
+                        fullName: string
+                        gender: MALE
+                        dateOfBirth: 0
+                        issueDate: 0
+                        countryOfBirth: string
+                        nationality: string
+                        maritalStatus: string
+                        documentNumber: string
+                      - status: SUCCESS
+                        attemptTimestamp: 0
+                        documentType: string
+                        fullName: string
+                        rfcNumber: string
+                        idCIF: string
+                      - status: SUCCESS
+                        attemptTimestamp: 0
+                        documentType: string
+                      - status: SUCCESS
+                        attemptTimestamp: 0
+                        documentType: string
+                        fullName: string
+                        address: string
+                        addressList:
+                        - string
+                        registrationNumber: string
+                        v5cNumber: string
+                        referenceNumber: string
+                    deviceInfo:
+                      ipAddress: string
+                      hash: string
+                      deviceType: IOS
+                      osVersion: string
+                      deviceModel: string
+                      sdkVersion: string
+                      browser: string
+                      hasLiedBrowser: true
+                      longitude: 0
+                      latitude: 0
+                      location: string
+                      getmAdminArea: CA
+                      getmSubAdminArea: Santa Clara
+                      getmLocality: string
+                      getmSubLocality: Mission District
+                      getmThoroughfare: string
+                      getmSubThoroughfare: string
+                      getmPostalCode: 95014
+                      getmCountryCode: US
+                      getmCountryName: United States
+                      hostingApp: Onboarding
+                    ineTransactionId: string
+                    errorDescription: string
+                    fallbackCalled: true
+                AUS_Passport_Success:
+                  summary: Australia Validation - Success
+                  description: Example of successful government validation for an Australian passport
+                  value:
+                    valid: true
+                    statusCode: 0
+                    governmentValidation:
+                      validationStatus:
+                        value: '0'
+                        status: OK
+                        key: ok
+                      ocrValidation:
+                      - value: 'true'
+                        status: OK
+                        key: documentNumber
+                      - value: 'true'
+                        status: OK
+                        key: paternalLastName
+                      - value: 'true'
+                        status: OK
+                        key: firstName
+                      - value: 'true'
+                        status: OK
+                        key: birthDate
+                      - value: 'true'
+                        status: OK
+                        key: expirationDate
+                      - value: 'true'
+                        status: OK
+                        key: issueDate
+                      ocrValidationOverall:
+                        value: '100.0'
+                        status: OK
+                      overall:
+                        value: '100.0'
+                        status: OK
+                AUS_UserNotFound:
+                  summary: Australia Validation - User Not Found (NO MATCH)
+                  description: Example of user not found during Australian government validation
+                  value:
+                    valid: false
+                    statusCode: 7
+                    governmentValidation:
+                      validationStatus:
+                        value: '7'
+                        status: FAIL
+                        key: userNotFound
+                      overall:
+                        status: FAIL
+                    errorDescription: userNotFound
+                AUS_ConnectionError:
+                  summary: Australia Validation - Connection Error
+                  description: Example of connection error during Australian government validation
+                  value:
+                    valid: false
+                    statusCode: 7
+                    governmentValidation:
+                      validationStatus:
+                        value: '17'
+                        status: CONNECTION_ERROR
+                        key: connectionError
+                      overall:
+                        status: FAIL
+                    errorDescription: connectionError
+                AUS_NotEnoughData:
+                  summary: Australia Validation - Incomplete Data
+                  description: Example of incomplete data during Australian government validation
+                  value:
+                    valid: false
+                    statusCode: 7
+                    governmentValidation:
+                      validationStatus:
+                        value: '9'
+                        status: NOT_ENOUGH_DATA
+                        key: notEnoughData
+                      overall:
+                        status: FAIL
+                    errorDescription: notEnoughData
+                Brazil Validation - Success:
+                  summary: SERPRO data-only - all OCR fields matched
+                  description: Brazil Validation - Success
+                  value:
+                    valid: true
+                    statusCode: 0
+                    governmentValidation:
+                      validationStatus:
+                        value: '0'
+                        status: OK
+                        key: ok
+                      ocrValidation:
+                      - value: 'true'
+                        status: OK
+                        key: documentNumber
+                      - value: 'true'
+                        status: OK
+                        key: fullName
+                      - value: 'true'
+                        status: OK
+                        key: birthDate
+                      ocrValidationOverall:
+                        value: '100.0'
+                        status: OK
+                      overall:
+                        value: '100.0'
+                        status: OK
+                Brazil Validation - Partial match:
+                  summary: SERPRO data-only - CPF found (validationStatus OK, valid=true) but an OCR field mismatched, so overall FAILs
+                  description: Brazil Validation - Partial match
+                  value:
+                    valid: true
+                    statusCode: 0
+                    governmentValidation:
+                      validationStatus:
+                        value: '0'
+                        status: OK
+                        key: ok
+                      ocrValidation:
+                      - value: 'true'
+                        status: OK
+                        key: documentNumber
+                      - value: 'true'
+                        status: OK
+                        key: fullName
+                      - value: 'false'
+                        status: FAIL
+                        key: birthDate
+                      ocrValidationOverall:
+                        value: '55.0'
+                        status: FAIL
+                      overall:
+                        value: '55.0'
+                        status: FAIL
+                Brazil Validation - No match:
+                  description: Brazil Validation - No match
+                  value:
+                    valid: false
+                    statusCode: 7
+                    governmentValidation:
+                      validationStatus:
+                        value: '7'
+                        status: FAIL
+                        key: userNotFound
+                      overall:
+                        value: '0.0'
+                        status: FAIL
+                    errorDescription: userNotFound
+                Brazil Validation - Invalid CPF:
+                  description: Brazil Validation - Invalid CPF
+                  value:
+                    valid: false
+                    statusCode: 16
+                    governmentValidation:
+                      validationStatus:
+                        value: '16'
+                        status: UNKNOWN
+                        key: cpfNumberInvalidOrMissing
+                      overall:
+                        status: FAIL
+                    errorDescription: cpfNumberInvalidOrMissing
+                Brazil SERPRO_FACE - Face matched:
+                  summary: SERPRO_FACE - Face+data validation success
+                  description: Brazil SERPRO_FACE - Face matched
+                  value:
+                    valid: true
+                    statusCode: 0
+                    governmentValidation:
+                      validationStatus:
+                        value: '0'
+                        status: OK
+                        key: ok
+                      ocrValidation:
+                      - value: 'true'
+                        status: OK
+                        key: documentNumber
+                      - value: 'true'
+                        status: OK
+                        key: fullName
+                      - value: 'true'
+                        status: OK
+                        key: birthDate
+                      ocrValidationOverall:
+                        value: '100.0'
+                        status: OK
+                      recognitionConfidence:
+                        value: '100.0'
+                        status: OK
+                      overall:
+                        value: '100.0'
+                        status: OK
+                Brazil SERPRO_FACE - Face not matched:
+                  summary: SERPRO_FACE - Face not matched or CPF not found
+                  description: Brazil SERPRO_FACE - Face not matched
+                  value:
+                    valid: false
+                    statusCode: 7
+                    governmentValidation:
+                      validationStatus:
+                        value: '7'
+                        status: FAIL
+                        key: userNotFound
+                      overall:
+                        value: '0.0'
+                        status: FAIL
+                    errorDescription: userNotFound
+                Brazil SERPRO_FACE - Face not in DB:
+                  summary: 'SERPRO_FACE - Face not in SERPRO DB (non-DriversLicense): data matches so validationStatus OK and valid=true, but recognitionConfidence FAILs and overrides overall to FAIL'
+                  description: Brazil SERPRO_FACE - Face not in DB
+                  value:
+                    valid: true
+                    statusCode: 0
+                    governmentValidation:
+                      validationStatus:
+                        value: '0'
+                        status: OK
+                        key: ok
+                      ocrValidation:
+                      - value: 'true'
+                        status: OK
+                        key: documentNumber
+                      - value: 'true'
+                        status: OK
+                        key: fullName
+                      - value: 'true'
+                        status: OK
+                        key: birthDate
+                      ocrValidationOverall:
+                        value: '100.0'
+                        status: OK
+                      recognitionConfidence:
+                        value: '0.0'
+                        status: FAIL
+                      overall:
+                        value: '0.0'
+                        status: FAIL
+                Brazil SERPRO_FACE - Missing selfie:
+                  summary: SERPRO_FACE - selfie required but not provided
+                  description: Brazil SERPRO_FACE - Missing selfie
+                  value:
+                    valid: false
+                    statusCode: 6
+                    governmentValidation:
+                      validationStatus:
+                        value: '6'
+                        status: UNKNOWN
+                        key: missingSelfie
+                      overall:
+                        status: FAIL
+                    errorDescription: missingSelfie
+                COL_Cedula_Success:
+                  summary: Colombia ANI Compliance Validation - Success
+                  description: Example of successful government validation
+                  value:
+                    valid: true
+                    statusCode: 0
+                    governmentValidation:
+                      validationStatus:
+                        value: '0'
+                        status: OK
+                        key: ok
+                      ocrValidation:
+                      - value: 'true'
+                        status: OK
+                        key: documentNumber
+                      - value: 'true'
+                        status: OK
+                        key: firstName
+                      - value: 'true'
+                        status: OK
+                        key: paternalLastName
+                      - value: 'true'
+                        status: OK
+                        key: maternalLastName
+                      - value: 'true'
+                        status: OK
+                        key: issueDate
+                      - value: 'true'
+                        status: OK
+                        key: ocr
+                      - value: 'true'
+                        status: OK
+                        key: middleName
+                      ocrValidationOverall:
+                        value: '100.0'
+                        status: OK
+                      overall:
+                        value: '100.0'
+                        status: OK
+                COL_Cedula_Success_Legacy:
+                  summary: Colombia BD ANI Validation - Success
+                  description: Example of successful government validation
+                  value:
+                    valid: true
+                    statusCode: 0
+                    governmentValidation:
+                      validationStatus:
+                        value: '0'
+                        status: OK
+                        key: ok
+                      ocrValidation:
+                      - value: 'true'
+                        status: OK
+                        key: documentNumber
+                      - value: 'true'
+                        status: OK
+                        key: firstName
+                      - value: 'true'
+                        status: OK
+                        key: paternalLastName
+                      - value: 'true'
+                        status: OK
+                        key: maternalLastName
+                      - value: 'true'
+                        status: OK
+                        key: issueDate
+                      - value: 'true'
+                        status: OK
+                        key: ocr
+                      governmentValidationResponse:
+                        codError: '0'
+                        contract_id: 133
+                        departamentoExpedicion: ATLANTICO
+                        descripcionEstado: VIGENTE
+                        estadoCedula: '0'
+                        fechaExpedicion: 15/08/1995
+                        fechaHoraConsulta: '2025-07-21 19:20:08'
+                        municipioExpedicion: BARRANQUILLA
+                        nuip: '99999999'
+                        particula: ' '
+                        primerApellido: PEREZ
+                        primerNombre: JUAN
+                        segundoApellido: GOMEZ
+                        segundoNombre: CARLOS
+                      ocrValidationOverall:
+                        value: '100.0'
+                        status: OK
+                      overall:
+                        value: '100.0'
+                        status: OK
+                Peru_ResidenceDocument_Success:
+                  summary: Peru ResidenceDocument - Success
+                  description: Example of successful government validation
+                  value:
+                    valid: true
+                    statusCode: 0
+                    governmentValidation:
+                      validationStatus:
+                        value: '0'
+                        status: OK
+                        key: ok
+                      ocrValidation:
+                      - value: 'true'
+                        status: OK
+                        key: documentNumber
+                      - value: 'true'
+                        status: OK
+                        key: firstName
+                      - value: 'true'
+                        status: OK
+                        key: paternalLastName
+                      - value: 'true'
+                        status: OK
+                        key: maternalLastName
+                      - value: 'true'
+                        status: OK
+                        key: birthDate
+                      governmentValidationResponse:
+                        code: 1
+                        message: OK
+                        data:
+                          nombres_apellidos: PEREZ GONZALEZ, ANA MARIA
+                          nacionalidad: VENEZOLANA
+                          fecha_nacimiento: 21-11-1992
+                          calidad_migratoria: RESIDENTE
+                          vencim_residencia: 31/12/2030
+                          caducidad_carne: 01/01/2035
+                          emision_ultimo: 01/01/2025
+                      ocrValidationOverall:
+                        value: '100.0'
+                        status: OK
+                      overall:
+                        value: '100.0'
+                        status: OK
+                Peru_ResidenceDocument_NoMatch:
+                  summary: Peru ResidenceDocument - No Match
+                  description: Example of no match government validation
+                  value:
+                    valid: false
+                    statusCode: 7
+                    governmentValidation:
+                      validationStatus:
+                        value: '7'
+                        status: FAIL
+                        key: userNotFound
+                      governmentValidationResponse:
+                        code: 0
+                        message: No se encontró datos para la búsqueda.
+                      overall:
+                        status: FAIL
+                    errorDescription: userNotFound
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/process-government-validation/
+      x-incode-markdown: https://developer.incode.com/api-reference/process-government-validation.md
 components:
   schemas:
-    GovernmentValidationRequest:
+    ExceptionResponse:
       type: object
       properties:
-        fallbackEnabled:
-          type: boolean
-          default: false
-        scrapingMethod:
-          type: boolean
-          default: false
-      additionalProperties: true
-    ProcessResponse:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    FingerprintsData:
       type: object
       properties:
-        success:
+        type:
+          type: integer
+          format: int32
+        fingerprints:
+          type: array
+          items:
+            $ref: '#/components/schemas/Fingerprint'
+      required:
+      - fingerprints
+    ResultBean:
+      type: object
+      properties:
+        value:
+          type: string
+          maximum: 100
+          minimum: 0
+        status:
+          type: string
+          enum:
+          - OK
+          - WARN
+          - FAIL
+          - UNKNOWN
+          - MANUAL
+          - MANUAL_OK
+          - MANUAL_FAIL
+          - MANUAL_PENDING
+    AdditionalDocumentAttemptDto:
+      type: object
+      description: Base definition for additional document attempts. This definition is used to represent the attempt to submit an additional document during the onboarding process. It includes common fields such as document type, status, attempt timestamp, and a list of image URLs.
+      discriminator:
+        propertyName: documentType
+        mapping:
+          ASYLUM_SEEKER: '#/components/schemas/AsylumSeekerDocumentAttemptDto'
+          BANK_STATEMENT: '#/components/schemas/BankStatementDocumentAttemptDto'
+          COLOMBIAN_BIRTH_CERTIFICATE: '#/components/schemas/ColombianBirthCertificateDocumentAttemptDto'
+          CURP: '#/components/schemas/CurpDocumentAttemptDto'
+          GENERIC: '#/components/schemas/GenericDocumentAttemptDto'
+          MEXICAN_TAX_DECLARATION: '#/components/schemas/MexicanTaxDeclarationDocumentAttemptDto'
+          MEXICAN_TAX_STATUS: '#/components/schemas/MexicanTaxStatusDocumentAttemptDto'
+          REFUGEE_ID: '#/components/schemas/RefugeeIdDocumentAttemptDto'
+          REFUGEE_STATUS: '#/components/schemas/RefugeeStatusDocumentAttemptDto'
+          POA: '#/components/schemas/PoaDocumentAttemptDto'
+          RFC: '#/components/schemas/RfcDocumentAttemptDto'
+          V5C_LOGBOOK: '#/components/schemas/V5CLogbookAttemptDto'
+          CAR_INVOICE: '#/components/schemas/CarInvoiceAttemptDto'
+          CIRCULATION_CARD: '#/components/schemas/CirculationCardAttemptDto'
+          INE_MEX: '#/components/schemas/IneMexDocumentAttemptDto'
+          BANK_CHECK: '#/components/schemas/BankCheckDocumentAttemptDto'
+          LETTER_OF_AUTHORIZATION: '#/components/schemas/LetterOfAuthorizationDocumentAttemptDto'
+          FINANCE_SETTLEMENT: '#/components/schemas/FinanceSettlementDocumentAttemptDto'
+          COLOMBIA_RUT_FORM: '#/components/schemas/ColombiaRutFormDocumentAttemptDto'
+          W8_BEN: '#/components/schemas/W8BenDocumentAttemptDto'
+          W8_BEN_E: '#/components/schemas/W8BenEDocumentAttemptDto'
+          UNKNOWN: '#/components/schemas/UnknownDocumentAttemptDto'
+      properties:
+        status:
+          type: string
+          enum:
+          - SUCCESS
+          - VALIDATION_ERROR
+          - FAIL
+        attemptTimestamp:
+          type: integer
+          format: int64
+        imagesUrl:
+          type: array
+          items:
+            type: string
+        attemptType:
+          type: string
+          enum:
+          - POA
+          - DOCUMENT_CAPTURE
+        antiSpoofResult:
+          $ref: '#/components/schemas/PoaAntiSpoofResult'
+        documentType:
+          type: string
+      required:
+      - documentType
+    OcrDataConfidence:
+      type: object
+      description: Structure containing ocr reliability confidence for each extracted ocr field. Confidence values are Floats between 0 and 1.
+      properties:
+        birthDateConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nameNativeScriptConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        firstNameNativeScriptConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        paternalLastNameNativeScriptConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        maternalLastNameNativeScriptConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        givenNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        firstNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        middleNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nameSuffixConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mothersSurnameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        fathersSurnameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nickNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        fullNameMrzConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mothersNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        fathersNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mothersIdNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        fathersIdNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        spouseNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        birthNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        addressConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        streetConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        colonyConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        postalCodeConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        cityConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        stateConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        districtConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        stateCodeConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        countryCodeConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        genderConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        issueDateConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        expirationDateConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        issuedAtConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        expireAtConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        issuingAuthorityConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mrz1Confidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mrz2Confidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mrz3Confidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mrzFullConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        documentNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        backNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        personalNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nationalNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        claveDeElectorConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        numeroEmisionCredencialConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        curpConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nueConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        registrationDateConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        heightConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        birthPlaceConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        bloodTypeConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        eyeColorConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        classesConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        condConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mentionsConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        refNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        weightConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        hairConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        restrictionsConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nationalityConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nationalityMrzConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nationalityAlpha3Confidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        maritalStatusConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        raceConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        taxIdNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        jurisdictionCodeConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+    Detail:
+      type: object
+      properties:
+        kind:
+          type: string
+        error:
+          type: string
+        loc:
+          type: string
+        explanation:
+          type: string
+    Fingerprint:
+      type: object
+      properties:
+        index:
+          type: integer
+          format: int32
+          maximum: 10
+        base64Fingerprint:
+          type: string
+          minLength: 1
+        fingerprintMetadata:
+          $ref: '#/components/schemas/FingerprintMetadata'
+    PoaAntiSpoofResult:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - PASS
+          - FAIL
+          - NOT_EXECUTED
+        kinds:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+        confidence:
+          type: number
+          format: float
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/Detail'
+    AddressBean:
+      type: object
+      properties:
+        street:
+          type: string
+          description: Street line in the way it is read from address string.
+        streetName:
+          type: string
+          description: Street name without exterior and interior numbers.
+        colony:
+          type: string
+          description: Colony line the way it is read from address string. (Not applicable for all countries)
+        postalCode:
+          type: string
+          description: Postal code in the way it is read from address string.
+        city:
+          type: string
+          description: City in the way it is read from address string.
+        state:
+          type: string
+          description: State in the way it is read from address string.
+        stateName:
+          type: string
+          description: Full StateName.
+        district:
+          type: string
+          description: District in the way it is read from address string.
+        stateCode:
+          type: string
+          description: State code if applicable.
+        addressCountryCode:
+          type: string
+          description: Address country code if applicable.
+        label:
+          type: string
+          description: Full address label.
+        exteriorNumber:
+          type: string
+          description: Exterior street number.
+        interiorNumber:
+          type: string
+          description: Interior street number.
+        addressLine1:
+          type: string
+          description: The primary line in the address that contains the most essential details for locating a place.
+        streetType:
+          type: string
+          description: Street type
+    RegistralSituation:
+      type: object
+      properties:
+        tipoSituacionRegistral:
+          type: string
+        tipoReporteRoboExtravio:
+          type: string
+    CurpCecobanValidation:
+      type: object
+      properties:
+        returnCode:
+          type: string
+        description:
+          type: string
+        uniquePopulationRegistrationKeyMatch:
           type: boolean
-      additionalProperties: true
+    DeviceInfoResponse:
+      type: object
+      properties:
+        ipAddress:
+          type: string
+          description: IP address of the device from which onboarding is being executed.
+          maxLength: 15
+        hash:
+          type: string
+          description: 'Hash is generated out of data specific to user device and browser: userAgent, webdriver, language, colorDepth, deviceMemory,
+
+            hardwareConcurrency, screenResolution, availableScreenResolution, timezoneOffset, timezone, sessionStorage, localStorage,
+
+            indexedDb, cpuClass, platform, plugins, canvas, webgl, webglVendorAndRenderer, adBlock, hasLiedLanguages, hasLiedResolution,
+
+            hasLiedOs, hasLiedBrowser, touchSupport, fonts, audio.
+
+            '
+          maxLength: 64
+        deviceType:
+          type: string
+          description: Device type
+          enum:
+          - IOS
+          - ANDROID
+          - WEBAPP
+        osVersion:
+          type: string
+        deviceModel:
+          type: string
+        sdkVersion:
+          type: string
+        browser:
+          type: string
+        hasLiedBrowser:
+          type: boolean
+        longitude:
+          type: number
+          format: float
+          description: User's geolocation longitude.
+        latitude:
+          type: number
+          format: float
+          description: User's geolocation latitude.
+        location:
+          type: string
+          description: User's location at the moment of onboarding process.
+        getmAdminArea:
+          type: string
+          description: State
+          example: CA
+        getmSubAdminArea:
+          type: string
+          description: County
+          example: Santa Clara
+        getmLocality:
+          type: string
+          description: City
+        getmSubLocality:
+          type: string
+          description: Neighborhood, common name
+          example: Mission District
+        getmThoroughfare:
+          type: string
+          description: Street name.
+        getmSubThoroughfare:
+          type: string
+          description: Number.
+        getmPostalCode:
+          type: string
+          description: Zip code
+          example: 95014
+        getmCountryCode:
+          type: string
+          description: Country code
+          example: US
+        getmCountryName:
+          type: string
+          description: Country name
+          example: United States
+        hostingApp:
+          type: string
+          description: Hosting App
+          example: Onboarding
+    GovernmentValidation:
+      type: object
+      description: "- recognitionConfidence: Only present in case face validation is performed as a part of government check\n- fingerprintConfidence: Only present in case fingerprint validation is performed as a part of government check\n- minimumPassingFingerprints: Only present in case fingerprint validation is performed.\n\n     Maps to configured number of minimum fingerprints configured at the time of score calculation.\n- validationStatus: Possible values: processingIne, ok, validationError, ineConnectionError, ineInfrastructureError, moduleNotSupported,\n    missingDocumentId, missingSelfie, userNotFound, userNotFoundInIneDb, notEnoughData, livenessFail, ineNotCurrent,\n    ineReportedLost, ineReportedStolen, ineSignaturError, transactionLimitReached, geographicRegionNotSupported\n\n    Key-value mapping:\n    - -1: processingIne\n    - 0: ok\n    - 1: validationError\n    - 2: ineConnectionError\n    - 3: ineInfrastructureError\n    - 4: moduleNotSupported\n    - 5: missingDocumentId\n    - 6: missingSelfie\n    - 7: userNotFound\n    - 8: userNotFoundInIneDb\n    - 9: notEnoughData\n    - 10: livenessFail\n    - 11: ineNotCurrent\n    - 12: ineReportedLost\n    - 13: ineReportedStolen\n    - 14: ineSignaturError\n    - 99: geographicRegionNotSupported\n    - 205: transactionLimitReached\n- ocrValidation: List of value, status, key objects.\n\n    Not all of the following keys are always present: issueDate firstName, maternalLastName, paternalLastName, ocr, personalId,\n    electorsKey, emissionNumber, registrationDate\n- ocrValidationOverall: Composite result for ocrValidation score\n- credentialStatus: List of value, status, key objects carrying issuing-authority verdicts about\n    the credential itself, e.g. nonCommercialDriverLicenseStatus, indefiniteExpiration.\n\n    Informational only - these never affect the government validation score or overall status.\n    An entry is present only when the check was requested; status OK means confirmed, FAIL refuted,\n    UNKNOWN the authority did not report it.\n- overall\n"
+      properties:
+        recognitionConfidence:
+          $ref: '#/components/schemas/ResultBean'
+        fingerprintConfidence:
+          $ref: '#/components/schemas/ResultBean'
+        minimumPassingFingerprints:
+          type: integer
+          format: int32
+        validationStatus:
+          $ref: '#/components/schemas/IdResultBean'
+        ocrValidation:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdResultBean'
+        credentialStatus:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdResultBean'
+        ocrValidationOverall:
+          $ref: '#/components/schemas/ResultBean'
+        overall:
+          $ref: '#/components/schemas/ResultBean'
+        provider:
+          type: string
+        appliedRule:
+          $ref: '#/components/schemas/AppliedFlowRule'
+    OcrDataResponse:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/NameBean'
+        address:
+          type: string
+          description: Address as read from id. Address can have two or three lines. Lines are separated by \n
+        addressFields:
+          $ref: '#/components/schemas/AddressBean'
+        fullAddress:
+          type: boolean
+          description: This field is set to true if address from id is full (has three lines) or not (For Mexican Voter IDs only).
+        invalidAddress:
+          type: boolean
+          description: This field checks for a valid street, numeric postal code with 5 digits, and that both colony and city have values. (Only checked for Mexican IDs)
+        checkedAddress:
+          type: string
+          description: Address as obtained after processing with geocoder geolocation api.
+        checkedAddressBean:
+          $ref: '#/components/schemas/AddressBean'
+        exteriorNumber:
+          type: string
+          description: Exterior street number.
+        interiorNumber:
+          type: string
+          description: Interior street number.
+        addressFromStatement:
+          type: string
+          description: Address as read from address statement. Lines are separated by \n.
+        addressFieldsFromStatement:
+          $ref: '#/components/schemas/AddressBean'
+        invalidAddressFromStatement:
+          type: boolean
+          description: This field checks for a valid street, numeric postal code with 5 digits, and tha both colony and city have values. (Only checked for Mexican POA)
+        addressStatementEmissionDate:
+          type: integer
+          format: int64
+          description: ' Issue date of address statement. The value is presented in UTC milliseconds.'
+        documentType:
+          type: string
+          description: 'Type of address statement document. Possible values:
+
+            - Mexico: liverpool, citibanamex, cfe, telcel, izzi, axtel, telmex, oapas, sacmex, opdm, naturgy, drenaje, totalplay, dhc, att, cea, smapa, megacable, jmas, amicsa, caev
+
+            - Bolivia: cre
+
+            - Uruguay: ute
+
+            - Unknown document: otherPoa
+
+            '
+          enum:
+          - a1
+          - aggm
+          - apg
+          - energieAg
+          - cre
+          - aforeAzteca
+          - amd
+          - amicsa
+          - att
+          - axtel
+          - bancoppel
+          - bancoAzteca
+          - banorte
+          - bbva
+          - cab
+          - caev
+          - capa
+          - cea
+          - cfe
+          - citibanamex
+          - cmapa
+          - cmapaGrande
+          - cmapas
+          - cmas
+          - cmasBlue
+          - comapa
+          - comapaRed
+          - coppel
+          - dapa
+          - dhc
+          - drenaje
+          - ecogas
+          - engie
+          - gasNatural
+          - h
+          - hsbc
+          - inbursa
+          - infonavit
+          - interapas
+          - isagas
+          - izzi
+          - jad
+          - japam
+          - japama
+          - japami
+          - japay
+          - jiapaz
+          - jmas
+          - jras
+          - jumapac
+          - jumapam
+          - lerdo
+          - liverpool
+          - mas
+          - megacable
+          - naturgy
+          - oapas
+          - odapas
+          - ooapas
+          - opdm
+          - oroapa
+          - sacmex
+          - sacmexCdmx
+          - santander
+          - sapa
+          - sapal
+          - sapamuy
+          - sapasa
+          - sapasma
+          - scotiabank
+          - seapal
+          - siapa
+          - simapag
+          - simapas
+          - simas
+          - smapa
+          - smapac
+          - smapam
+          - smapas
+          - spectrum
+          - stori
+          - sura
+          - tam
+          - telcel
+          - telmex
+          - totalplay
+          - veolia
+          - victoria
+          - wizz
+          - asylumSeeker
+          - refugeeId
+          - refugeeStatus
+          - ute
+          - telkom
+          - tmobile
+          - verizon
+          - xfinity
+          - aforeCoppel
+          - americanExpress
+          - ap
+          - telnor
+          - wellsFargo
+          - otherPoa
+        addressStatementTimestamps:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressStatementDate'
+        poaName:
+          type: string
+          description: Extracted name from address statement.
+        typeOfId:
+          type: string
+          enum:
+          - Unknown
+          - Passport
+          - Visa
+          - DriversLicense
+          - IdentificationCard
+          - Permit
+          - Currency
+          - ResidenceDocument
+          - TravelDocument
+          - BirthCertificate
+          - VehicleRegistration
+          - Other
+          - WeaponLicense
+          - TribalIdentification
+          - VoterIdentification
+          - Military
+          - TaxIdentification
+          - FederalID
+          - MedicalCard
+        documentFrontSubtype:
+          type: string
+          description: Additional info about ID type (front side)
+        documentBackSubtype:
+          type: string
+          description: Additional info about ID type (back side)
+        issueFront:
+          type: integer
+          format: int32
+          description: Issue year (per classification model) of the ID (front side)
+        issueBack:
+          type: integer
+          format: int32
+          description: Issue year (per classification model) of the ID (back side)
+        birthDate:
+          type: integer
+          format: int64
+          description: Date of birth is presented in UTC milliseconds.
+        gender:
+          type: string
+          description: Gender values are presented in English. "M" for male, "F" for female and "X" for non-binary.
+          enum:
+          - M
+          - F
+          - X
+          maxLength: 1
+        claveDeElector:
+          type: string
+          description: Clave de elector as read from id. For Mexican IDs only.
+          maxLength: 18
+          minLength: 18
+        curp:
+          type: string
+          description: Curp as read form id. For Mexican IDs only.
+          maxLength: 18
+          minLength: 18
+        numeroEmisionCredencial:
+          type: string
+          description: Numero Emision Credencial as read from id. (For Mexican IDs only).
+          maxLength: 2
+          minLength: 2
+        cic:
+          type: string
+          description: Cic as read from id. (This field is read from back side of id; For Mexican IDs only).
+          maxLength: 9
+          minLength: 9
+        ocr:
+          type: string
+          description: Ocr as read from id. (This field is read from back side of id; For Mexican IDs only).
+          maxLength: 13
+          minLength: 13
+        documentNumber:
+          type: string
+          description: Document number.
+        documentNumberSource:
+          type: string
+          description: Document number source.
+          enum:
+          - FORM
+          - OCR
+        personalNumber:
+          type: string
+          description: Personal number.
+        nationalNumber:
+          type: string
+          description: National number.
+        refNumber:
+          type: string
+          description: Document Reference Number.
+        taxIdNumber:
+          type: string
+          description: Personal tax identification number.
+        nue:
+          type: string
+          description: NUE number as read from id. (for Resident Cards)
+        externalId:
+          type: string
+          description: External user id.
+        issuedAt:
+          type: string
+          description: Date of issue UTC timestamp.
+        expireAt:
+          type: string
+          description: Expiration date UTC timestamp.
+        expirationDate:
+          type: integer
+          format: int32
+          description: Expiration year of id.
+        issueDate:
+          type: integer
+          format: int32
+          description: Issue year of id.
+        registrationDate:
+          type: integer
+          format: int32
+          description: Registration date read from id.
+        dlClassDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/DLClassDetails'
+        issuingCountry:
+          type: string
+          description: Issuing country of document.
+        issuingState:
+          type: string
+          description: Issuing state of document.
+        birthPlace:
+          type: string
+          description: Birth place as read from id.
+        printingNumber:
+          type: string
+          description: Printing number (número de impresión) printed below the barcode on Colombian IDs.
+        duplicateNumber:
+          type: string
+          description: Number of duplicates (número de duplicados) printed below the barcode on Colombian IDs.
+        preparationNumber:
+          type: string
+          description: Preparation number (número de preparación) printed below the barcode on Colombian IDs.
+        issuingAuthority:
+          type: string
+          description: Issuing Authority as read from id.
+        height:
+          type: string
+          description: Person's height as read from id.
+        weight:
+          type: string
+          description: Person's weight.
+        eyeColor:
+          type: string
+          description: Person's eye color.
+        hairColor:
+          type: string
+          description: Person's hair color.
+        religion:
+          type: string
+          description: Person's religion.
+        bloodType:
+          type: string
+          description: Person's blood type.
+        maritalStatus:
+          type: string
+          description: Person's marital status.
+        nationality:
+          type: string
+          description: Person's nationality.
+        race:
+          type: string
+          description: Person's race.
+        nationalityMrz:
+          type: string
+          description: Person's nationality as it appears in MRZ (if present).
+        nationalityAlpha3:
+          type: string
+          description: Person's nationality Alpha3 code format. Only for Brazilian IDs.
+        governmentComparisonResults:
+          $ref: '#/components/schemas/GovernmentComparisonResults'
+        notExtracted:
+          type: integer
+          format: int32
+          description: Number of not extracted OCR fields. Only for Mexican IDs.
+        notExtractedDetails:
+          type: array
+          items:
+            type: string
+        classes:
+          type: string
+          description: Person's driver licence classes.
+        cond:
+          type: string
+          description: Person's driver licence conditions.
+        mentions:
+          type: string
+          description: Person's driver licence mentions.
+        restrictions:
+          type: string
+          description: Person's driver licence restrictions.
+        mrz1:
+          type: string
+          description: First MRZ line.
+        mrz2:
+          type: string
+          description: Second MRZ line.
+        mrz3:
+          type: string
+          description: Third MRZ line.
+        fullNameMrz:
+          type: string
+          description: Person's full name read from MRZ.
+        documentNumberCheckDigit:
+          type: string
+          description: Document number check digit read from MRZ.
+        dateOfBirthCheckDigit:
+          type: string
+          description: Date of birth check digit read from MRZ.
+        expirationDateCheckDigit:
+          type: string
+          description: Expiration date check digit read from MRZ.
+        barcodeRawData:
+          type: string
+          description: Full unformatted data read from 2D barcode.
+        qrFrontContents:
+          type: array
+          description: Raw QR code payloads read from the front of the document, unparsed. Omitted when the capture was redacted.
+          items:
+            type: string
+        qrBackContents:
+          type: array
+          description: Raw QR code payloads read from the back of the document, unparsed. Omitted when the capture was redacted.
+          items:
+            type: string
+        fathersName:
+          type: string
+          description: Person's father's name. Only for Brazilian and Indian IDs.
+        mothersName:
+          type: string
+          description: Person's mother's name. Only for Brazilian IDs.
+        fathersIdNumber:
+          type: string
+          description: Person's father's Id Number. In the context of minors identity validation.
+        mothersIdNumber:
+          type: string
+          description: Person's mother's Id Number. In the context of minors identity validation.
+        spouseName:
+          type: string
+          description: Person's spouse's name.
+        federalRevenueNumber:
+          type: string
+          description: Federal revenue number. Only for Brazilian IDs.
+        originDocumentId:
+          type: string
+          deprecated: true
+          description: Origin document ID. Only for Brazilian IDs.
+        driversLicenseCategory:
+          type: string
+          deprecated: true
+          description: Driver's licence category. Only for Brazilian IDs.
+        controlNumber:
+          type: string
+          deprecated: true
+          description: Control number. Only for Brazilian IDs.
+        renach:
+          type: string
+          deprecated: true
+          description: Renach. Only for Brazilian IDs.
+        additionalAttrs:
+          type: array
+          description: Additional document attributes.
+          items:
+            type: string
+            enum:
+            - DOCUMENTO_INFANTIL
+            - IDADE_PRE_ESCOLAR
+            - MENOR_DE_ANOS
+            - NAO_ASSINA
+            - EM_FASE_DE_ALFABETIZACAO
+            - IMPOSSIBILITADO_DE_ASSINAR
+            - LIMITED_TERM
+            - FEDERAL_LIMITS_APPLY
+            - PERMISO_PARA_TRABAJAR
+            - EXTRANJERO
+            - INDIA_DIGITAL_VID
+            - VETERAN
+            - MOTORCYCLE_LICENSE
+            - NON_DOMICILED
+            - COMMERCIAL_LICENSE
+            - RESIDENTE
+            - MIGRANTE
+            - TEMPORAL
+            - VISITANTE
+            - TRAMITE
+            - RUEX
+            - INDIGENA
+            - AFROMEXICANA
+            - INDIA_DIGITAL_TAXID
+        ocrDataConfidence:
+          $ref: '#/components/schemas/OcrDataConfidence'
+        additionalDocumentAttempts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalDocumentAttemptDto'
+        documentSubmissionMethod:
+          type: string
+          description: Method used to submit the document.
+          enum:
+          - CAPTURED_DOCUMENT
+          - UPLOADED_FILE
+          - IMPORTED_CREDENTIAL
+        credentialsProvider:
+          type: string
+          description: Credentials provider used when documentSubmissionMethod is IMPORTED_CREDENTIAL.
+          enum:
+          - APPLE
+          - GOOGLE
+          - DIGILOCKER
+          - SAMSUNG
+          - DIGITAL_ID
+          - NETHERLANDS_IDIN
+          - FINNISH_TRUST_NETWORK
+    FingerprintMetadata:
+      type: object
+      properties:
+        device:
+          type: string
+        resolution:
+          type: string
+        qualityScore:
+          type: string
+    IdResultBean:
+      type: object
+      properties:
+        value:
+          type: string
+          maximum: 100
+          minimum: 0
+        status:
+          type: string
+          enum:
+          - OK
+          - WARN
+          - FAIL
+          - UNKNOWN
+          - MANUAL
+          - MANUAL_OK
+          - MANUAL_FAIL
+          - MANUAL_PENDING
+        key:
+          type: string
+    GovernmentValidationResponse:
+      type: object
+      properties:
+        valid:
+          type: boolean
+        statusCode:
+          type: integer
+          format: int32
+        registralSituation:
+          $ref: '#/components/schemas/RegistralSituation'
+        governmentValidation:
+          $ref: '#/components/schemas/GovernmentValidation'
+        curpCecobanValidation:
+          $ref: '#/components/schemas/CurpCecobanValidation'
+        customFields:
+          type: object
+          additionalProperties:
+            type: string
+        ocrData:
+          $ref: '#/components/schemas/OcrDataResponse'
+        deviceInfo:
+          $ref: '#/components/schemas/DeviceInfoResponse'
+        ineTransactionId:
+          type: string
+        errorDescription:
+          type: string
+        fallbackCalled:
+          type: boolean
+    AppliedFlowRule:
+      type: object
+      description: Specific rule from rule engine
+      properties:
+        name:
+          type: string
+          description: Name of the rule.
+        expression:
+          type: string
+          description: A logical expression of the rule.
+        ruleType:
+          type: string
+          enum:
+          - idValidation
+          - secondIdValidation
+          - faceValidation
+          - liveness
+          - deepsight
+          - eKyc
+          - videoselfie
+          - faceAuthentication
+          - total
+          - phoneRisk
+          - emailRisk
+          - governmentValidation
+        status:
+          type: string
+          enum:
+          - OK
+          - WARN
+          - FAIL
+          - UNKNOWN
+          - MANUAL
+          - MANUAL_OK
+          - MANUAL_FAIL
+          - MANUAL_PENDING
+    GovermentValidationResponseObject:
+      type: object
+      oneOf:
+      - $ref: '#/components/schemas/Brazil'
+      - $ref: '#/components/schemas/GovernmentValidationResponse'
+    DLClassDetails:
+      type: object
+      description: Driver's license details
+      properties:
+        dlClass:
+          type: string
+          description: Driver's license class.
+        validFromDate:
+          type: integer
+          format: int64
+          description: DL class valid from UTC timestamp
+        validToDate:
+          type: integer
+          format: int64
+          description: DL class valid to UTC timestamp.
+        additionalCodes:
+          type: string
+          description: Additional codes associated with DL class.
+        restrictions:
+          type: array
+          description: Restriction codes associated with DL class.
+          items:
+            type: string
+    GovernmentValidationDataRequest:
+      type: object
+      properties:
+        ocr:
+          type: string
+        cic:
+          type: string
+        nombre:
+          type: string
+        apellidoPaterno:
+          type: string
+        apellidoMaterno:
+          type: string
+        anioRegistro:
+          type: string
+        anioEmision:
+          type: string
+        numeroEmisionCredencial:
+          type: string
+        claveElector:
+          type: string
+        curp:
+          type: string
+        base64Image:
+          type: string
+        idNumber:
+          type: string
+        fechaEmision:
+          type: string
+        personalNumber:
+          type: string
+        birthDate:
+          type: string
+        gender:
+          type: string
+        birthPlace:
+          type: string
+        address:
+          type: string
+        addressLine2:
+          type: string
+        addressState:
+          type: string
+        latitude:
+          type: string
+        longitude:
+          type: string
+        macAddress:
+          type: string
+        ip:
+          type: string
+        osVersion:
+          type: string
+        applicationName:
+          type: string
+        sufix:
+          type: string
+        firstName:
+          type: string
+        givenName:
+          type: string
+        middleName:
+          type: string
+        maternalLastName:
+          type: string
+        paternalLastName:
+          type: string
+        documentType:
+          type: string
+          enum:
+          - Unknown
+          - Passport
+          - Visa
+          - DriversLicense
+          - IdentificationCard
+          - Permit
+          - Currency
+          - ResidenceDocument
+          - TravelDocument
+          - BirthCertificate
+          - VehicleRegistration
+          - Other
+          - WeaponLicense
+          - TribalIdentification
+          - VoterIdentification
+          - Military
+          - TaxIdentification
+          - FederalID
+          - MedicalCard
+        refNumber:
+          type: string
+        issuerState:
+          type: string
+        aamvaMessageDestination:
+          type: string
+        realIdConformantCode:
+          type: string
+        driverLicenseNonCommercialStatusCode:
+          type: string
+        documentTypeId:
+          type: integer
+          format: int32
+        issuedAt:
+          type: string
+        documentNumber:
+          type: string
+        expireAt:
+          type: string
+        eyeColor:
+          type: string
+        height:
+          type: string
+        weight:
+          type: string
+        city:
+          type: string
+        postalCode:
+          type: string
+        email:
+          type: string
+        fullName:
+          type: string
+        nationality:
+          type: string
+        dateFormat:
+          type: string
+        fingerprintsData:
+          $ref: '#/components/schemas/FingerprintsData'
+    Brazil:
+      type: object
+      description: Response model for Brazil government validation
+      properties:
+        valid:
+          type: boolean
+        statusCode:
+          type: integer
+          format: int32
+        governmentValidation:
+          $ref: '#/components/schemas/GovernmentValidation'
+          description: "    - recognitionConfidence: Present when government face validation is attempted (e.g. SERPRO_FACE).\n        - value: \"100.0\" when face matched, \"0.0\" when no match or face not in SERPRO DB\n        - status: OK when face matched, FAIL when no match or face not in SERPRO DB\n    - validationStatus: Key-value mapping:\n        - OK (0, \"ok\"): CPF found, data and/or face matched\n        - VALIDATION_ERROR (1, \"validationError\")\n        - MODULE_NOT_SUPPORTED (4, \"moduleNotSupported\")\n        - MISSING_SELFIE (6, \"missingSelfie\"): selfie required for SERPRO_FACE\n        - USER_NOT_FOUND (7, \"userNotFound\"): CPF not found in government DB, or face not matched\n        - CPF_NUMBER_INVALID_OR_MISSING (16, \"cpfNumberInvalidOrMissing\")\n        - CONNECTION_ERROR (17, \"connectionError\")\n        - PROVIDER_NOT_CONFIGURED (96, \"providerNotConfigured\")\n        - PROVIDER_UNAVAILABLE (98, \"providerUnavailable\")\n        - GEOGRAPHIC_REGION_NOT_SUPPORTED (99, \"geographicRegionNotSupported\")\n    - ocrValidation: List of value/status/key objects. Keys present for Brazil:\n        - documentNumber: CPF validity check\n        - fullName: name match (derived from firstName, paternalLastName, maternalLastName — all map to the same SERPRO nome field and always share the same status)\n        - birthDate: date of birth match\n        Not all keys are always present.\n    - ocrValidationOverall: Composite result for ocrValidation score\n    - overall: Equals ocrValidationOverall for SERPRO; for SERPRO_FACE the face recognitionConfidence can override it\n        (e.g. face not in DB / not matched drives overall to 0.0 FAIL even when ocrValidationOverall is OK)\n"
+        errorDescription:
+          type: string
+    NameBean:
+      type: object
+      properties:
+        fullName:
+          type: string
+        fullNameNativeScript:
+          type: string
+        firstNameNativeScript:
+          type: string
+        paternalLastNameNativeScript:
+          type: string
+        maternalLastNameNativeScript:
+          type: string
+        machineReadableFullName:
+          type: string
+          description: Full name from Barcode or MRZ
+        firstName:
+          type: string
+        middleName:
+          type: string
+        givenName:
+          type: string
+        givenNameMrz:
+          type: string
+        initials:
+          type: string
+          description: Initials as returned by bank-ID schemes (e.g. iDIN) — the only given-name evidence they provide
+        nameSuffix:
+          type: string
+        paternalLastName:
+          type: string
+        maternalLastName:
+          type: string
+        lastNameMrz:
+          type: string
+        familyName:
+          type: string
+    GovernmentComparisonResults:
+      type: object
+      description: Government validation data. Only for supported government validation countries.
+      properties:
+        paternalLastNameValid:
+          type: boolean
+          description: Indicates validity of person's paternal last name through government validation apis.
+        maternalLastNameValid:
+          type: boolean
+          description: Indicates validity of person's maternal last name through government validation apis.
+        firstNameValid:
+          type: boolean
+          description: Indicates validity of person's first name through government validation apis.
+        curpValid:
+          type: boolean
+          description: Indicates CURP validity through RENAPO/CURP provider validation.
+        ineCurpValid:
+          type: boolean
+          description: Indicates CURP validity through INE government validation (separate from RENAPO).
+        ocrValid:
+          type: boolean
+          description: Indicates ocr validity through government validation apis.
+        claveDeElectorValid:
+          type: boolean
+          description: Indicates "clave de elector" validity through government validation apis.
+        numeroEmisionCredencialValid:
+          type: boolean
+          description: Indicates "numero emision credencial" validity through government validation apis.
+        registrationDateValid:
+          type: boolean
+          description: Indicates registration date validity through government validation apis.
+        issueDateValid:
+          type: boolean
+          description: Indicates issue date validity through government validation apis.
+    AddressStatementDate:
+      type: object
+      properties:
+        get_version:
+          type: integer
+          format: int64
+        dateType:
+          type: string
+          description: Description of timestamp.
+        addressStatementTimestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp.
   parameters:
     ApiVersion:
       name: api-version
@@ -68,21 +2563,27 @@ components:
       schema:
         type: string
         default: '1.0'
-    HardwareId:
-      name: X-Incode-Hardware-Id
-      in: header
-      required: true
-      schema:
-        type: string
-      description: Session token returned by POST /omni/start.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
-      in: header
+      description: Your api key. Request it from Incode support team
       name: x-api-key
-      description: Client API key issued by Incode.
-    SessionToken:
-      type: apiKey
       in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
       name: X-Incode-Hardware-Id
-      description: Session token (Onboarding Token) returned by POST /omni/start.
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

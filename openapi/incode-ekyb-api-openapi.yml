@@ -1,0 +1,1033 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Ekyb API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Ekyb
+paths:
+  /omni/externalVerification/ekyb:
+    post:
+      tags:
+      - Ekyb
+      summary: eKYB
+      description: This endpoint performs an eKYB check for the business specified
+      operationId: externalverificationekyb
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusinessVerificationRequestDto'
+            examples:
+              US:
+                description: US
+                value:
+                  plugins:
+                  - ekyb
+                  businessName: Incode Technologies, Inc.
+                  addressLine1: 575 Market St
+                  addressLine2: Fl 4
+                  city: San Francisco
+                  state: CA
+                  postalCode: '94105'
+              BR:
+                description: BR
+                value:
+                  plugins:
+                  - ekyb
+                  businessName: RENATA DISTR. DE SUPLEMENTOS LTDA
+                  street: Rua Curupaiti
+                  houseNo: '225'
+                  addressLine2: ''
+                  city: Rio De Janeiro
+                  state: RJ
+                  postalCode: '20735320'
+                  country: BR
+                  taxId: '41111051548164'
+                  uboNames:
+                  - MICHEL RODRIGUES
+                  - ERIC SANTOS
+                  - MICHELLE MUNHOZ
+        required: true
+      responses:
+        '200':
+          description: "Status codes for business name:\n- status: Success, sub_label: Verified, label: Match identified to the submitted Business Name\n- status: Warning, sub_label: Similar Match, label: Similar match identified to the submitted Business Name\n- status: Failure, sub_label: Unverified, label: Unable to identify a match to the submitted Business Name\n- status: Failure, sub_label: Alternate Name, label: We believe the submitted TIN is associated with \"name\"\n\nStatus codes for address verification:\n- status: Success, sub_label: Verified, label: Match identified to the submitted Business Name\n- status: Warning, sub_label: Similar Match, label: Similar match identified to the submitted Business Name\n- status: Failure, sub_label: Unverified, label: Unable to identify a match to the submitted Business Name\n- status: Failure, sub_label: Alternate Name, label: We believe the submitted TIN is associated with \"name\"\n\nStatus codes for address property type:\n- status: Success, sub_label: Commercial, label: Submitted Office Address is a Commercial property\n- status: Warning, sub_label: Residential, label: Submitted Office Address is a Residential property\n\nStatus codes for address deliverability:\n- status: Success, sub_label: Deliverable, label: The USPS is able to deliver mail to the submitted Office Address\n- status: Failure, sub_label: Undeliverable, label: The USPS is unable to deliver mail to the submitted Office Address\n\nExample:\n```\n{\n    \"kyb\": [\n        {\n            \"key\": \"name\",\n            \"status\": \"success\",\n            \"sub_label\": \"Verified\",\n            \"message\": \"Match identified to the submitted Business Name\"\n        },\n        {\n            \"key\": \"address_verification\",\n            \"status\": \"success\",\n            \"sub_label\": \"Verified\",\n            \"message\": \"Match identified to the submitted Office Address\"\n        },\n        {\n            \"key\": \"address_deliverability\",\n            \"status\": \"success\",\n            \"sub_label\": \"Deliverable\",\n            \"message\": \"The USPS is able to deliver mail to the submitted Office Address\"\n        },\n        {\n            \"key\": \"address_property_type\",\n            \"status\": \"success\",\n            \"sub_label\": \"Commercial\",\n            \"message\": \"Submitted Office Address is a Commercial property\"\n        }\n    ]\n}\n```\n"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EkybVerificationResponse'
+        '202':
+          description: Async verification is enabled for the organization; the request is processed in the background and the result is delivered via the EKYB_VERIFICATION_RESULT webhook. Body carries only referenceId and status=PENDING.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EkybVerificationResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/externalverification-ekyb/
+      x-incode-markdown: https://developer.incode.com/api-reference/externalverification-ekyb.md
+  /omni/ekybChecks:
+    post:
+      tags:
+      - Ekyb
+      summary: EkybChecks Modular Business Verification
+      description: 'Composable KYB endpoint. Clients specify which modules they need and Incode routes to the correct vendor for the country. Available modules: identity, address, statusEntityType, personAssociation, webPresence.'
+      operationId: ekybchecks
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EkybChecksRequestDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EkybChecksResult'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/ekybchecks/
+      x-incode-markdown: https://developer.incode.com/api-reference/ekybchecks.md
+  /omni/verification/async/{referenceId}:
+    get:
+      tags:
+      - Ekyb
+      summary: Get async vendor verification status/result
+      description: 'Retrieves the status and persisted result of a previously initiated async vendor
+
+        verification request. The result field is null while the request is PENDING,
+
+        carries the verification response body once COMPLETED, and carries error details
+
+        when FAILED. The result is also delivered via the corresponding webhook
+
+        (EKYB_VERIFICATION_RESULT / EKYC_VERIFICATION_RESULT); this endpoint is a
+
+        read-only status check. Returns 404 if the referenceId is not found or belongs
+
+        to a different tenant.'
+      operationId: getAsyncVendorVerificationResult
+      parameters:
+      - name: referenceId
+        in: path
+        required: true
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: Request found — status is PENDING, COMPLETED, or FAILED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncVendorVerificationResultResponse'
+        '404':
+          description: No async verification request found for the given referenceId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncVendorVerificationResultResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/verification-async-referenceid/
+      x-incode-markdown: https://developer.incode.com/api-reference/verification-async-referenceid.md
+  /omni/externalVerification/ekyb/session:
+    get:
+      tags:
+      - Ekyb
+      summary: Get eKYB session data for the current session
+      description: 'Returns stored eKYB verification request/response data for the interview associated with the
+
+        caller''s session token. Intended for downstream onboarding steps (e.g. the business watchlist
+
+        screen) to reuse data the user already entered on the eKYB form, such as `businessName`,
+
+        `country` and `taxId`, without requiring an executive token.'
+      operationId: externalVerificationEkybSession
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EkybDataResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/externalverification-ekyb-session/
+      x-incode-markdown: https://developer.incode.com/api-reference/externalverification-ekyb-session.md
+components:
+  schemas:
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    EkybChecksPersonMatch:
+      type: object
+      properties:
+        checkedName:
+          type: string
+        status:
+          type: string
+          enum:
+          - verified
+          - approximateMatch
+          - unverified
+          - notFound
+        matchedName:
+          type: string
+        matchedPerson:
+          $ref: '#/components/schemas/EkybChecksPersonResult'
+    VerificationMessages:
+      type: object
+      properties:
+        tinVerificationMessage:
+          type: string
+    TitleData:
+      type: object
+      properties:
+        title:
+          type: string
+    BusinessVerificationResultData:
+      type: object
+      properties:
+        businessName:
+          type: string
+        businessClassification:
+          type: string
+        addressVerification:
+          type: string
+        cityVerification:
+          type: string
+        postalCodeVerification:
+          type: string
+        addressPropertyType:
+          type: string
+        addressDeliverability:
+          type: string
+        tinVerification:
+          type: string
+        uboNameMatch:
+          type: string
+        registrationStatus:
+          type: string
+          enum:
+          - Active
+          - Inactive
+          - Unknown
+        entityType:
+          $ref: '#/components/schemas/EntityTypeData'
+        uboNameVerificationResults:
+          type: array
+          items:
+            $ref: '#/components/schemas/UboNameVerificationResultData'
+        directorsVerificationResults:
+          type: array
+          items:
+            $ref: '#/components/schemas/UboNameVerificationResultData'
+        people:
+          type: array
+          items:
+            $ref: '#/components/schemas/PeopleData'
+        verificationMessages:
+          $ref: '#/components/schemas/VerificationMessages'
+    IdentityModuleResult:
+      type: object
+      properties:
+        taxId:
+          type: string
+          enum:
+          - verified
+          - approximateMatch
+          - unverified
+          - notFound
+        name:
+          type: string
+          enum:
+          - verified
+          - approximateMatch
+          - unverified
+          - notFound
+        registryName:
+          type: string
+        tinMatchType:
+          type: string
+        error:
+          $ref: '#/components/schemas/EkybChecksError'
+    EkybChecksScore:
+      type: object
+      properties:
+        type:
+          type: string
+        score:
+          type: number
+          format: double
+        rating:
+          type: string
+    AsyncVendorVerificationResultResponse:
+      type: object
+      properties:
+        referenceId:
+          type: string
+        status:
+          type: string
+          enum:
+          - PENDING
+          - COMPLETED
+          - FAILED
+        type:
+          type: string
+          enum:
+          - EKYB
+          - EKYC
+        result:
+          type: object
+    EkybChecksError:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - verified
+          - approximateMatch
+          - unverified
+          - notFound
+        message:
+          type: string
+    SocialProfile:
+      type: object
+      properties:
+        platform:
+          type: string
+        username:
+          type: string
+        url:
+          type: string
+        confidence:
+          type: string
+        followers:
+          type: integer
+          format: int64
+        bio:
+          type: string
+        businessWebsite:
+          type: string
+        verified:
+          type: boolean
+    ReviewSource:
+      type: object
+      properties:
+        source:
+          type: string
+        url:
+          type: string
+        rating:
+          type: number
+          format: double
+        reviewCount:
+          type: integer
+          format: int32
+        summary:
+          type: string
+        address:
+          type: string
+        phoneNumber:
+          type: string
+    AddressModuleResult:
+      type: object
+      properties:
+        addressVerification:
+          type: string
+          enum:
+          - verified
+          - approximateMatch
+          - unverified
+          - notFound
+        registryAddress:
+          type: string
+        error:
+          $ref: '#/components/schemas/EkybChecksError'
+    EkybChecksResult:
+      type: object
+      properties:
+        identity:
+          $ref: '#/components/schemas/IdentityModuleResult'
+        address:
+          $ref: '#/components/schemas/AddressModuleResult'
+        statusEntityType:
+          $ref: '#/components/schemas/StatusEntityTypeModuleResult'
+        personAssociation:
+          $ref: '#/components/schemas/PersonAssociationModuleResult'
+        webPresence:
+          $ref: '#/components/schemas/WebPresenceModuleResult'
+        scores:
+          type: array
+          items:
+            $ref: '#/components/schemas/EkybChecksScore'
+        empty:
+          type: boolean
+    BusinessVerificationRequestDto:
+      type: object
+      properties:
+        plugins:
+          type: array
+          items:
+            type: string
+        businessName:
+          type: string
+          description: Name of the business
+          example: Incode Technologies, Inc.
+        addressLine1:
+          type: string
+          description: Address line 1 of the business
+          example: 575
+        street:
+          type: string
+          description: Street name of the business address
+        houseNo:
+          type: string
+          description: The exterior number of the business address
+          example: 574
+        addressLine2:
+          type: string
+          description: Address line 2 of the business
+          example: Fl 4
+        city:
+          type: string
+          description: City of the business address.
+          example: San Francisco
+        state:
+          type: string
+          description: State of the business address.
+          example: CA
+        postalCode:
+          type: string
+          description: Postal code of the business address.
+          example: 94105
+        country:
+          type: string
+          description: Two-letter country code of the business address
+          example: US
+        taxId:
+          type: string
+          description: The tax id of the business
+        uboName:
+          type: string
+          deprecated: true
+          description: Ultimate Beneficial Owner name. Deprecated — use uboNames instead.
+        uboNames:
+          type: array
+          description: Ultimate Beneficial Owners names
+          example:
+          - John Smith
+          - Jane Smith
+          items:
+            type: string
+        directors:
+          type: array
+          description: Names of the directors of the business
+          example:
+          - John Smith
+          - Jane Smith
+          items:
+            type: string
+    SicCode:
+      type: object
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+    UboNameVerificationResultData:
+      type: object
+      properties:
+        name:
+          type: string
+        uboNameMatch:
+          type: string
+        matchId:
+          type: string
+        ownershipPercentage:
+          type: string
+    PersonAssociationModuleResult:
+      type: object
+      properties:
+        personMatches:
+          type: array
+          items:
+            $ref: '#/components/schemas/EkybChecksPersonMatch'
+        people:
+          type: array
+          items:
+            $ref: '#/components/schemas/EkybChecksPersonResult'
+        error:
+          $ref: '#/components/schemas/EkybChecksError'
+    EkybSourceInfo:
+      type: object
+      properties:
+        uboNames:
+          type: array
+          items:
+            $ref: '#/components/schemas/UboName'
+    WebPresenceModuleResult:
+      type: object
+      properties:
+        website:
+          $ref: '#/components/schemas/WebsiteInfo'
+        socialProfiles:
+          type: array
+          items:
+            $ref: '#/components/schemas/SocialProfile'
+        reviews:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReviewSource'
+        directoryListings:
+          type: array
+          items:
+            type: object
+        industryPrediction:
+          $ref: '#/components/schemas/IndustryPrediction'
+        webPresenceScores:
+          type: array
+          items:
+            $ref: '#/components/schemas/EkybChecksScore'
+        error:
+          $ref: '#/components/schemas/EkybChecksError'
+    EkybChecksRequestDto:
+      type: object
+      properties:
+        plugins:
+          type: array
+          items:
+            type: string
+        country:
+          type: string
+          description: ISO 3166-1 alpha-2 country code
+          example: US
+          minLength: 1
+        taxId:
+          type: string
+          description: Tax ID or company registration number
+          example: 12-3456789
+        businessName:
+          type: string
+          description: Registered legal name of the business
+          example: Incode Technologies, Inc.
+        street:
+          type: string
+          description: Street address
+          example: 101
+        city:
+          type: string
+          description: City
+          example: San Francisco
+        state:
+          type: string
+          description: State / province
+          example: CA
+        postalCode:
+          type: string
+          description: Postal code / ZIP
+          example: 94105
+        personNames:
+          type: array
+          description: Names of persons to verify association with the business (PERSON_ASSOCIATION module). Each name is matched against the business officer/director registry; one result per name is returned.
+          items:
+            type: string
+        website:
+          type: string
+          description: Business website URL
+          example: https://incode.com
+        alternativeNames:
+          type: array
+          description: Alternative or trade names for the business
+          example:
+          - Incode
+          items:
+            type: string
+        phoneNumber:
+          type: string
+          description: Business phone number
+          example: +1 (415) 800-9400
+        email:
+          type: string
+          description: Business email address
+          example: info@incode.com
+        referenceId:
+          type: string
+          description: Caller-supplied reference ID for correlating the request
+          example: incode-technologies-kyb-001
+        modules:
+          type: array
+          items:
+            type: string
+            enum:
+            - identity
+            - address
+            - statusEntityType
+            - personAssociation
+            - webPresence
+          minItems: 1
+      required:
+      - country
+    EkybDataResponse:
+      type: object
+      properties:
+        requestData:
+          $ref: '#/components/schemas/BusinessVerificationRequestData'
+        verificationResult:
+          $ref: '#/components/schemas/BusinessVerificationResultData'
+        externalVerificationThirdPartyRequest:
+          type: object
+          additionalProperties:
+            type: object
+        externalVerificationThirdPartyResponse:
+          type: object
+          additionalProperties:
+            type: object
+        providerInteractions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProviderInteraction'
+    EntityTypeData:
+      type: object
+      properties:
+        entityType:
+          type: string
+    IndustryPrediction:
+      type: object
+      properties:
+        naicsCode:
+          type: string
+        title:
+          type: string
+        accuracy:
+          type: number
+          format: double
+        riskLevel:
+          type: string
+        keywords:
+          type: array
+          items:
+            type: string
+        reasoning:
+          type: string
+        mccCodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/MccCode'
+        sicCodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/SicCode'
+    ProviderInteraction:
+      type: object
+      properties:
+        providerName:
+          type: string
+          enum:
+          - MIDDESK
+          - OPEN_CORPS_US
+          - OPEN_CORPS_CA
+          - SERPRO
+          - OPENDATA
+          - CREDITSAFE_UK
+          - CREDITSAFE_RO
+          - CREDITSAFE_IT
+          - CREDITSAFE_ES
+          - CREDITSAFE_FR
+          - CREDITSAFE_DE
+          - CREDITSAFE_AR
+          - CREDITSAFE_IE
+          - CREDITSAFE_JP
+          - CREDITSAFE_SE
+          - CREDITSAFE_NO
+          - CREDITSAFE_NL
+          - CREDITSAFE_VN
+          - CREDITSAFE_NG
+          - CREDITSAFE_CM
+          - CREDITSAFE_KE
+          - CREDITSAFE_MX
+          - CREDITSAFE_DK
+          - CREDITSAFE_BG
+          - CREDITSAFE_MT
+          - CREDITSAFE_LT
+          - CREDITSAFE_AU
+          - CREDITSAFE_GR
+          - CREDITSAFE_PT
+          - THE_KYB_NL
+          - THE_KYB_KM
+          - THE_KYB_TR
+          - THE_KYB_EG
+          - THE_KYB_AE
+          - THE_KYB_SA
+          - NUBARIUM_MX
+          - ASIAVERIFY_CN
+          - ASIAVERIFY_IN
+          - ASIAVERIFY_HK
+          - MONO_NG
+          - IDENTIFY_AFRICA_KE
+          - IDMERIT_MX
+          - THE_KYB_SA_PREFILL
+          - THE_KYB_AE_PREFILL
+          - CREDITSAFE_AU_PREFILL
+          - CREDITSAFE_GB_PREFILL
+          - BASELAYER_US_PREFILL
+          - CREDITSAFE_IN_PREFILL
+          - CREDITSAFE_DE_PREFILL
+          - CREDITSAFE_ES_PREFILL
+          - CREDITSAFE_FR_PREFILL
+          - CREDITSAFE_IT_PREFILL
+          - CREDITSAFE_NL_PREFILL
+          - CREDITSAFE_GR_PREFILL
+          - CREDITSAFE_PT_PREFILL
+          - CREDITSAFE_BE_PREFILL
+          - CREDITSAFE_AT_PREFILL
+          - CREDITSAFE_IE_PREFILL
+        interactionType:
+          type: string
+          enum:
+          - token_fetch
+          - verification
+          - business_classification
+          - entity_lookup
+          - prefill
+        timestamp:
+          type: string
+          format: date-time
+        externalVerificationThirdPartyRequest:
+          type: object
+          additionalProperties:
+            type: object
+        externalVerificationThirdPartyResponse:
+          type: object
+          additionalProperties:
+            type: object
+        status:
+          type: string
+          enum:
+          - SUCCESS
+          - NO_RESULT
+          - DEFERRED
+        errorMessage:
+          type: string
+    EkybVerification:
+      type: object
+      properties:
+        key:
+          type: string
+          description: The name of test
+        status:
+          type: string
+          description: Whether the test ows passed.
+        sub_label:
+          type: string
+          description: Additional info on the status.
+        message:
+          type: string
+          description: Human readable description of the status.
+        reasonCodes:
+          type: array
+          description: Machine-readable qualifiers for this check. The "tin" entry carries "Tax ID was not found." when the vendor returned no company for the supplied identifier; otherwise it carries exactly one of REGNO or VATNO, naming the identifier class the lookup resolved through. The "ubo_name_match" entry carries NO_SHAREHOLDER_DATA, and "directors_name_match" carries NO_DIRECTOR_DATA, when the provider returned no usable records to compare against; on those two keys the field is absent when a comparison actually ran. An "Unverified" sub_label accompanied by a no-data code means the check could not be performed, rather than that it was performed and failed. New codes may be added over time, so treat unrecognised values as informational.
+          example:
+          - NO_SHAREHOLDER_DATA
+          items:
+            type: string
+    PeopleData:
+      type: object
+      properties:
+        name:
+          type: string
+        titles:
+          type: array
+          items:
+            $ref: '#/components/schemas/TitleData'
+        memberType:
+          type: string
+    EkybVerificationResponse:
+      type: object
+      properties:
+        kyb:
+          type: array
+          items:
+            $ref: '#/components/schemas/EkybVerification'
+        kybSource:
+          $ref: '#/components/schemas/EkybSourceInfo'
+        businessClassification:
+          type: array
+          items:
+            $ref: '#/components/schemas/EkybVerification'
+        status:
+          type: string
+          description: 'Only present on a 202 async dispatch: PENDING until the verification finishes and the result is delivered via the EKYB_VERIFICATION_RESULT webhook.'
+          enum:
+          - PENDING
+          - COMPLETED
+          - FAILED
+        referenceId:
+          type: string
+          description: 'Only present on a 202 async dispatch: id correlating the webhook notification and the result-poll endpoint with this request.'
+    EkybChecksPersonResult:
+      type: object
+      properties:
+        name:
+          type: string
+        titles:
+          type: array
+          items:
+            type: string
+    WebsiteInfo:
+      type: object
+      properties:
+        url:
+          type: string
+        parked:
+          type: boolean
+        websiteBuildStatus:
+          type: string
+        summary:
+          type: string
+        domainAgeMonths:
+          type: integer
+          format: int32
+        domainCreatedAt:
+          type: string
+        domainExpiresAt:
+          type: string
+        registrar:
+          type: string
+        sslValid:
+          type: boolean
+        sslDaysUntilExpiry:
+          type: integer
+          format: int32
+        sslCertificateType:
+          type: string
+        sslIssuer:
+          type: string
+        sslExpiryDate:
+          type: string
+        emailDeliverable:
+          type: boolean
+        phoneNumbers:
+          type: array
+          items:
+            type: string
+        emails:
+          type: array
+          items:
+            type: string
+        screenshotUrl:
+          type: string
+    UboName:
+      type: object
+      properties:
+        id:
+          type: string
+        uboName:
+          type: string
+    MccCode:
+      type: object
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        mastercardRisk:
+          type: boolean
+        visaRiskTier:
+          type: string
+    BusinessVerificationRequestData:
+      type: object
+      properties:
+        plugins:
+          type: array
+          items:
+            type: string
+        businessName:
+          type: string
+        address:
+          type: string
+        addressLine1:
+          type: string
+        street:
+          type: string
+        houseNo:
+          type: string
+        addressLine2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
+          enum:
+          - US
+          - BR
+          - CA
+          - CN
+          - UK
+          - GB
+          - DE
+          - FR
+          - RO
+          - ES
+          - IT
+          - IL
+          - AR
+          - IE
+          - JP
+          - SE
+          - 'NO'
+          - VN
+          - NL
+          - NG
+          - KE
+          - CM
+          - HK
+          - IN
+          - MX
+          - DK
+          - BG
+          - MT
+          - LT
+          - KM
+          - TR
+          - EG
+          - AE
+          - SA
+          - AU
+          - GR
+          - PT
+          - BE
+          - AT
+        taxId:
+          type: string
+        uboNames:
+          type: array
+          items:
+            type: string
+        directors:
+          type: array
+          items:
+            type: string
+    StatusEntityTypeModuleResult:
+      type: object
+      properties:
+        registrationStatus:
+          type: string
+        entityType:
+          type: string
+        incorporationDate:
+          type: string
+        error:
+          $ref: '#/components/schemas/EkybChecksError'
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

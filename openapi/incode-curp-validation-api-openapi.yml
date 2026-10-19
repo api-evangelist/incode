@@ -1,0 +1,703 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Curp validation API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Curp validation
+paths:
+  /api/validate/curp/v4:
+    post:
+      tags:
+      - Curp validation
+      summary: CURP validation v4
+      description: 'Check for valid CURP and return corresponding values of that person.
+
+
+        If CURP is not found then renapo_valid field will be false.
+
+
+        if CURP has invalid format or is not found an error object with details will be returned, for example:
+
+
+        ```
+
+        {
+
+
+        "error": { "codigoError": "06", "message": "La CURP no se encuentra en la base de datos" },
+
+
+        "result": "Not valid request: La CURP no se encuentra en la base de datos code: 06",
+
+
+        }
+
+        ```'
+      operationId: validatecurp4
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CurpRequest'
+        required: true
+      responses:
+        '200':
+          description: Respuesta con validación de CURP
+          content:
+            application/json:
+              examples:
+                Successful CURP Validation:
+                  summary: Successful CURP Validation
+                  description: Successful CURP Validation
+                  value:
+                    success: true
+                    curp: XXXX820814HDFABC01
+                    sex: MUJER
+                    nationality: MEX
+                    result: success
+                    requestData:
+                      name: JUANA
+                      firstLastName: PEREZ
+                      secondLastName: LOPEZ
+                      gender: M
+                      birthDate: 14/08/1982
+                      state: DF
+                    transactionId: transaction1234567890
+                    renapo_valid: true
+                    names: JUANA
+                    paternal_surname: PEREZ
+                    mothers_maiden_name: LOPEZ
+                    birthdate: 14/08/1982
+                    entity_birth: DF
+                    probation_document: '1'
+                    probation_document_data:
+                      foja: ''
+                      numEntidadReg: 09
+                      libro: ''
+                      NumRegExtranjeros: ''
+                      cveEntidadNac: DF
+                      numActa: '00001'
+                      CRIP: ''
+                      tomo: ''
+                      cveEntidadEmisora: ''
+                      anioReg: '1982'
+                      cveMunicipioReg: '001'
+                      FolioCarta: ''
+                    status_curp: RCN
+                    deceasedStatus: ALIVE
+                CURP not found:
+                  summary: CURP not found
+                  description: CURP not found
+                  value:
+                    success: false
+                    error:
+                      codigoError: '06'
+                      resultCURPS:
+                        numEntidadReg: ''
+                        apellidoPaterno: ''
+                        libro: ''
+                        statusCurp: ''
+                        cveEntidadNac: ''
+                        numActa: ''
+                        CRIP: ''
+                        tomo: ''
+                        cveEntidadEmisora: ''
+                        FolioCertificado: ''
+                        anioReg: ''
+                        cveMunicipioReg: ''
+                        FolioCarta: ''
+                        CURP: ''
+                        apellidoMaterno: ''
+                        nombres: ''
+                        nacionalidad: ''
+                        foja: ''
+                        NumRegExtranjeros: ''
+                        fechNac: ''
+                        sexo: ''
+                        docProbatorio: ''
+                      statusOper: NO EXITOSO
+                      tipoError: '01'
+                      sessionID: xF1hOzrjnJU36wDsPl83KlkDpE-eb7tM1Oe2bjI0jrbPJv-mU3IF!1562844632!1749682961123
+                      message: La CURP no se encuentra en la base de datos
+                    result: 'Not valid request: La CURP no se encuentra en la base de datos code: 06'
+                    transactionId: xF1hOzrjnJU36wDsPl83KlkDpE-eb7tM1Oe2bjI0jrbPJv-mU3IF!1562844632!1749682961123
+                    renapo_valid: false
+                Daily Rate Limit Exceeded:
+                  summary: Daily Rate Limit Exceeded
+                  description: Daily Rate Limit Exceeded
+                  value:
+                    success: false
+                    error:
+                      codigoError: '02'
+                      tipoError: '99'
+                      message: SE HA ALCANZADO EL LIMITE DE TRANSACCIONES PERMITIDAS POR DIA
+                    result: SE HA ALCANZADO EL LIMITE DE TRANSACCIONES PERMITIDAS POR DIA
+                    renapo_valid: false
+                Curp status not acceptable:
+                  summary: Curp status not acceptable
+                  description: Curp status not acceptable
+                  value:
+                    success: false
+                    sessionStatus: Alive
+                    error:
+                      codigoError: '02'
+                      tipoError: '99'
+                      message: Curp status is not acceptable.
+                    result: 'Error: STATUS CURP not acceptable.'
+                    renapo_valid: false
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        '500':
+          description: Internal error during CURP validation.
+        '504':
+          description: The request to validate the CURP exceeded the allowed time limit
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/api-validate-curp-v4/
+      x-incode-markdown: https://developer.incode.com/api-reference/api-validate-curp-v4.md
+  /api/validate/curp-by-data/v4:
+    post:
+      tags:
+      - Curp validation
+      summary: CURP by data validation v4
+      description: Check for valid CURP based on a person data and return corresponding values of that person including the CURP.
+      operationId: validatecurpbydata4
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CurpDataRequest'
+        required: true
+      responses:
+        '200':
+          description: 'If data doesn''t match any CURP then the field renapo_valid will be false.
+
+
+            If there is an error with the request data an error object is returned with the details, example:"
+
+            ```
+
+            { "error": { "descripcionRespuesta": "DATOS INCORRECTOS: [El campo no cumple con el formato.]", "codigoRespuesta": "02", } }
+
+            ```
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurpResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/api-validate-curp-by-data-v4/
+      x-incode-markdown: https://developer.incode.com/api-reference/api-validate-curp-by-data-v4.md
+  /omni/add/curp/v2:
+    post:
+      tags:
+      - Curp validation
+      summary: Add curp v2
+      description: Add CURP and validation result based on a person data.
+      operationId: addcurp2
+      parameters:
+      - name: interviewId
+        in: query
+        required: false
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        description: 'Valid values for state are the ones listed by renapo in this link:
+
+          [https://es.wikipedia.org/wiki/Plantilla:Abreviaciones_de_los_estados_de_México](https://es.wikipedia.org/wiki/Plantilla:Abreviaciones_de_los_estados_de_México)
+
+          '
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CurpDataRequest'
+        required: true
+      responses:
+        '200':
+          description: Respuesta con validación de CURP
+          content:
+            application/json:
+              examples:
+                Successful CURP Validation:
+                  summary: Successful CURP Validation
+                  description: Successful CURP Validation
+                  value:
+                    success: true
+                    curp: XXXX820814HDFABC01
+                    sex: MUJER
+                    nationality: MEX
+                    result: success
+                    requestData:
+                      name: JUANA
+                      firstLastName: PEREZ
+                      secondLastName: LOPEZ
+                      gender: M
+                      birthDate: 14/08/1982
+                      state: DF
+                    transactionId: transaction1234567890
+                    renapo_valid: true
+                    names: JUANA
+                    paternal_surname: PEREZ
+                    mothers_maiden_name: LOPEZ
+                    birthdate: 14/08/1982
+                    entity_birth: DF
+                    probation_document: '1'
+                    probation_document_data:
+                      foja: ''
+                      numEntidadReg: 09
+                      libro: ''
+                      NumRegExtranjeros: ''
+                      cveEntidadNac: DF
+                      numActa: '00001'
+                      CRIP: ''
+                      tomo: ''
+                      cveEntidadEmisora: ''
+                      anioReg: '1982'
+                      cveMunicipioReg: '001'
+                      FolioCarta: ''
+                    status_curp: RCN
+                    deceasedStatus: ALIVE
+                CURP not found:
+                  summary: CURP not found
+                  description: CURP not found
+                  value:
+                    success: false
+                    error:
+                      codigoError: '06'
+                      resultCURPS:
+                        numEntidadReg: ''
+                        apellidoPaterno: ''
+                        libro: ''
+                        statusCurp: ''
+                        cveEntidadNac: ''
+                        numActa: ''
+                        CRIP: ''
+                        tomo: ''
+                        cveEntidadEmisora: ''
+                        FolioCertificado: ''
+                        anioReg: ''
+                        cveMunicipioReg: ''
+                        FolioCarta: ''
+                        CURP: ''
+                        apellidoMaterno: ''
+                        nombres: ''
+                        nacionalidad: ''
+                        foja: ''
+                        NumRegExtranjeros: ''
+                        fechNac: ''
+                        sexo: ''
+                        docProbatorio: ''
+                      statusOper: NO EXITOSO
+                      tipoError: '01'
+                      sessionID: xF1hOzrjnJU36wDsPl83KlkDpE-eb7tM1Oe2bjI0jrbPJv-mU3IF!1562844632!1749682961123
+                      message: La CURP no se encuentra en la base de datos
+                    result: 'Not valid request: La CURP no se encuentra en la base de datos code: 06'
+                    transactionId: xF1hOzrjnJU36wDsPl83KlkDpE-eb7tM1Oe2bjI0jrbPJv-mU3IF!1562844632!1749682961123
+                    renapo_valid: false
+                Daily Rate Limit Exceeded:
+                  summary: Daily Rate Limit Exceeded
+                  description: Daily Rate Limit Exceeded
+                  value:
+                    success: false
+                    error:
+                      codigoError: '02'
+                      tipoError: '99'
+                      message: SE HA ALCANZADO EL LIMITE DE TRANSACCIONES PERMITIDAS POR DIA
+                    result: SE HA ALCANZADO EL LIMITE DE TRANSACCIONES PERMITIDAS POR DIA
+                    renapo_valid: false
+                Curp status not acceptable:
+                  summary: Curp status not acceptable
+                  description: Curp status not acceptable
+                  value:
+                    success: false
+                    sessionStatus: Alive
+                    error:
+                      codigoError: '02'
+                      tipoError: '99'
+                      message: Curp status is not acceptable.
+                    result: 'Error: STATUS CURP not acceptable.'
+                    renapo_valid: false
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        '500':
+          description: Internal error during CURP validation.
+        '504':
+          description: The request to validate the CURP exceeded the allowed time limit
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-curp-v2/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-curp-v2.md
+  /omni/add/curp:
+    post:
+      tags:
+      - Curp validation
+      summary: Add curp
+      description: Add curp and the validation process result to interview.
+      operationId: addcurp
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddCurpRequest'
+        required: true
+      responses:
+        '200':
+          description: Respuesta con validación de CURP
+          content:
+            application/json:
+              examples:
+                Successful CURP Validation:
+                  summary: Successful CURP Validation
+                  description: Successful CURP Validation
+                  value:
+                    success: true
+                    curp: XXXX820814HDFABC01
+                    sex: MUJER
+                    nationality: MEX
+                    result: success
+                    requestData:
+                      name: JUANA
+                      firstLastName: PEREZ
+                      secondLastName: LOPEZ
+                      gender: M
+                      birthDate: 14/08/1982
+                      state: DF
+                    transactionId: transaction1234567890
+                    renapo_valid: true
+                    names: JUANA
+                    paternal_surname: PEREZ
+                    mothers_maiden_name: LOPEZ
+                    birthdate: 14/08/1982
+                    entity_birth: DF
+                    probation_document: '1'
+                    probation_document_data:
+                      foja: ''
+                      numEntidadReg: 09
+                      libro: ''
+                      NumRegExtranjeros: ''
+                      cveEntidadNac: DF
+                      numActa: '00001'
+                      CRIP: ''
+                      tomo: ''
+                      cveEntidadEmisora: ''
+                      anioReg: '1982'
+                      cveMunicipioReg: '001'
+                      FolioCarta: ''
+                    status_curp: RCN
+                    deceasedStatus: ALIVE
+                CURP not found:
+                  summary: CURP not found
+                  description: CURP not found
+                  value:
+                    success: false
+                    error:
+                      codigoError: '06'
+                      resultCURPS:
+                        numEntidadReg: ''
+                        apellidoPaterno: ''
+                        libro: ''
+                        statusCurp: ''
+                        cveEntidadNac: ''
+                        numActa: ''
+                        CRIP: ''
+                        tomo: ''
+                        cveEntidadEmisora: ''
+                        FolioCertificado: ''
+                        anioReg: ''
+                        cveMunicipioReg: ''
+                        FolioCarta: ''
+                        CURP: ''
+                        apellidoMaterno: ''
+                        nombres: ''
+                        nacionalidad: ''
+                        foja: ''
+                        NumRegExtranjeros: ''
+                        fechNac: ''
+                        sexo: ''
+                        docProbatorio: ''
+                      statusOper: NO EXITOSO
+                      tipoError: '01'
+                      sessionID: xF1hOzrjnJU36wDsPl83KlkDpE-eb7tM1Oe2bjI0jrbPJv-mU3IF!1562844632!1749682961123
+                      message: La CURP no se encuentra en la base de datos
+                    result: 'Not valid request: La CURP no se encuentra en la base de datos code: 06'
+                    transactionId: xF1hOzrjnJU36wDsPl83KlkDpE-eb7tM1Oe2bjI0jrbPJv-mU3IF!1562844632!1749682961123
+                    renapo_valid: false
+                Daily Rate Limit Exceeded:
+                  summary: Daily Rate Limit Exceeded
+                  description: Daily Rate Limit Exceeded
+                  value:
+                    success: false
+                    error:
+                      codigoError: '02'
+                      tipoError: '99'
+                      message: SE HA ALCANZADO EL LIMITE DE TRANSACCIONES PERMITIDAS POR DIA
+                    result: SE HA ALCANZADO EL LIMITE DE TRANSACCIONES PERMITIDAS POR DIA
+                    renapo_valid: false
+                Curp status not acceptable:
+                  summary: Curp status not acceptable
+                  description: Curp status not acceptable
+                  value:
+                    success: false
+                    sessionStatus: Alive
+                    error:
+                      codigoError: '02'
+                      tipoError: '99'
+                      message: Curp status is not acceptable.
+                    result: 'Error: STATUS CURP not acceptable.'
+                    renapo_valid: false
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        '500':
+          description: Internal error during CURP validation.
+        '504':
+          description: The request to validate the CURP exceeded the allowed time limit
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/curp-validation-error-codes/
+      x-incode-markdown: https://developer.incode.com/api-reference/curp-validation-error-codes.md
+components:
+  schemas:
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    CurpDataRequest:
+      type: object
+      properties:
+        curp:
+          type: string
+          description: User's curp. Has to be in valid format. If it isn't present, then curp value from interview is used.
+          example: COHJ950918HCMVRS09
+        name:
+          type: string
+          minLength: 1
+        firstLastName:
+          type: string
+          minLength: 1
+        secondLastName:
+          type: string
+        gender:
+          type: string
+          description: Valid gender values are "H" (Hombre, male), "M" (mujer, female) and "X" (otro, other)
+          enum:
+          - H
+          - M
+          - X
+          minLength: 1
+        birthDate:
+          type: string
+          format: dd/mm/yyyy
+          example: 07/06/1995
+          minLength: 1
+        state:
+          type: string
+          example: CM
+          minLength: 1
+        externalId:
+          type: string
+          example: bdac7bdd-9339-4f85-9b32-bc90d553ddc6
+    CurpResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        curp:
+          type: string
+          description: Curp
+        sex:
+          type: string
+          description: Sex
+          enum:
+          - Mujer
+          - Hombre
+          - X
+        nationality:
+          type: string
+          description: Nationality
+        result:
+          type: string
+        transactionId:
+          type: string
+        renapo_valid:
+          type: boolean
+          description: Flag indicating if CURP validation passed - tipoError present in response
+        names:
+          type: string
+          description: Names
+        paternal_surname:
+          type: string
+          description: Paternal surname
+        mothers_maiden_name:
+          type: string
+          description: Mother maiden name
+        birthdate:
+          type: string
+          description: Birth Date in format DD/MM/YYYY
+        entity_birth:
+          type: string
+          description: Birth State
+        probation_document:
+          type: string
+          description: Probation Document
+        probation_document_data:
+          type: object
+          additionalProperties:
+            type: object
+          description: 'Key/Value structure. All keys are type of string. Available Key values:
+
+            - anioReg
+
+            - foja
+
+            - tomo
+
+            - libro
+
+            - numActa
+
+            - CRIP
+
+            - numEntidadReg
+
+            - cveMunicipioReg
+
+            - NumRegExtranjeros
+
+            - FolioCarta
+
+            - cveEntidadNac
+
+            - cveEntidadEmisora
+
+            '
+        status_curp:
+          type: string
+          description: Status Curp
+        deceasedStatus:
+          type: string
+          description: Deceased Status
+    AddCurpRequest:
+      type: object
+      properties:
+        curp:
+          type: string
+          description: User's curp. Has to be in valid format. If it isn't present, then curp value from interview is used.
+          example: COHJ950918HCMVRS09
+    CurpRequest:
+      type: object
+      properties:
+        curp:
+          type: string
+          minLength: 1
+        externalId:
+          type: string
+          example: bdac7bdd-9339-4f85-9b32-bc90d553ddc6
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

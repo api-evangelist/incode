@@ -1,0 +1,324 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Trust graph API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Trust graph
+paths:
+  /omni/trust-graph/report:
+    post:
+      tags:
+      - Trust graph
+      summary: Add fraud candidate to the trust graph
+      description: Adds a new fraud candidate to the trust graph based on the provided request data, including details such as the source entity, reason, and associated information.
+      operationId: addFraudCandidate
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FraudCandidateRequestDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+      x-incode-status: undocumented
+  /omni/trust-graph/defraud:
+    post:
+      tags:
+      - Trust graph
+      summary: Defraud multiple interviews in trust graph
+      description: Marks multiple interviews as defrauded in the trust graph based on the provided list of interview IDs.
+      operationId: defraudInterviewBatch
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DefraudInterviewBatchRequestDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+      x-incode-status: undocumented
+  /omni/b2b/trust-graph/report:
+    post:
+      tags:
+      - Trust graph
+      summary: Add fraud candidate to the trust graph (B2B)
+      description: Adds a new fraud candidate to the trust graph for B2B based on the provided request data.
+      operationId: addFraudCandidateB2B
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FraudCandidateRequestB2BDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      x-incode-status: undocumented
+  /omni/trust-graph/reason-categories:
+    get:
+      tags:
+      - Trust graph
+      summary: Get reason categories from TrustGraph
+      description: Returns reason categories (with reasons) from TrustGraph
+      operationId: getReasonCategories
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReasonCategoriesResponseDto'
+      x-incode-status: undocumented
+  /omni/b2b/trust-graph/result:
+    get:
+      tags:
+      - Trust graph
+      summary: Get trust graph check results
+      description: Retrieves the results of fraud checks performed on a specific interview, identified by its interview ID.
+      operationId: getTrustGraphCheckResult
+      parameters:
+      - name: interviewId
+        in: query
+        required: true
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustGraphCheckResultB2BDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      x-incode-status: undocumented
+components:
+  schemas:
+    TrustGraphCheckResultB2BDto:
+      type: object
+      properties:
+        externalId:
+          type: string
+        status:
+          type: string
+          enum:
+          - PASSED
+          - FAILED
+          - ERROR
+          - UNKNOWN
+        skipReason:
+          type: string
+          enum:
+          - COMPLIANCE_RESTRICTED
+          - DOCUMENT_NOT_CHECKABLE
+          - DOCUMENT_QUALITY_INSUFFICIENT
+          - DOCUMENT_QUALITY_UNAVAILABLE
+          - UNKNOWN
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrustGraphCategoryResultDto'
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    DefraudInterviewBatchRequestDto:
+      type: object
+      properties:
+        interviewIds:
+          type: array
+          items:
+            type: string
+          maxItems: 2147483647
+          minItems: 1
+      required:
+      - interviewIds
+    ReasonCategoriesResponseDto:
+      type: object
+      properties:
+        reasonsAndCategories:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/ReasonConfigDto'
+    TrustGraphCategoryResultDto:
+      type: object
+      properties:
+        reasonCategory:
+          type: string
+          enum:
+          - SUSPECTED_REPEAT_FRAUDSTER
+          - FIRST_PARTY_FRAUD
+          - UNUSUAL_ACTIVITY
+          - VELOCITY_CHECKS
+          - FRAUD_RINGS
+        config:
+          $ref: '#/components/schemas/ReasonCategoryConfig'
+        matches:
+          type: array
+          items:
+            $ref: '#/components/schemas/MatchDto'
+          uniqueItems: true
+    ReasonConfigDto:
+      type: object
+      properties:
+        code:
+          type: string
+        descriptions:
+          type: object
+          additionalProperties:
+            type: string
+    MatchDto:
+      type: object
+      properties:
+        origin:
+          type: string
+          enum:
+          - REPORTED_BY_CLIENT
+          - REPORTED_BY_INCODE
+          - THIRD_PARTY
+          - UNKNOWN
+        reason:
+          type: string
+        checkType:
+          type: string
+          enum:
+          - DEVICE_HASH
+          - DOCUMENT_NUMBER
+          - PERSONAL_NUMBER
+          - VOTER_NUMBER
+          - FACE
+          - FACE_ON_ID
+          - UNKNOWN
+    ReasonCategoryConfig:
+      type: object
+      properties:
+        reasonCategoryConfigStatus:
+          type: string
+          enum:
+          - ENABLED
+          - DISABLED
+          - NOT_CONFIGURED
+    FraudCandidateRequestB2BDto:
+      type: object
+      properties:
+        sourceEntityId:
+          type: string
+        reason:
+          type: string
+        comment:
+          type: string
+    FraudCandidateRequestDto:
+      type: object
+      properties:
+        sourceEntityId:
+          type: string
+        reason:
+          type: string
+          minLength: 1
+        comment:
+          type: string
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

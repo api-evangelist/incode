@@ -1,0 +1,2285 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Id capture API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Id capture
+paths:
+  /omni/update/editable-ocr-data-second-id:
+    put:
+      tags:
+      - Id capture
+      summary: Update editable OCR data in interview for the second Id
+      description: Update some of the crucial interview OCR data if needed.
+      operationId: updateeditableocrdatasecondid
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerEditableOcrDataRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/update-editable-ocr-data-second-id/
+      x-incode-markdown: https://developer.incode.com/api-reference/update-editable-ocr-data-second-id.md
+  /omni/update/editable-ocr-data:
+    put:
+      tags:
+      - Id capture
+      summary: Update editable OCR data in interview
+      description: Update some of the crucial interview OCR data if needed.
+      operationId: updateeditableocrdata
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerEditableOcrDataRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/update-editable-ocr-data/
+      x-incode-markdown: https://developer.incode.com/api-reference/update-editable-ocr-data.md
+  /omni/process/second-id:
+    post:
+      tags:
+      - Id capture
+      summary: Process Second Id
+      description: '**Note**: This endpoint should be called only after the upload of front-side-secondId and
+
+        back-side-secondId is over. And in case of passports or only front sided documents, only
+
+        front-side-secondId should be over.
+
+
+        Incode validations and ocr parsing are processed during this endpoint. To fetch ocr data call
+
+        Fetch-SecondId_OCR. Parameter queueName is needed so it can be determined in which queue
+
+        interview should go. Once this is called, user is no longer able to upload ID (front or back side).'
+      operationId: processSecondId
+      parameters:
+      - name: queueName
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'The name of the queue, user is entering in case conference call will be used. If not set, default queue will be used.
+
+            '
+          enum:
+          - aristotle
+          - buddha
+          - confucius
+          - diogenes
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessIdResponseDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/process-second-id/
+      x-incode-markdown: https://developer.incode.com/api-reference/process-second-id.md
+  /omni/process/id:
+    post:
+      tags:
+      - Id capture
+      summary: Process Id
+      description: '**Note**:This endpoint should be called only after the front-side
+
+        and back-side is over.
+
+        And in case of passports or only front sided documents, only front-side should be over.
+
+
+        Incode validations and ocr parsing are processed during this endpoint. To fetch ocr data call Fetch-OCR.
+
+
+        Once this is called, user is no longer able to upload ID (front or back side).'
+      operationId: processId
+      parameters:
+      - name: queueName
+        in: query
+        description: The name of the queue, user is entering in case conference call will be used. If not set, default queue will be used
+        required: false
+        schema:
+          type: string
+          enum:
+          - aristotle
+          - buddha
+          - confucius
+          - diogenes
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessIdResponseDto'
+        '400':
+          description: 'Custom error statuses:
+
+            - 4085: ID image is too small. The message contains the received dimensions and the required minimum (the smallest image side must be at least 200 px).
+
+            - 6000: Processing error (generic failure during ID processing)
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/process-id/
+      x-incode-markdown: https://developer.incode.com/api-reference/process-id.md
+  /omni/add/front-second-id/v2:
+    post:
+      tags:
+      - Id capture
+      summary: Add front side of Second ID
+      description: This endpoint is used for storing front side of second id for further processing
+      operationId: addFrontSecondIdV2
+      parameters:
+      - name: onlyFront
+        in: query
+        description: Flag stating if document is one-sided (like Passport). Default value is false, in case it is not sent.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdCaptureV2Request'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddIdResponse'
+        '400':
+          description: 'Custom error statuses:
+
+            - 4019: Face not found
+
+            - 1003: Face cropping failure
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-front-second-id-v2/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-front-second-id-v2.md
+  /omni/add/front-id/v2:
+    post:
+      tags:
+      - Id capture
+      summary: Add front side of ID
+      description: 'This endpoint is used for storing front side of id for further processing. Image quality check is performed during that call.
+
+        Number of retries is not limited.
+
+
+        Once process-id is finished, this endpoint cannot be called for retries.
+
+
+        **Note: Front side of id should be uploaded before back-side**
+
+
+        **Image requirements**: the smallest side of the image must be at least 200 px.
+
+        A smaller image can pass this capture step, but process-id rejects it with error status 4085 ("ID image is too small.").
+
+        Images larger than 2048 px on the longest side are scaled down automatically.'
+      operationId: addFrontIdV2
+      parameters:
+      - name: onlyFront
+        in: query
+        description: Flag stating if document is one-sided (like Passport)
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: extractIdFace
+        in: query
+        description: When false, skips biometric face extraction and template creation from the front ID. Default true.
+        required: false
+        schema:
+          type: boolean
+          default: true
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        description: Front side of id. In case of passport, this should be page with all data about user.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdCaptureV2Request'
+        required: true
+      responses:
+        '200':
+          description: 'In case there''s some issue when calling the endpoint due to classification failed, an issue such as bad quality,
+
+            or any of the fail reasons the response will always have the field:
+
+            - classification
+
+            - failReason
+
+            - sharpness
+
+            - glare
+
+            - horizontalResolution
+
+
+            We recommend considering the call as failed if there''s a failReason in the response or if the classification is false.
+
+            Possible values for fail reason:
+
+            - UNKNOWN_DOCUMENT_TYPE: document classification failed
+
+            - WRONG_DOCUMENT_SIDE: can happen when uploading back side of id when front id is required or the other way around
+
+            - WRONG_ONE_SIDED_DOCUMENT: uploading wrong document with only one side
+
+            - WRONG_UNFOLDED_DOCUMENT: uploading unfolded document with unrecognizable sides
+
+            - UNFOLDED_DOCUMENT_PAGE_MISMATCH: uploading unfolded document with mismatching sides
+
+            - DOCUMENT_NOT_READABLE: document couldn''t be read, probably due to image quality
+
+            - UNABLE_TO_ALIGN_DOCUMENT: alignment failed
+
+            - ID_TYPE_UNACCEPTABLE: invalid type of id
+
+            - UNEXPECTED_ERROR_OCCURRED: unexpected error
+
+
+            Whenever the classification is done successfully the fields that will always be present are:
+
+            - classification
+
+            - sharpness
+
+            - glare
+
+            - horizontalResolution
+
+            - readability
+
+            - typeOfId
+
+            - sessionStatus
+
+
+            The remaining fields could be optional depending on the specific type of id and country of origin.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddIdResponse'
+        '400':
+          description: 'Custom error statuses:
+
+            - 1003: Face cropping failure
+
+            - 4004: Could not find user
+
+            - 4019: Face not found
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-front-id-v2/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-front-id-v2.md
+  /omni/add/document-id:
+    post:
+      tags:
+      - Id capture
+      summary: Add document id
+      description: Upload document identifier. For Mexican id it is cic from the back of id.
+      operationId: addDocumentId
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentIdentifierRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-document-id/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-document-id.md
+  /omni/add/barcode/v3:
+    post:
+      tags:
+      - Id capture
+      summary: Add Base64 Barcode
+      description: Add Base64 barcode and parse it to interview.
+      operationId: addbarcodev3
+      parameters:
+      - name: processId
+        in: query
+        description: Flag stating if id validation should be automatically performed
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        description: Barcode V2 request.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BarcodeV2Request'
+        required: true
+      responses:
+        '200':
+          description: 'Response:
+
+            - forceFrontIdCapture: Boolean. Flag that signals if front id capture must be executed after barcode being added.
+
+            - sessionStatus: SessionStatus. Session status
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddBarcodeResponseDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-barcode-v3/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-barcode-v3.md
+  /omni/add/barcode/v2:
+    post:
+      tags:
+      - Id capture
+      summary: Add Base64 Barcode
+      description: Add Base64 barcode and parse it to interview.
+      operationId: addbarcodev2
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BarcodeV2Request'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-barcode-v2/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-barcode-v2.md
+  /omni/add/barcode:
+    post:
+      tags:
+      - Id capture
+      summary: Add Barcode
+      description: Add raw barcode and parse it to interview.
+      operationId: addbarcode
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BarcodeRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-barcode/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-barcode.md
+  /omni/add/back-second-id/v2:
+    post:
+      tags:
+      - Id capture
+      summary: Add back side of Second ID
+      description: 'Image quality check is performed during that call. Number of retries is not limited. Once id processing is finished,
+
+        this endpoint cannot be called for retries. Front side of id should be uploaded before back side. In case of passport,
+
+        this endpoint should not be called.'
+      operationId: addBackSecondIdV2
+      parameters:
+      - name: captureType
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - AUTO
+          - MANUAL
+          - NATIVE
+          - UPLOAD
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdCaptureV2Request'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddIdResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-back-second-id-v2/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-back-second-id-v2.md
+  /omni/add/back-id/v2:
+    post:
+      tags:
+      - Id capture
+      summary: Add back side of ID
+      description: 'This endpoint is used for storing back side of id for further processing. Image quality check is performed during that call.
+
+        Number of retries is not limited.
+
+
+        Once process-id is finished, this endpoint cannot be called for retries.
+
+
+        **Note**: Front-side of id should be uploaded before back side.
+
+
+        In case of passport or only front sided documents, this endpoint should not be called.'
+      operationId: addBackIdV2
+      parameters:
+      - name: retry
+        in: query
+        description: Flag stating that this is retry attempt for add/back-id
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        description: Back side of id
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdCaptureV2Request'
+        required: true
+      responses:
+        '200':
+          description: 'In case there''s some issue when calling the endpoint due to classification failed, an issue such as bad quality,
+
+            or any of the fail reasons the response will always have the field:
+
+            - classification
+
+            - failReason
+
+            - sharpness
+
+            - glare
+
+            - horizontalResolution
+
+
+            We recommend considering the call as failed if there''s a failReason in the response or if the classification is false.
+
+            Possible values for fail reason:
+
+            - UNKNOWN_DOCUMENT_TYPE: document classification failed
+
+            - WRONG_DOCUMENT_SIDE: can happen when uploading back side of id when front id is required or the other way around
+
+            - WRONG_ONE_SIDED_DOCUMENT: uploading wrong document with only one side
+
+            - WRONG_UNFOLDED_DOCUMENT: uploading unfolded document with unrecognizable sides
+
+            - UNFOLDED_DOCUMENT_PAGE_MISMATCH: uploading unfolded document with mismatching sides
+
+            - DOCUMENT_NOT_READABLE: document couldn''t be read, probably due to image quality
+
+            - UNABLE_TO_ALIGN_DOCUMENT: alignment failed
+
+            - ID_TYPE_UNACCEPTABLE: invalid type of id
+
+            - UNEXPECTED_ERROR_OCCURRED: unexpected error
+
+
+            Whenever the classification is done successfully the fields that will always be present are:
+
+            - classification
+
+            - sharpness
+
+            - glare
+
+            - horizontalResolution
+
+            - readibility
+
+            - typeOfId
+
+            - sessionStatus
+
+
+            The remaining fields could be optional depending on the specific type of id and country of origin.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddIdResponse'
+        '400':
+          description: 'Custom error statuses:
+
+            - 4004: Could not find user
+
+            - 5003: Unsatisfied image size
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-back-id-v2/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-back-id-v2.md
+  /omni/get/ocr-data/v2:
+    get:
+      tags:
+      - Id capture
+      summary: Fetch ocr data v2
+      description: Returns data about user read from id and address statement wrapped in ocrData object.
+      operationId: getocrdatav2
+      parameters:
+      - name: id
+        in: query
+        description: Id of onboarding for which data are requested. If not present, it will be extracted from token.
+        required: false
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OcrDataResponsePacked'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/get-ocr-data-v2/
+      x-incode-markdown: https://developer.incode.com/api-reference/get-ocr-data-v2.md
+  /omni/get/ocr-data-second-id:
+    get:
+      tags:
+      - Id capture
+      summary: Fetch ocr data for second id
+      description: Returns data about user read from the second id.
+      operationId: getOcrDataSecondId
+      parameters:
+      - name: id
+        in: query
+        description: Id of onboarding for which data are requested. If not present, it will be extracted from token.
+        required: false
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OcrDataResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/get-ocr-data-second-id/
+      x-incode-markdown: https://developer.incode.com/api-reference/get-ocr-data-second-id.md
+  /omni/get/ocr-data:
+    get:
+      tags:
+      - Id capture
+      summary: Fetch ocr data
+      description: Returns data about user read from id and address statement.
+      operationId: getOcrData
+      parameters:
+      - name: id
+        in: query
+        description: Id of onboarding for which data are requested. If not present, it will be extracted from token.
+        required: false
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OcrDataResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/get-ocr-data/
+      x-incode-markdown: https://developer.incode.com/api-reference/get-ocr-data.md
+  /omni/get/id-summary:
+    get:
+      tags:
+      - Id capture
+      summary: Get ID Summary
+      description: Returns success information about addFront and addBack. Also returns onlyFront flag.
+      operationId: getIdSummary
+      parameters:
+      - name: id
+        in: query
+        description: Id of onboarding for which data are requested. If not present, it will be extracted from token.
+        required: false
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdSummaryResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/get-id-summary/
+      x-incode-markdown: https://developer.incode.com/api-reference/get-id-summary.md
+  /omni/cross-doc-data-check/results:
+    get:
+      tags:
+      - Id capture
+      summary: Get cross-document comparison results
+      description: Fetch cross-document data check results for a given interview ID. If no ID is provided, it defaults to the user's ID from the JWT.
+      operationId: cross-doc-check-results
+      parameters:
+      - name: id
+        in: query
+        required: false
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: Response contains a map of results with detailed comparison information.
+          content:
+            application/json:
+              schema:
+                type: string
+                example:
+                  additionalProp1:
+                  - interviewId: string
+                    comparisonName: string
+                    comparisonId: string
+                    result: OK
+                    leftValueDetails:
+                      documentType: string
+                      fieldName: string
+                      value: {}
+                      sourceNotFound: true
+                    rightValueDetails:
+                      documentType: string
+                      fieldName: string
+                      value: {}
+                      sourceNotFound: true
+                    severity: ultra_low
+                  additionalProp2:
+                  - interviewId: string
+                    comparisonName: string
+                    comparisonId: string
+                    result: OK
+                    leftValueDetails:
+                      documentType: string
+                      fieldName: string
+                      value: {}
+                      sourceNotFound: true
+                    rightValueDetails:
+                      documentType: string
+                      fieldName: string
+                      value: {}
+                      sourceNotFound: true
+                    severity: ultra_low
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/cross-doc-data-check-results/
+      x-incode-markdown: https://developer.incode.com/api-reference/cross-doc-data-check-results.md
+components:
+  schemas:
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    CustomerEditableOcrDataRequest:
+      type: object
+      properties:
+        address:
+          type: string
+        documentNumber:
+          type: string
+        name:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        paternalLastName:
+          type: string
+        maternalLastName:
+          type: string
+        personalNumber:
+          type: string
+        curp:
+          type: string
+        email:
+          type: string
+        birthDate:
+          type: string
+        expireAt:
+          type: string
+        gender:
+          type: string
+    IdCaptureV2Request:
+      type: object
+      properties:
+        base64Image:
+          type: string
+          description: Image in base64 format. One of base64Image or imageUrl is required
+          example: /9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEB...
+        imageUrl:
+          type: string
+          description: URL of the image. One of base64Image or imageUrl is required
+          example: http://...
+    AdditionalDocumentAttemptDto:
+      type: object
+      description: Base definition for additional document attempts. This definition is used to represent the attempt to submit an additional document during the onboarding process. It includes common fields such as document type, status, attempt timestamp, and a list of image URLs.
+      discriminator:
+        propertyName: documentType
+        mapping:
+          ASYLUM_SEEKER: '#/components/schemas/AsylumSeekerDocumentAttemptDto'
+          BANK_STATEMENT: '#/components/schemas/BankStatementDocumentAttemptDto'
+          COLOMBIAN_BIRTH_CERTIFICATE: '#/components/schemas/ColombianBirthCertificateDocumentAttemptDto'
+          CURP: '#/components/schemas/CurpDocumentAttemptDto'
+          GENERIC: '#/components/schemas/GenericDocumentAttemptDto'
+          MEXICAN_TAX_DECLARATION: '#/components/schemas/MexicanTaxDeclarationDocumentAttemptDto'
+          MEXICAN_TAX_STATUS: '#/components/schemas/MexicanTaxStatusDocumentAttemptDto'
+          REFUGEE_ID: '#/components/schemas/RefugeeIdDocumentAttemptDto'
+          REFUGEE_STATUS: '#/components/schemas/RefugeeStatusDocumentAttemptDto'
+          POA: '#/components/schemas/PoaDocumentAttemptDto'
+          RFC: '#/components/schemas/RfcDocumentAttemptDto'
+          V5C_LOGBOOK: '#/components/schemas/V5CLogbookAttemptDto'
+          CAR_INVOICE: '#/components/schemas/CarInvoiceAttemptDto'
+          CIRCULATION_CARD: '#/components/schemas/CirculationCardAttemptDto'
+          INE_MEX: '#/components/schemas/IneMexDocumentAttemptDto'
+          BANK_CHECK: '#/components/schemas/BankCheckDocumentAttemptDto'
+          LETTER_OF_AUTHORIZATION: '#/components/schemas/LetterOfAuthorizationDocumentAttemptDto'
+          FINANCE_SETTLEMENT: '#/components/schemas/FinanceSettlementDocumentAttemptDto'
+          COLOMBIA_RUT_FORM: '#/components/schemas/ColombiaRutFormDocumentAttemptDto'
+          W8_BEN: '#/components/schemas/W8BenDocumentAttemptDto'
+          W8_BEN_E: '#/components/schemas/W8BenEDocumentAttemptDto'
+          UNKNOWN: '#/components/schemas/UnknownDocumentAttemptDto'
+      properties:
+        status:
+          type: string
+          enum:
+          - SUCCESS
+          - VALIDATION_ERROR
+          - FAIL
+        attemptTimestamp:
+          type: integer
+          format: int64
+        imagesUrl:
+          type: array
+          items:
+            type: string
+        attemptType:
+          type: string
+          enum:
+          - POA
+          - DOCUMENT_CAPTURE
+        antiSpoofResult:
+          $ref: '#/components/schemas/PoaAntiSpoofResult'
+        documentType:
+          type: string
+      required:
+      - documentType
+    DocumentIdentifierRequest:
+      type: object
+      properties:
+        documentIdentifier:
+          type: string
+          description: Document id.
+          example: 123456789
+          minLength: 1
+    CaptureAttemptsLimitDto:
+      type: object
+      properties:
+        max:
+          type: integer
+          format: int32
+          description: Maximum number of attempts to capture a photo.
+        remaining:
+          type: integer
+          format: int32
+          description: Number of remaining attempts to capture a photo.
+    OcrDataConfidence:
+      type: object
+      description: Structure containing ocr reliability confidence for each extracted ocr field. Confidence values are Floats between 0 and 1.
+      properties:
+        birthDateConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nameNativeScriptConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        firstNameNativeScriptConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        paternalLastNameNativeScriptConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        maternalLastNameNativeScriptConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        givenNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        firstNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        middleNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nameSuffixConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mothersSurnameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        fathersSurnameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nickNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        fullNameMrzConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mothersNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        fathersNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mothersIdNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        fathersIdNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        spouseNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        birthNameConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        addressConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        streetConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        colonyConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        postalCodeConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        cityConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        stateConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        districtConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        stateCodeConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        countryCodeConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        genderConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        issueDateConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        expirationDateConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        issuedAtConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        expireAtConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        issuingAuthorityConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mrz1Confidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mrz2Confidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mrz3Confidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mrzFullConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        documentNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        backNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        personalNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nationalNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        claveDeElectorConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        numeroEmisionCredencialConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        curpConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nueConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        registrationDateConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        heightConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        birthPlaceConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        bloodTypeConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        eyeColorConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        classesConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        condConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        mentionsConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        refNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        weightConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        hairConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        restrictionsConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nationalityConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nationalityMrzConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        nationalityAlpha3Confidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        maritalStatusConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        raceConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        taxIdNumberConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+        jurisdictionCodeConfidence:
+          type: number
+          format: float
+          maximum: 1
+          minimum: 0
+    Detail:
+      type: object
+      properties:
+        kind:
+          type: string
+        error:
+          type: string
+        loc:
+          type: string
+        explanation:
+          type: string
+    IdSummaryDocumentSideResult:
+      type: object
+      properties:
+        classification:
+          type: boolean
+        readability:
+          type: boolean
+        sharpness:
+          type: integer
+          format: int32
+        glare:
+          type: integer
+          format: int32
+    PoaAntiSpoofResult:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - PASS
+          - FAIL
+          - NOT_EXECUTED
+        kinds:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+        confidence:
+          type: number
+          format: float
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/Detail'
+    ProcessIdResponseDto:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+        isDocumentExpired:
+          type: boolean
+          description: Flag indicating if the document is expired.
+    AddressBean:
+      type: object
+      properties:
+        street:
+          type: string
+          description: Street line in the way it is read from address string.
+        streetName:
+          type: string
+          description: Street name without exterior and interior numbers.
+        colony:
+          type: string
+          description: Colony line the way it is read from address string. (Not applicable for all countries)
+        postalCode:
+          type: string
+          description: Postal code in the way it is read from address string.
+        city:
+          type: string
+          description: City in the way it is read from address string.
+        state:
+          type: string
+          description: State in the way it is read from address string.
+        stateName:
+          type: string
+          description: Full StateName.
+        district:
+          type: string
+          description: District in the way it is read from address string.
+        stateCode:
+          type: string
+          description: State code if applicable.
+        addressCountryCode:
+          type: string
+          description: Address country code if applicable.
+        label:
+          type: string
+          description: Full address label.
+        exteriorNumber:
+          type: string
+          description: Exterior street number.
+        interiorNumber:
+          type: string
+          description: Interior street number.
+        addressLine1:
+          type: string
+          description: The primary line in the address that contains the most essential details for locating a place.
+        streetType:
+          type: string
+          description: Street type
+    AddIdResponse:
+      type: object
+      properties:
+        correctSharpness:
+          type: boolean
+          description: It's true if the sharpness of the ID meets the requirements.
+        correctGlare:
+          type: boolean
+          description: It's true if the glare of the ID meets the requirements.
+        horizontalResolution:
+          type: integer
+          format: int32
+          description: Value is based on the resolution of the cropped photo. Low value means after performing the crop we have a bad quality of image. We recommend to retry capture if value is below 155.
+        shadowConfidence:
+          type: number
+          format: float
+          description: Value 0 means it is no shadow on the image and image quality is good, while value 1 represents bad quality of image with a lot of shadow. We recommend to retry capture if value is 1.
+          maximum: 1
+          minimum: 0
+        classification:
+          type: boolean
+          description: If true, server classified image as a front side of an id. If false, server failed to classify image as valid front side of an id or passport and other parameters can be ignored.
+        readability:
+          type: boolean
+          description: If true, server can properly read ID. If false server failed to read some key places of the ID.
+        typeOfId:
+          type: string
+          enum:
+          - Unknown
+          - Passport
+          - Visa
+          - DriversLicense
+          - IdentificationCard
+          - Permit
+          - Currency
+          - ResidenceDocument
+          - TravelDocument
+          - BirthCertificate
+          - VehicleRegistration
+          - Other
+          - WeaponLicense
+          - TribalIdentification
+          - VoterIdentification
+          - Military
+          - TaxIdentification
+          - FederalID
+          - MedicalCard
+        issueYear:
+          type: integer
+          format: int32
+          description: Issue year of the ID.
+        issueName:
+          type: string
+          description: Description of the ID. Could contain country code, state, type of ID, subtype of ID.
+        curpCheck:
+          type: boolean
+          description: Only for Mexican IDs. Flag stating if curp was properly read.
+        sessionStatus:
+          type: string
+          description: Session Status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+        countryCode:
+          type: string
+          description: Valid ISO alpha-2 or alpha-3 code of the ID issuing country.
+        state:
+          type: string
+          description: Issuing state of the ID.
+        failReason:
+          type: string
+          description: Classification fail reason
+          enum:
+          - UNKNOWN_DOCUMENT_TYPE
+          - WRONG_DOCUMENT_SIDE
+          - WRONG_ONE_SIDED_DOCUMENT
+          - UNFOLDED_DOCUMENT_PAGE_MISMATCH
+          - WRONG_UNFOLDED_DOCUMENT
+          - DOCUMENT_NOT_READABLE
+          - UNABLE_TO_ALIGN_DOCUMENT
+          - ID_TYPE_UNACCEPTABLE
+          - UNEXPECTED_ERROR_OCCURRED
+          - DIGITAL_ID_REQUESTED_BUT_OTHER_PROVIDED
+        skipBackIdCapture:
+          type: boolean
+          description: Flag that signals if back id capture should be skipped or not.
+        forceFrontIdCapture:
+          type: boolean
+          description: Flag that signals if front id capture must be executed after back.
+        showMandatoryConsent:
+          type: boolean
+          description: Render mandatory consent page based on this parameter value.
+        regulationType:
+          type: string
+          description: Regulation type for the mandatory consent (only if showMandatoryConsent set to true).
+        skipGlareFront:
+          type: boolean
+          description: Flag that signals if front side glare should be ignored.
+        skipGlareBack:
+          type: boolean
+          description: Flag that signals if back side glare should be ignored.
+        documentIsOnTheEdge:
+          type: boolean
+          description: Flag that signals if document is on the edge on the full frame image.
+        acceptedDocuments:
+          type: array
+          description: List of accepted documents for that particular country in case of ID_TYPE_UNACCEPTABLE failReason.
+          items:
+            type: string
+            enum:
+            - Unknown
+            - Passport
+            - Visa
+            - DriversLicense
+            - IdentificationCard
+            - Permit
+            - Currency
+            - ResidenceDocument
+            - TravelDocument
+            - BirthCertificate
+            - VehicleRegistration
+            - Other
+            - WeaponLicense
+            - TribalIdentification
+            - VoterIdentification
+            - Military
+            - TaxIdentification
+            - FederalID
+            - MedicalCard
+          uniqueItems: true
+        imageRedacted:
+          type: boolean
+          description: Flag that signals if image was redacted as part of the ID capture.
+        idFaceExtractionSkipped:
+          type: boolean
+          description: True when biometric face extraction from the front ID was skipped because the client passed extractIdFace=false. While this flag is true, face-match flows that require an ID-side template cannot run; the flag is cleared on a subsequent add/front-id call where extractIdFace is true (or omitted).
+        captureAttemptsLimit:
+          $ref: '#/components/schemas/CaptureAttemptsLimitDto'
+          description: Checked only if configured in the session flow.
+        idQualityAttemptApproved:
+          type: boolean
+          description: ID quality check result based on ML readability estimation. True if perFieldReadability >= 0.38, false otherwise. Only available for Mexican documents when feature is enabled.
+        isDocumentExpired:
+          type: boolean
+          description: Flag indicating if the document side is expired.
+        attemptId:
+          type: string
+          description: Created attempt id.
+    OcrDataResponse:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/NameBean'
+        address:
+          type: string
+          description: Address as read from id. Address can have two or three lines. Lines are separated by \n
+        addressFields:
+          $ref: '#/components/schemas/AddressBean'
+        fullAddress:
+          type: boolean
+          description: This field is set to true if address from id is full (has three lines) or not (For Mexican Voter IDs only).
+        invalidAddress:
+          type: boolean
+          description: This field checks for a valid street, numeric postal code with 5 digits, and that both colony and city have values. (Only checked for Mexican IDs)
+        checkedAddress:
+          type: string
+          description: Address as obtained after processing with geocoder geolocation api.
+        checkedAddressBean:
+          $ref: '#/components/schemas/AddressBean'
+        exteriorNumber:
+          type: string
+          description: Exterior street number.
+        interiorNumber:
+          type: string
+          description: Interior street number.
+        addressFromStatement:
+          type: string
+          description: Address as read from address statement. Lines are separated by \n.
+        addressFieldsFromStatement:
+          $ref: '#/components/schemas/AddressBean'
+        invalidAddressFromStatement:
+          type: boolean
+          description: This field checks for a valid street, numeric postal code with 5 digits, and tha both colony and city have values. (Only checked for Mexican POA)
+        addressStatementEmissionDate:
+          type: integer
+          format: int64
+          description: ' Issue date of address statement. The value is presented in UTC milliseconds.'
+        documentType:
+          type: string
+          description: 'Type of address statement document. Possible values:
+
+            - Mexico: liverpool, citibanamex, cfe, telcel, izzi, axtel, telmex, oapas, sacmex, opdm, naturgy, drenaje, totalplay, dhc, att, cea, smapa, megacable, jmas, amicsa, caev
+
+            - Bolivia: cre
+
+            - Uruguay: ute
+
+            - Unknown document: otherPoa
+
+            '
+          enum:
+          - a1
+          - aggm
+          - apg
+          - energieAg
+          - cre
+          - aforeAzteca
+          - amd
+          - amicsa
+          - att
+          - axtel
+          - bancoppel
+          - bancoAzteca
+          - banorte
+          - bbva
+          - cab
+          - caev
+          - capa
+          - cea
+          - cfe
+          - citibanamex
+          - cmapa
+          - cmapaGrande
+          - cmapas
+          - cmas
+          - cmasBlue
+          - comapa
+          - comapaRed
+          - coppel
+          - dapa
+          - dhc
+          - drenaje
+          - ecogas
+          - engie
+          - gasNatural
+          - h
+          - hsbc
+          - inbursa
+          - infonavit
+          - interapas
+          - isagas
+          - izzi
+          - jad
+          - japam
+          - japama
+          - japami
+          - japay
+          - jiapaz
+          - jmas
+          - jras
+          - jumapac
+          - jumapam
+          - lerdo
+          - liverpool
+          - mas
+          - megacable
+          - naturgy
+          - oapas
+          - odapas
+          - ooapas
+          - opdm
+          - oroapa
+          - sacmex
+          - sacmexCdmx
+          - santander
+          - sapa
+          - sapal
+          - sapamuy
+          - sapasa
+          - sapasma
+          - scotiabank
+          - seapal
+          - siapa
+          - simapag
+          - simapas
+          - simas
+          - smapa
+          - smapac
+          - smapam
+          - smapas
+          - spectrum
+          - stori
+          - sura
+          - tam
+          - telcel
+          - telmex
+          - totalplay
+          - veolia
+          - victoria
+          - wizz
+          - asylumSeeker
+          - refugeeId
+          - refugeeStatus
+          - ute
+          - telkom
+          - tmobile
+          - verizon
+          - xfinity
+          - aforeCoppel
+          - americanExpress
+          - ap
+          - telnor
+          - wellsFargo
+          - otherPoa
+        addressStatementTimestamps:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressStatementDate'
+        poaName:
+          type: string
+          description: Extracted name from address statement.
+        typeOfId:
+          type: string
+          enum:
+          - Unknown
+          - Passport
+          - Visa
+          - DriversLicense
+          - IdentificationCard
+          - Permit
+          - Currency
+          - ResidenceDocument
+          - TravelDocument
+          - BirthCertificate
+          - VehicleRegistration
+          - Other
+          - WeaponLicense
+          - TribalIdentification
+          - VoterIdentification
+          - Military
+          - TaxIdentification
+          - FederalID
+          - MedicalCard
+        documentFrontSubtype:
+          type: string
+          description: Additional info about ID type (front side)
+        documentBackSubtype:
+          type: string
+          description: Additional info about ID type (back side)
+        issueFront:
+          type: integer
+          format: int32
+          description: Issue year (per classification model) of the ID (front side)
+        issueBack:
+          type: integer
+          format: int32
+          description: Issue year (per classification model) of the ID (back side)
+        birthDate:
+          type: integer
+          format: int64
+          description: Date of birth is presented in UTC milliseconds.
+        gender:
+          type: string
+          description: Gender values are presented in English. "M" for male, "F" for female and "X" for non-binary.
+          enum:
+          - M
+          - F
+          - X
+          maxLength: 1
+        claveDeElector:
+          type: string
+          description: Clave de elector as read from id. For Mexican IDs only.
+          maxLength: 18
+          minLength: 18
+        curp:
+          type: string
+          description: Curp as read form id. For Mexican IDs only.
+          maxLength: 18
+          minLength: 18
+        numeroEmisionCredencial:
+          type: string
+          description: Numero Emision Credencial as read from id. (For Mexican IDs only).
+          maxLength: 2
+          minLength: 2
+        cic:
+          type: string
+          description: Cic as read from id. (This field is read from back side of id; For Mexican IDs only).
+          maxLength: 9
+          minLength: 9
+        ocr:
+          type: string
+          description: Ocr as read from id. (This field is read from back side of id; For Mexican IDs only).
+          maxLength: 13
+          minLength: 13
+        documentNumber:
+          type: string
+          description: Document number.
+        documentNumberSource:
+          type: string
+          description: Document number source.
+          enum:
+          - FORM
+          - OCR
+        personalNumber:
+          type: string
+          description: Personal number.
+        nationalNumber:
+          type: string
+          description: National number.
+        refNumber:
+          type: string
+          description: Document Reference Number.
+        taxIdNumber:
+          type: string
+          description: Personal tax identification number.
+        nue:
+          type: string
+          description: NUE number as read from id. (for Resident Cards)
+        externalId:
+          type: string
+          description: External user id.
+        issuedAt:
+          type: string
+          description: Date of issue UTC timestamp.
+        expireAt:
+          type: string
+          description: Expiration date UTC timestamp.
+        expirationDate:
+          type: integer
+          format: int32
+          description: Expiration year of id.
+        issueDate:
+          type: integer
+          format: int32
+          description: Issue year of id.
+        registrationDate:
+          type: integer
+          format: int32
+          description: Registration date read from id.
+        dlClassDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/DLClassDetails'
+        issuingCountry:
+          type: string
+          description: Issuing country of document.
+        issuingState:
+          type: string
+          description: Issuing state of document.
+        birthPlace:
+          type: string
+          description: Birth place as read from id.
+        printingNumber:
+          type: string
+          description: Printing number (número de impresión) printed below the barcode on Colombian IDs.
+        duplicateNumber:
+          type: string
+          description: Number of duplicates (número de duplicados) printed below the barcode on Colombian IDs.
+        preparationNumber:
+          type: string
+          description: Preparation number (número de preparación) printed below the barcode on Colombian IDs.
+        issuingAuthority:
+          type: string
+          description: Issuing Authority as read from id.
+        height:
+          type: string
+          description: Person's height as read from id.
+        weight:
+          type: string
+          description: Person's weight.
+        eyeColor:
+          type: string
+          description: Person's eye color.
+        hairColor:
+          type: string
+          description: Person's hair color.
+        religion:
+          type: string
+          description: Person's religion.
+        bloodType:
+          type: string
+          description: Person's blood type.
+        maritalStatus:
+          type: string
+          description: Person's marital status.
+        nationality:
+          type: string
+          description: Person's nationality.
+        race:
+          type: string
+          description: Person's race.
+        nationalityMrz:
+          type: string
+          description: Person's nationality as it appears in MRZ (if present).
+        nationalityAlpha3:
+          type: string
+          description: Person's nationality Alpha3 code format. Only for Brazilian IDs.
+        governmentComparisonResults:
+          $ref: '#/components/schemas/GovernmentComparisonResults'
+        notExtracted:
+          type: integer
+          format: int32
+          description: Number of not extracted OCR fields. Only for Mexican IDs.
+        notExtractedDetails:
+          type: array
+          items:
+            type: string
+        classes:
+          type: string
+          description: Person's driver licence classes.
+        cond:
+          type: string
+          description: Person's driver licence conditions.
+        mentions:
+          type: string
+          description: Person's driver licence mentions.
+        restrictions:
+          type: string
+          description: Person's driver licence restrictions.
+        mrz1:
+          type: string
+          description: First MRZ line.
+        mrz2:
+          type: string
+          description: Second MRZ line.
+        mrz3:
+          type: string
+          description: Third MRZ line.
+        fullNameMrz:
+          type: string
+          description: Person's full name read from MRZ.
+        documentNumberCheckDigit:
+          type: string
+          description: Document number check digit read from MRZ.
+        dateOfBirthCheckDigit:
+          type: string
+          description: Date of birth check digit read from MRZ.
+        expirationDateCheckDigit:
+          type: string
+          description: Expiration date check digit read from MRZ.
+        barcodeRawData:
+          type: string
+          description: Full unformatted data read from 2D barcode.
+        qrFrontContents:
+          type: array
+          description: Raw QR code payloads read from the front of the document, unparsed. Omitted when the capture was redacted.
+          items:
+            type: string
+        qrBackContents:
+          type: array
+          description: Raw QR code payloads read from the back of the document, unparsed. Omitted when the capture was redacted.
+          items:
+            type: string
+        fathersName:
+          type: string
+          description: Person's father's name. Only for Brazilian and Indian IDs.
+        mothersName:
+          type: string
+          description: Person's mother's name. Only for Brazilian IDs.
+        fathersIdNumber:
+          type: string
+          description: Person's father's Id Number. In the context of minors identity validation.
+        mothersIdNumber:
+          type: string
+          description: Person's mother's Id Number. In the context of minors identity validation.
+        spouseName:
+          type: string
+          description: Person's spouse's name.
+        federalRevenueNumber:
+          type: string
+          description: Federal revenue number. Only for Brazilian IDs.
+        originDocumentId:
+          type: string
+          deprecated: true
+          description: Origin document ID. Only for Brazilian IDs.
+        driversLicenseCategory:
+          type: string
+          deprecated: true
+          description: Driver's licence category. Only for Brazilian IDs.
+        controlNumber:
+          type: string
+          deprecated: true
+          description: Control number. Only for Brazilian IDs.
+        renach:
+          type: string
+          deprecated: true
+          description: Renach. Only for Brazilian IDs.
+        additionalAttrs:
+          type: array
+          description: Additional document attributes.
+          items:
+            type: string
+            enum:
+            - DOCUMENTO_INFANTIL
+            - IDADE_PRE_ESCOLAR
+            - MENOR_DE_ANOS
+            - NAO_ASSINA
+            - EM_FASE_DE_ALFABETIZACAO
+            - IMPOSSIBILITADO_DE_ASSINAR
+            - LIMITED_TERM
+            - FEDERAL_LIMITS_APPLY
+            - PERMISO_PARA_TRABAJAR
+            - EXTRANJERO
+            - INDIA_DIGITAL_VID
+            - VETERAN
+            - MOTORCYCLE_LICENSE
+            - NON_DOMICILED
+            - COMMERCIAL_LICENSE
+            - RESIDENTE
+            - MIGRANTE
+            - TEMPORAL
+            - VISITANTE
+            - TRAMITE
+            - RUEX
+            - INDIGENA
+            - AFROMEXICANA
+            - INDIA_DIGITAL_TAXID
+        ocrDataConfidence:
+          $ref: '#/components/schemas/OcrDataConfidence'
+        additionalDocumentAttempts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalDocumentAttemptDto'
+        documentSubmissionMethod:
+          type: string
+          description: Method used to submit the document.
+          enum:
+          - CAPTURED_DOCUMENT
+          - UPLOADED_FILE
+          - IMPORTED_CREDENTIAL
+        credentialsProvider:
+          type: string
+          description: Credentials provider used when documentSubmissionMethod is IMPORTED_CREDENTIAL.
+          enum:
+          - APPLE
+          - GOOGLE
+          - DIGILOCKER
+          - SAMSUNG
+          - DIGITAL_ID
+          - NETHERLANDS_IDIN
+          - FINNISH_TRUST_NETWORK
+    BasicResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+    OcrDataResponsePacked:
+      type: object
+      properties:
+        ocrData:
+          $ref: '#/components/schemas/OcrDataResponse'
+    DLClassDetails:
+      type: object
+      description: Driver's license details
+      properties:
+        dlClass:
+          type: string
+          description: Driver's license class.
+        validFromDate:
+          type: integer
+          format: int64
+          description: DL class valid from UTC timestamp
+        validToDate:
+          type: integer
+          format: int64
+          description: DL class valid to UTC timestamp.
+        additionalCodes:
+          type: string
+          description: Additional codes associated with DL class.
+        restrictions:
+          type: array
+          description: Restriction codes associated with DL class.
+          items:
+            type: string
+    BarcodeV2Request:
+      type: object
+      properties:
+        base64Barcode:
+          type: string
+          description: Barcode in base64 format.
+          minLength: 1
+    AddBarcodeResponseDto:
+      type: object
+      properties:
+        countryCode:
+          type: string
+          description: Valid ISO alpha-2 or alpha-3 code of the barcode issuing country.
+        forceFrontIdCapture:
+          type: boolean
+          description: Flag that signals if front id capture must be executed after barcode being added.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+        idValidationCompleted:
+          type: boolean
+          description: Flag that indicates whether ID validation has been completed.
+        isDocumentExpired:
+          type: boolean
+          description: Flag indicating if the document is expired.
+    IdSummaryResponse:
+      type: object
+      properties:
+        onlyFront:
+          type: boolean
+        addFrontResult:
+          $ref: '#/components/schemas/IdSummaryDocumentSideResult'
+        addBackResult:
+          $ref: '#/components/schemas/IdSummaryDocumentSideResult'
+    BarcodeRequest:
+      type: object
+      properties:
+        rawBarcode:
+          type: string
+          description: Barcode in raw format
+          minLength: 1
+    NameBean:
+      type: object
+      properties:
+        fullName:
+          type: string
+        fullNameNativeScript:
+          type: string
+        firstNameNativeScript:
+          type: string
+        paternalLastNameNativeScript:
+          type: string
+        maternalLastNameNativeScript:
+          type: string
+        machineReadableFullName:
+          type: string
+          description: Full name from Barcode or MRZ
+        firstName:
+          type: string
+        middleName:
+          type: string
+        givenName:
+          type: string
+        givenNameMrz:
+          type: string
+        initials:
+          type: string
+          description: Initials as returned by bank-ID schemes (e.g. iDIN) — the only given-name evidence they provide
+        nameSuffix:
+          type: string
+        paternalLastName:
+          type: string
+        maternalLastName:
+          type: string
+        lastNameMrz:
+          type: string
+        familyName:
+          type: string
+    GovernmentComparisonResults:
+      type: object
+      description: Government validation data. Only for supported government validation countries.
+      properties:
+        paternalLastNameValid:
+          type: boolean
+          description: Indicates validity of person's paternal last name through government validation apis.
+        maternalLastNameValid:
+          type: boolean
+          description: Indicates validity of person's maternal last name through government validation apis.
+        firstNameValid:
+          type: boolean
+          description: Indicates validity of person's first name through government validation apis.
+        curpValid:
+          type: boolean
+          description: Indicates CURP validity through RENAPO/CURP provider validation.
+        ineCurpValid:
+          type: boolean
+          description: Indicates CURP validity through INE government validation (separate from RENAPO).
+        ocrValid:
+          type: boolean
+          description: Indicates ocr validity through government validation apis.
+        claveDeElectorValid:
+          type: boolean
+          description: Indicates "clave de elector" validity through government validation apis.
+        numeroEmisionCredencialValid:
+          type: boolean
+          description: Indicates "numero emision credencial" validity through government validation apis.
+        registrationDateValid:
+          type: boolean
+          description: Indicates registration date validity through government validation apis.
+        issueDateValid:
+          type: boolean
+          description: Indicates issue date validity through government validation apis.
+    AddressStatementDate:
+      type: object
+      properties:
+        get_version:
+          type: integer
+          format: int64
+        dateType:
+          type: string
+          description: Description of timestamp.
+        addressStatementTimestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp.
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

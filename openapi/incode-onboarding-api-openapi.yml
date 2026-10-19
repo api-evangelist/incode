@@ -1,99 +1,1240 @@
 openapi: 3.2.0
 info:
   title: Incode Omni Onboarding API
-  description: REST API for the Incode Omni identity verification platform. Onboarding sessions capture and validate government IDs, run face match and passive liveness, perform government-database and watchlist/AML screening, and return scores, OCR data, and images. All calls require an x-api-key, and module calls additionally require the session token in the X-Incode-Hardware-Id header.
-  termsOfService: https://incode.com/legal/terms-of-service
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
   contact:
-    name: Incode Support
+    name: Incode Developer Hub
     url: https://developer.incode.com/
-  version: '1.0'
 servers:
 - url: https://demo-api.incodesmile.com
-  description: Demo / sandbox
-- url: https://api.incodesmile.com
-  description: Production
+  description: Incode demo environment
 security:
 - ApiKeyAuth: []
-  SessionToken: []
+  IncodeHardwareIdAuth: []
 tags:
 - name: Onboarding
-  description: Create and complete onboarding sessions.
 paths:
-  /omni/start:
+  /omni/videoselfie/compare-ocr/v2:
     post:
-      operationId: startOnboarding
       tags:
       - Onboarding
-      summary: Start an onboarding session
-      description: Creates a new onboarding session from a Flow configuration and returns a session token (Onboarding Token) used to authorize all subsequent Omni module calls.
-      security:
-      - ApiKeyAuth: []
+      summary: Compare OCR from videoselfie against OCR from ID v2
+      description: This endpoint is used to compare OCR from videoselfie frame against OCR from ID.
+      operationId: videoSelfieCompareOcrV2
       parameters:
-      - $ref: '#/components/parameters/ApiVersion'
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
       requestBody:
-        required: true
+        description: Frame extracted from videoselfie
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/StartSessionRequest'
+              $ref: '#/components/schemas/Base64ImageRequest'
+        required: true
       responses:
         '200':
-          description: Session created.
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StartSessionResponse'
-  /omni/finish-status:
-    get:
-      operationId: finishStatus
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: 'Custom error statuses:
+
+            - 5003: Unsatisfied image size
+
+            - 5004: Document alignment failed
+
+            - 5005: Document not found
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/videoselfie-compare-ocr-v2/
+      x-incode-markdown: https://developer.incode.com/api-reference/videoselfie-compare-ocr-v2.md
+  /omni/identity-crosscheck:
+    post:
       tags:
       - Onboarding
-      summary: Get onboarding completion status
-      description: Returns the completion status of the onboarding session.
+      summary: Identity cross-check comparing account creation data with IDV data
+      description: 'Cross-checks name and date of birth from account creation against data extracted during IDV.
+
+        Compares the provided data with OCR-extracted data and returns validation score with risk assessment.'
+      operationId: identityCrosscheck
       parameters:
-      - $ref: '#/components/parameters/ApiVersion'
-      - $ref: '#/components/parameters/HardwareId'
+      - name: interviewId
+        in: query
+        required: false
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        description: Identity cross-check request containing name and DOB (session ID from JWT)
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentityCrosscheckRequest'
+            example:
+              name: John Doe
+              dateOfBirth: '1990-01-15'
+        required: true
       responses:
         '200':
-          description: Onboarding status.
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FinishStatusResponse'
+                $ref: '#/components/schemas/IdentityCrosscheckResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        '404':
+          description: Session or IDV data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/identity-crosscheck/
+      x-incode-markdown: https://developer.incode.com/api-reference/identity-crosscheck.md
+  /omni/expire/interviews:
+    post:
+      tags:
+      - Onboarding
+      summary: Expire onboarding sessions by interviewIds
+      description: Expire onboarding sessions given by interviewIds array, and cleanerConfiguration parameter.
+      operationId: expireOnboardingSessionsByIds
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExpireInterviewDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/expire-interviews/
+      x-incode-markdown: https://developer.incode.com/api-reference/expire-interviews.md
+  /omni/device/stats:
+    post:
+      tags:
+      - Onboarding
+      summary: Update device stats
+      description: Sends information about collected capture frame statistics
+      operationId: updateBehavioralStats
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BehavioralStatsRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/device-stats/
+      x-incode-markdown: https://developer.incode.com/api-reference/device-stats.md
+  /omni/delete/interviews:
+    post:
+      tags:
+      - Onboarding
+      summary: Delete Multiple onboarding sessions with multiple options
+      description: 'Delete all onboarding sessions by given array of interview ids. The endpoint is executed asynchronously.
+
+        Note:
+
+        Requires admin login token reference - /executive/log-in
+
+        Please, bear in mind that usage of this API endpoint for deletion of Customer Data will mean that Incode will no longer have access to it nor will be able to review or analyze any issue related to deleted Customer Data. After deletion, as Incode will not be able to retrieve the deleted Customer Data, any potential claims related to such data will be waived by Customer.
+
+        Finally, for clarity purposes, Incode may continue to process information derived from Customer Data that has been deidentified, anonymized, and/or aggregated such that the data is no longer considered Personal Data under applicable Data Protection Laws and in a manner that does not identify individuals or Customer to improve its services and defend its legitimate interests.'
+      operationId: cleanOnboardingSessionsByIds
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InterviewCleanupRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncDeletionTaskResponse'
+      deprecated: true
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/delete-interviews/
+      x-incode-markdown: https://developer.incode.com/api-reference/delete-interviews.md
+  /omni/code/verify:
+    post:
+      tags:
+      - Onboarding
+      summary: Verify interview code
+      description: Verify interview code before connecting to video conference.
+      operationId: verifyInterviewCode
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyInterviewCodeRequest'
+        required: true
+      responses:
+        '200':
+          description: 'Custom error status:
+
+            - 4014: Invalid interview code
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/code-verify/
+      x-incode-markdown: https://developer.incode.com/api-reference/code-verify.md
+  /omni/batch/auth-stats:
+    post:
+      tags:
+      - Onboarding
+      summary: Insert authentications in batch
+      description: Inserts face authentications in batch.
+      operationId: batchAuthStats
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchAuthStatsRequest'
+            example:
+              data:
+              - id: 6231ec685a378c0013e72641
+                photo: base64 of photo
+                confidence: 100
+                timestamp: 1647444546006
+                sourceId: identifier
+              - id: 6231ec685a378c0013e72641
+                photo: base64 of photo
+                confidence: 100
+                timestamp: 1647444546006
+                sourceId: identifier
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/batch-auth-stats/
+      x-incode-markdown: https://developer.incode.com/api-reference/batch-auth-stats.md
+  /omni/attach-signature-to-pdf:
+    post:
+      tags:
+      - Onboarding
+      summary: Attach signature to pdf document
+      description: 'Attach signature from interview to supplied pdf at (x, y) coordinates with desired height to desired page on pdf.
+
+        Coordinates are relative to left bottom corner of page.'
+      operationId: addSignatureToPdfFile
+      parameters:
+      - name: x
+        in: query
+        description: The x axis where to place the signature image (from the left bottom corner of page)
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: y
+        in: query
+        description: The y axis where to place the signature image (from the left bottom corner of page)
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: height
+        in: query
+        description: Height of the image when placed in the pdf, keeps aspect ratio.
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: pageNumber
+        in: query
+        description: number of page on which to put the signature image (pages numbering start from 1, default value is 1)
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        description: Document to add signature to
+        content:
+          application/json:
+            schema:
+              type: string
+              format: byte
+        required: true
+      responses:
+        '200':
+          description: Stream of new pdf document file
+          content:
+            application/pdf: {}
+        '400':
+          description: Bad Request
+          content:
+            application/pdf:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/attach-signature-to-pdf/
+      x-incode-markdown: https://developer.incode.com/api-reference/attach-signature-to-pdf.md
+  /omni/add/name:
+    post:
+      tags:
+      - Onboarding
+      summary: Add name
+      description: This endpoint is used for adding user's name for current onboarding session.
+      operationId: addName
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NameRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-name/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-name.md
+  /omni/add/device-fingerprint-signals:
+    post:
+      tags:
+      - Onboarding
+      summary: Add device fingerprint signals
+      description: Records signals (device, network, behaviour, or PID) captured during an interview event
+      operationId: addDeviceFingerprintSignals
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceFingerprintSignalsRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-device-fingerprint-signals/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-device-fingerprint-signals.md
+  /omni/add/device-fingerprint:
+    post:
+      tags:
+      - Onboarding
+      summary: Add device fingerprint
+      description: Sends information about device from which endpoint is called
+      operationId: addDeviceFingerprint
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceFingerprintRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddDeviceFingerprintResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/add-device-fingerprint/
+      x-incode-markdown: https://developer.incode.com/api-reference/add-device-fingerprint.md
+  /omni/identity/{customerId}/sessionIds:
+    get:
+      tags:
+      - Onboarding
+      summary: Fetch all passed onboardings ids for the same person
+      description: Get all passed onboardings ids for the same person
+      operationId: getCustomerSessionIds
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerSessionIdsResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/identity-sessionids/
+      x-incode-markdown: https://developer.incode.com/api-reference/identity-sessionids.md
+  /omni/send/sms-otp:
+    get:
+      tags:
+      - Onboarding
+      summary: Send SMS with One Time Password for onboarding
+      description: 'Send SMS with an OTP (One Time Password) code to validate an onboarding.
+
+        Phone number is obtained from interview data, so phone step it''s required.'
+      operationId: sendOTP
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OTP sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Contact Already Verified - The phone/email is already verified for this session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+              examples:
+                Contact already verified:
+                  description: Contact already verified
+                  value:
+                    timestamp: 1234567890
+                    status: 4300
+                    error: Contact Already Verified
+                    message: 'OtpException: Session has verified contact'
+                    path: /omni/send/sms-otp
+        '429':
+          description: Too Many Requests - Cooldown period not completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/send-sms-otp/
+      x-incode-markdown: https://developer.incode.com/api-reference/send-sms-otp.md
+  /omni/send/otp:
+    get:
+      tags:
+      - Onboarding
+      summary: Send SMS with One Time Password for onboarding
+      description: 'Send SMS with an OTP (One Time Password) code to validate an onboarding.
+
+        Phone number is obtained from interview data, so phone step it''s required.'
+      operationId: getOTP
+      parameters:
+      - name: communicationchannel
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - SMS
+          - EMAIL
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OTP sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Contact Already Verified - The phone/email is already verified for this session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+              examples:
+                Contact already verified:
+                  description: Contact already verified
+                  value:
+                    timestamp: 1234567890
+                    status: 4300
+                    error: Contact Already Verified
+                    message: 'OtpException: Session has verified contact'
+                    path: /omni/send/sms-otp
+        '429':
+          description: Too Many Requests - Cooldown period not completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/send-otp/
+      x-incode-markdown: https://developer.incode.com/api-reference/send-otp.md
+  /omni/get/questionAndAnswer:
+    get:
+      tags:
+      - Onboarding
+      summary: Fetch random questions and answers for video selfie
+      description: 'Fetch a number random questions and answers for video selfie for given apiKey. If there are no defined QA pairs for the apiKey,
+
+        a random QA pair is returned from the default set.'
+      operationId: getQuestionAndAnswer
+      parameters:
+      - name: numberOfQuestions
+        in: query
+        description: Number of questions to be returned to client
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: returnVoiceConsentQuestion
+        in: query
+        description: Flag stating if voice consent question should be included in response
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RandomQandAListResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/get-questionandanswer/
+      x-incode-markdown: https://developer.incode.com/api-reference/get-questionandanswer.md
+  /omni/get/postprocess/isfinished:
+    get:
+      tags:
+      - Onboarding
+      summary: Fetch processing status
+      description: Check if session processing is done.
+      operationId: checkIfPostProcessingIsFinished
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: 'finished: Boolean. A flag stating if processing is done or not.'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/get-postprocess-isfinished/
+      x-incode-markdown: https://developer.incode.com/api-reference/get-postprocess-isfinished.md
+  /omni/compare/sms-otp:
+    get:
+      tags:
+      - Onboarding
+      summary: Compare/Validate OTP code obtained through SMS for onboarding
+      description: 'Send OTP code obtained through SMS to validate an onboarding.
+
+        Phone number is obtained from interview data, so phone step it''s required.
+
+        Success will be false if code sent doesn''t match.'
+      operationId: compareOTP
+      parameters:
+      - name: code
+        in: query
+        required: true
+        schema:
+          type: string
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/compare-sms-otp/
+      x-incode-markdown: https://developer.incode.com/api-reference/compare-sms-otp.md
+  /omni/code/generate:
+    get:
+      tags:
+      - Onboarding
+      summary: Generate interview code
+      description: Generate interview code for this session.
+      operationId: generateInterviewCode
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: 'interviewCode: String. 6 characters. Newly generated code to be verified before connecting to video conference.'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/code-generate/
+      x-incode-markdown: https://developer.incode.com/api-reference/code-generate.md
 components:
   schemas:
-    StartSessionRequest:
+    IdentityCrosscheck:
       type: object
+      description: Identity cross-check score comparing account creation data with IDV extracted data
+      properties:
+        overall:
+          $ref: '#/components/schemas/ResultBean'
+          description: Overall validation result
+        checks:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ResultBean'
+          description: Individual validation checks
+        riskLevel:
+          type: string
+          description: Risk level assessment
+          example: LOW
+    ExceptionResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: UTC timestamp in milliseconds
+        status:
+          type: integer
+          format: int32
+          description: Custom error code or HTTP status code
+        error:
+          type: string
+          description: HTTP status error
+        message:
+          type: string
+          description: Custom error message
+        path:
+          type: string
+          description: Endpoint path
+        details:
+          type: object
+          description: Custom error details
+    BatchAuthStatsRequest:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/QRScanAttempt'
+    ResultBean:
+      type: object
+      properties:
+        value:
+          type: string
+          maximum: 100
+          minimum: 0
+        status:
+          type: string
+          enum:
+          - OK
+          - WARN
+          - FAIL
+          - UNKNOWN
+          - MANUAL
+          - MANUAL_OK
+          - MANUAL_FAIL
+          - MANUAL_PENDING
+    BehavioralStatsRequest:
+      type: object
+      properties:
+        inspectorOpened:
+          type: boolean
+          description: Flag indicating web browser inspector detected
+          example: true
+        frontIdStatsAnalysisStatus:
+          type: string
+          description: Status of the front ID capture analysis
+          enum:
+          - PASS
+          - UNCLEAR
+          - FAIL
+          example: PASS
+        backIdStatsAnalysisStatus:
+          type: string
+          description: Status of the back ID capture analysis
+          enum:
+          - PASS
+          - UNCLEAR
+          - FAIL
+          example: PASS
+        selfieStatsAnalysisStatus:
+          type: string
+          description: Status of the selfie ID capture analysis
+          enum:
+          - PASS
+          - UNCLEAR
+          - FAIL
+          example: PASS
+        motionStatus:
+          type: string
+          description: Status of motion analysis
+          enum:
+          - PASS
+          - UNCLEAR
+          - FAIL
+          example: PASS
+        virtualCameraDetected:
+          type: boolean
+          description: Flag indicating virtual camera was detected
+          example: true
+        cameraLabelInspectionStatus:
+          type: string
+          description: Status of the camera label inspection
+          enum:
+          - PASS
+          - UNCLEAR
+          - FAIL
+          example: PASS
+    QuestionAndAnswerWithId:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the given Question-Answer pair.
+        question:
+          type: string
+          description: Random question to be shown in video selfie.
+        answer:
+          type: string
+          description: Corresponding answer to the question.
+    VerifyInterviewCodeRequest:
+      type: object
+      properties:
+        interviewCode:
+          type: string
+          description: Interview code to be verified against given session.
+          example: C8Z38D
+          maxLength: 6
+          minLength: 1
+    CleanerConfigurationDto:
+      type: object
+      properties:
+        deletePiiFieldsOnly:
+          type: boolean
+          default: 'false'
+          description: Flag indicating if this is partial delete, where only PII fields should be removed.
+        piiFieldsToKeep:
+          type: array
+          items:
+            type: string
+        keepEnrolledUser:
+          type: boolean
+          default: 'false'
+          description: Flag indicating if user that was previously enrolled from this session should stay enrolled in the system after this session is deleted
+        keepTemplates:
+          type: boolean
+          default: 'false'
+          description: Flag indicating if face templates created during onboarding process, should remain in DB
+        keepImages:
+          type: boolean
+          default: 'false'
+          description: Flag indicating if images captured during onboarding process should remain in the system
+        keepDeviceFingerprints:
+          type: boolean
+          default: 'false'
+          description: Flag indicating if device fingerprint stored during onboarding process should remain in the system
+        keepEvents:
+          type: boolean
+          default: 'false'
+          description: Flag indicating if events stored during onboarding process should remain in the system
+        keepValidationTests:
+          type: boolean
+          default: 'false'
+          description: Flag indicating if validation tests stored during onboarding process should remain in the system
+        keepVideoArchives:
+          type: boolean
+          default: 'false'
+          description: Flag indicating if video archives stored during onboarding process should remain in the system
+        keepConferenceEvents:
+          type: boolean
+          default: 'false'
+          description: Flag indicating if events stored during conference video call should remain in the system
+        keepChats:
+          type: boolean
+          default: 'false'
+          description: Flag indicating if chat stored during conference video call should remain in the system
+        keepStats:
+          type: boolean
+          default: 'false'
+          description: Flag indicating if statistics stored during onboarding process should remain in the system
+        deletionMode:
+          type: string
+          description: Specifies the type of deletion to perform.
+          enum:
+          - BIOMETRICS
+          - PII
+          - FULL
+          example: FULL
+    IpLocationDto:
+      type: object
+      properties:
+        ipCountry:
+          type: string
+          description: Country from IP address
+          example: United States
+        ipRegion:
+          type: string
+          description: Region from IP address
+          example: Texas
+        ipCity:
+          type: string
+          description: City from IP address
+          example: Houston
+        ipLatitude:
+          type: number
+          format: double
+          description: Latitude from IP address
+          example: 29.123456
+        ipLongitude:
+          type: number
+          format: double
+          description: Longitude from IP address
+          example: -95.123456
+    DeviceFingerprintSignalsRequest:
+      type: object
+      properties:
+        metadata:
+          type: string
+          description: 'HMAC-signed Base64-encoded metadata blob. Format: <hmac>.<base64-encoded-json>. Inner JSON shape: DeviceFingerprintSignalsMetadataDto (fields: timestamp, signalsType, payload, sdkPlatform, sdkVersion, signalsVersion). Server verifies HMAC via the service-configured `hmac_key` and rejects expired/replayed signatures based on the per-tenant CaptureMetadataConfig timestamp threshold.'
+          example: abc123def.eyJ0aW1lc3RhbXAiOjE3NDI0NzUxNTE0MTgsLi4ufQ==
+          minLength: 1
+        interviewEvent:
+          type: string
+          description: Frontend interview-event code categorizing these signals; resolved against the interview-event dictionary (must be a FRONTEND-sender code, e.g. "captureAttemptFinished").
+          example: captureAttemptFinished
+          minLength: 1
       required:
-      - configurationId
-      properties:
-        configurationId:
-          type: string
-          description: The Incode Flow identifier (Flow ID).
-        countryCode:
-          type: string
-          description: Country code for the session (e.g. ALL, MEX, USA).
-          example: ALL
-        externalCustomerId:
-          type: string
-          description: Custom ID linking the session to your system.
-    StartSessionResponse:
+      - interviewEvent
+      - metadata
+    AddDeviceFingerprintResponse:
       type: object
       properties:
-        token:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
           type: string
-          description: Session token used for subsequent Omni calls.
-        interviewId:
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+        ipCountry:
           type: string
-          description: Unique session identifier.
-        interviewToken:
+          description: Current country based on the geolocation Api
+        ipState:
           type: string
-    FinishStatusResponse:
+          description: Current state based on the geolocation Api
+        showMandatoryConsent:
+          type: boolean
+          description: Render mandatory consent page based on this parameter value.
+        regulationType:
+          type: string
+          description: Regulation type for the mandatory consent (only if showMandatoryConsent set to true).
+    NameRequest:
       type: object
       properties:
-        onboardingStatus:
+        name:
           type: string
-          example: ONBOARDING_FINISHED
+          description: User's name.
+          example: John Doe
+          minLength: 1
+    IdentityCrosscheckResponse:
+      type: object
+      description: Response from identity cross-check operation containing match results and risk assessment
+      properties:
+        sessionId:
+          type: string
+          description: Session ID that was cross-checked
+          example: 64a7b8c9d1e2f3g4h5i6j7k8
+        score:
+          $ref: '#/components/schemas/IdentityCrosscheck'
+          description: Identity cross-check score results
+        success:
+          type: boolean
+          description: Success indicator
+          example: true
+        errorMessage:
+          type: string
+          description: Error message if cross-check failed
+          example: IDV data not found for session
+    ExpireInterviewDto:
+      type: object
+      properties:
+        interviewIds:
+          type: array
+          items:
+            type: string
+          minItems: 1
+        cleanerConfiguration:
+          $ref: '#/components/schemas/ExpireInterviewConfigurationDto'
+          description: Configuration for expiring interview
+    QRScanAttempt:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identity (customer) id.
+        photo:
+          type: string
+          description: Base64 of photo.
+        confidence:
+          type: number
+          format: float
+          description: Match confidence.
+        timestamp:
+          type: integer
+          format: int64
+          description: Timestamp
+        sourceId:
+          type: string
+          description: Source identifier of batch of authentications
+        deviceId:
+          type: string
+          description: User device id
+        reasonCodes:
+          type: array
+          description: Reason codes
+          items:
+            type: string
+        blocked:
+          type: boolean
+          description: Flag indicating if user is on a blocklist
+        blocklistConfidence:
+          type: number
+          format: float
+          description: Confidence score related to block list
+        matchedWatchlistId:
+          type: string
+          description: Id of the matched watchlist entry when blocklist validation exceeds the confidence threshold
+    BasicResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+    CustomerSessionIdsResponse:
+      type: object
+      properties:
+        sessionIds:
+          type: array
+          items:
+            type: string
+        count:
+          type: integer
+          format: int32
+        initialSessionId:
+          type: string
+    IdentityCrosscheckRequest:
+      type: object
+      description: Request for identity cross-check comparing account creation data with IDV extracted data
+      properties:
+        name:
+          type: string
+          description: Full name from account creation
+          example: John Doe
+          minLength: 1
+        dateOfBirth:
+          type: string
+          description: Date of birth in YYYY-MM-DD format
+          example: '1990-01-15'
+          minLength: 1
+      required:
+      - dateOfBirth
+      - name
+    ExpireInterviewConfigurationDto:
+      type: object
+      properties:
+        expirationConditions:
+          type: array
+          items:
+            type: string
+            enum:
+            - INCOMPLETE
+            - NEEDS_REVIEW
+      required:
+      - expirationConditions
+    RandomQandAListResponse:
+      type: object
+      properties:
+        questionAndAnswers:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionAndAnswerWithId'
+    AsyncDeletionTaskResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Flag indicating request passed successfully.
+        sessionStatus:
+          type: string
+          description: Session status
+          enum:
+          - Alive
+          - Closed
+          - Deleted
+        taskId:
+          type: string
+        statusUri:
+          type: string
+    DeviceFingerprintRequest:
+      type: object
+      properties:
+        deviceType:
+          type: string
+          description: Platform of device
+          enum:
+          - IOS
+          - ANDROID
+          - WEBAPP
+          example: IOS
+        hash:
+          type: string
+          description: Hash code of the device fingerprint
+          example: 42ecaaf4a16e626gt
+          maxLength: 255
+          minLength: 0
+        ip:
+          type: string
+          description: IP address of the device
+          example: 0.0.0.0
+          maxLength: 45
+          minLength: 0
+        ipLocation:
+          $ref: '#/components/schemas/IpLocationDto'
+          description: Location info based on IP address
+        data:
+          type: string
+          description: Additional data about device
+          example:
+          - key: userAgent
+            value: Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1
+          maxLength: 1024
+          minLength: 0
+        osVersion:
+          type: string
+          description: OS version. If omitted it is parsed from user agent
+          example: iOS 14
+          maxLength: 255
+          minLength: 0
+        deviceModel:
+          type: string
+          description: Device model. If omitted it is parsed from user agent
+          example: iPhone 12
+          maxLength: 255
+          minLength: 0
+        sdkVersion:
+          type: string
+          description: Version of SDK used
+          example: 1
+          maxLength: 255
+          minLength: 0
+        hostingApp:
+          type: string
+          description: hostingApp. Name of the hosting application
+          example: Onboarding
+          maxLength: 255
+          minLength: 0
+        algorithmName:
+          type: string
+          description: Name of the fingerprinting algorithm used to produce the hash
+          example: fingerprintpro
+        algorithmVersion:
+          type: string
+          description: Version of the fingerprinting algorithm used to produce the hash
+          example: 1.0.0
+      required:
+      - data
+      - deviceType
+      - hash
+      - ip
+    InterviewCleanupRequest:
+      type: object
+      properties:
+        interviewIds:
+          type: array
+          items:
+            type: string
+          minItems: 1
+        cleanerConfiguration:
+          $ref: '#/components/schemas/CleanerConfigurationDto'
+    Base64ImageRequest:
+      type: object
+      properties:
+        base64Image:
+          type: string
+          description: Base64 string representation of the image
+          minLength: 1
+      required:
+      - base64Image
   parameters:
     ApiVersion:
       name: api-version
@@ -102,21 +1243,27 @@ components:
       schema:
         type: string
         default: '1.0'
-    HardwareId:
-      name: X-Incode-Hardware-Id
-      in: header
-      required: true
-      schema:
-        type: string
-      description: Session token returned by POST /omni/start.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
-      in: header
+      description: Your api key. Request it from Incode support team
       name: x-api-key
-      description: Client API key issued by Incode.
-    SessionToken:
-      type: apiKey
       in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
       name: X-Incode-Hardware-Id
-      description: Session token (Onboarding Token) returned by POST /omni/start.
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT

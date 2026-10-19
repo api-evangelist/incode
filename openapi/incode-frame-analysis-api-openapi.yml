@@ -1,0 +1,178 @@
+openapi: 3.2.0
+info:
+  title: Incode Omni Frame analysis API
+  description: 'Incode Omni
+
+
+    Served by Incode Developer Hub at https://developer.incode.com/openapi.json.
+
+
+    This is the published Omni API specification, annotated with a link from each of its 210 operations to the page documenting it (`externalDocs`, plus `x-incode-markdown` for the Markdown twin).
+
+
+    9 operation(s) have no page on this site yet and are marked `x-incode-status: undocumented`.
+
+
+    Schemas are the API''s own — nothing here is re-derived from the documentation.'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 0.0.1-SNAPSHOT
+  contact:
+    name: Incode Developer Hub
+    url: https://developer.incode.com/
+servers:
+- url: https://demo-api.incodesmile.com
+  description: Incode demo environment
+security:
+- ApiKeyAuth: []
+  IncodeHardwareIdAuth: []
+tags:
+- name: Frame analysis
+paths:
+  /omni/frame-analysis/analyze:
+    post:
+      tags:
+      - Frame analysis
+      summary: Analysis of all faces from selfie image
+      description: 'Authenticate users by comparing base64 image from request and user''s existing face templates.
+
+        Each face from the image is analyzed, and relevant attributes are extracted. In case of failure, error description is returned.'
+      operationId: authenticate_1
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FrameAnalysisRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FrameAnalysisResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/frame-analysis-analyze/
+      x-incode-markdown: https://developer.incode.com/api-reference/frame-analysis-analyze.md
+  /omni/frame-analysis/analyze/third-party:
+    post:
+      tags:
+      - Frame analysis
+      summary: Analysis of all faces from selfie image
+      description: 'Authenticate users by comparing base64 image from request and user''s existing face templates.
+
+        Each face from the image is analyzed, and relevant attributes are extracted. In case of failure, error description is returned.'
+      operationId: authenticate_2
+      parameters:
+      - in: header
+        $ref: '#/components/parameters/ApiVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FrameAnalysisRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FrameAnalysisResponse'
+      externalDocs:
+        description: Documentation for this endpoint
+        url: https://developer.incode.com/api-reference/frame-analysis-analyze-third-party/
+      x-incode-markdown: https://developer.incode.com/api-reference/frame-analysis-analyze-third-party.md
+components:
+  schemas:
+    FrameAnalysisErrorDto:
+      type: object
+      properties:
+        name:
+          type: string
+    FrameAnalysisRequest:
+      type: object
+      properties:
+        base64Image:
+          type: string
+          description: Base64 representation of image.
+          example: /9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEB...
+          minLength: 1
+        videoRef:
+          type: string
+          description: Reference of video from which frame is extracted.
+        frameRef:
+          type: string
+          description: Reference of frame that should be analyzed.
+      required:
+      - base64Image
+    FrameAnalysisResponse:
+      type: object
+      properties:
+        identities:
+          type: array
+          description: List of identities analyzed from input base64image.
+          items:
+            $ref: '#/components/schemas/AnalyzedIdentityDto'
+        videoRef:
+          type: string
+          description: Reference of video from which frame is extracted.
+        frameRef:
+          type: string
+          description: Reference of frame that is analyzed.
+        error:
+          $ref: '#/components/schemas/FrameAnalysisErrorDto'
+          description: "Error name.\nPossible error name is:\n    FACE_EXTRACTION_FAILED\n"
+          example: "{\n    \"name\": \"FACE_EXTRACTION_FAILED\",\n}\n"
+    AnalyzedIdentityDto:
+      type: object
+      properties:
+        identityId:
+          type: string
+          description: Id of recognized customer.
+        estimatedAge:
+          type: integer
+          format: int32
+          description: Estimated age based on extracted face.
+        error:
+          $ref: '#/components/schemas/FrameAnalysisErrorDto'
+          description: "Error name.\nPossible error names are:\n    LENSES_DETECTED,\n    FACE_MASK_DETECTED,\n    HEAD_COVER_DETECTED,\n    CLOSED_EYES_DETECTED,\n    SPOOF_ATTEMPT_DETECTED,\n    USER_IS_NOT_RECOGNIZED\n"
+          example: "{\n    \"name\": \"LENSES_DETECTED\",\n}\n"
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: header
+      required: true
+      schema:
+        type: string
+        default: '1.0'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your api key. Request it from Incode support team
+      name: x-api-key
+      in: header
+    IncodeHardwareIdAuth:
+      type: apiKey
+      description: Session token. Created either via /omni/start or /executive/log-in
+      name: X-Incode-Hardware-Id
+      in: header
+    BearerAuth:
+      type: http
+      description: 'Bearer token.
+
+
+        Created via /oauth2/token on auth server, using [client_credentials](https://www.oauth.com/oauth2-servers/access-tokens/client-credentials) grant.
+
+
+        The client_id and client_secret params can be found in Default client credentials integration.
+
+        '
+      scheme: bearer
+      bearerFormat: JWT
