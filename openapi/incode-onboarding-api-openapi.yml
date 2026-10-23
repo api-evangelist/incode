@@ -1267,3 +1267,9 @@ components:
         '
       scheme: bearer
       bearerFormat: JWT
+x-provenance:
+  method: harvested
+  publisher: Incode
+  source: https://developer.incode.com/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
