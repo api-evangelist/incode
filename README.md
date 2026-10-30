@@ -1,4 +1,4 @@
-# Incode (incode)
+# Incode
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -66,179 +66,127 @@
 
 Incode is an AI-powered identity verification and biometric authentication platform. The Incode Omni API runs configurable onboarding sessions that capture and validate government IDs, perform face match and passive liveness, run government-database and watchlist/AML checks, and return scores, OCR data, and images via REST.
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/incode/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/incode/refs/heads/main/apis.yml)
+**Areas:** Identity Verification · Biometrics · KYC · Liveness · Onboarding
 
-## Tags
+## Incode on APIs.io
 
-- Identity Verification
-- Biometrics
-- KYC
-- Liveness
-- Onboarding
+Everything profiled for Incode is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/incode/](https://apis.io/providers/incode/)** — or go straight to one of the APIs or properties below.
 
-## Timestamps
+### APIs (6)
 
-- **Created:** 2026-06-25
-- **Modified:** 2026-06-25
+- [Incode Face and Liveness API](https://apis.io/apis/incode/incode-face-and-liveness-api/) — Selfie capture, passive liveness, and face match.
+- [Incode Government Validation API](https://apis.io/apis/incode/incode-government-validation-api/) — Validation against government databases.
+- [Incode ID Verification API](https://apis.io/apis/incode/incode-id-verification-api/) — Government ID capture and validation.
+- [Incode Onboarding API](https://apis.io/apis/incode/incode-onboarding-api/) — Create and complete onboarding sessions.
+- [Incode Results API](https://apis.io/apis/incode/incode-results-api/) — Fetch scores, OCR data, and images.
+- [Incode Watchlist and AML API](https://apis.io/apis/incode/incode-watchlist-and-aml-api/) — Sanctions, PEP, and warning-list screening.
 
-## APIs
+### Published properties
 
-### Incode Onboarding Sessions API
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-Creates and manages back-end onboarding sessions via POST /omni/start, returning a session token used to authorize all subsequent Omni module calls, and reports completion via GET /omni/finish-status.
+#### Agentic access (1)
 
-- **Human URL:** [https://developer.incode.com/docs/onboarding-integration](https://developer.incode.com/docs/onboarding-integration)
-- **Base URL:** `https://demo-api.incodesmile.com`
+Which operations an agent can call, which act, and which need a human in the loop.
 
-#### Tags
+- [Incode Agentic Access](https://apis.io/agentic-access/incode/incode-agentic-access/)
 
-- Onboarding
-- Sessions
-- KYC
+#### Collections (7)
 
-#### Properties
+Postman and Open Collection request collections.
 
-- [Documentation](https://developer.incode.com/docs/onboarding-integration)
-- [API Reference](https://developer.incode.com/docs/api-onboarding-start-session)
-- [OpenAPI](openapi/incode-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/incode.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/incode.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [Incode Omni API](https://apis.io/collections/incode/open-incode/)
+- [Incode Omni Face and Liveness API](https://apis.io/collections/incode/open-incode-face-and-liveness-api/)
+- [Incode Omni Face and Liveness Government Validation API](https://apis.io/collections/incode/open-incode-government-validation-api/)
+- [Incode Omni Face and Liveness ID Verification API](https://apis.io/collections/incode/open-incode-id-verification-api/)
+- [Incode Omni Face and Liveness Onboarding API](https://apis.io/collections/incode/open-incode-onboarding-api/)
+- [Incode Omni Face and Liveness Results API](https://apis.io/collections/incode/open-incode-results-api/)
+- [Incode Omni Face and Liveness Watchlist and AML API](https://apis.io/collections/incode/open-incode-watchlist-and-aml-api/)
 
-### Incode ID Verification API
+#### Security (3)
 
-Captures and validates government IDs through POST /omni/add/front-id/v2, POST /omni/add/back-id/v2, and POST /omni/process/id, extracting OCR data and document authenticity scores from base64-encoded images.
+Authentication, trust centre, and vulnerability disclosure.
 
-- **Human URL:** [https://developer.incode.com/docs/api-onboarding-id-validation](https://developer.incode.com/docs/api-onboarding-id-validation)
-- **Base URL:** `https://demo-api.incodesmile.com`
+- [Incode Authentication](https://apis.io/security/incode/incode-authentication/)
+- [Incode Domain Security](https://apis.io/security/incode/incode-domain-security/)
+- [Incode Trust Center](https://apis.io/security/incode/incode-trust-center/)
 
-#### Tags
+#### Plans and pricing (1)
 
-- ID Verification
-- Document Capture
-- OCR
+Published plans, tiers and prices.
 
-#### Properties
+- [Incode Plans Pricing](https://apis.io/plans/incode/incode-plans-pricing/)
 
-- [Documentation](https://developer.incode.com/docs/api-onboarding-id-validation)
-- [API Reference](https://developer.incode.com/reference/processid)
-- [OpenAPI](openapi/incode-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/incode.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/incode.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+#### Rate limits (1)
 
-### Incode Face and Liveness API
+Published request limits.
 
-Adds a selfie and runs passive liveness via POST /omni/add/face/third-party, then compares it against the ID portrait for face match via POST /omni/process/face.
+- [Incode Rate Limits](https://apis.io/rate-limits/incode/incode-rate-limits/)
 
-- **Human URL:** [https://developer.incode.com/docs/api-onboarding-face-validation](https://developer.incode.com/docs/api-onboarding-face-validation)
-- **Base URL:** `https://demo-api.incodesmile.com`
+#### FinOps (1)
 
-#### Tags
+What the API costs to run, by operation.
 
-- Face Match
-- Liveness
-- Biometrics
+- [Incode Finops](https://apis.io/finops/incode/incode-finops/)
 
-#### Properties
+## Where to find this API
 
-- [Documentation](https://developer.incode.com/docs/api-onboarding-face-validation)
-- [API Reference](https://developer.incode.com/reference/processface)
-- [OpenAPI](openapi/incode-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/incode.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/incode.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
-### Incode Government Validation API
-
-Validates captured ID data against government databases (e.g. Mexico INE, Peru RENIEC) via POST /omni/process/government-validation, with optional fallback and selfie-to-government-image comparison.
-
-- **Human URL:** [https://developer.incode.com/docs/government-verification](https://developer.incode.com/docs/government-verification)
-- **Base URL:** `https://demo-api.incodesmile.com`
-
-#### Tags
-
-- Government Validation
-- KYC
-- Compliance
-
-#### Properties
-
-- [Documentation](https://developer.incode.com/docs/government-verification)
-- [API Reference](https://developer.incode.com/reference/processgovernmentvalidation)
-- [OpenAPI](openapi/incode-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/incode.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/incode.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Incode Watchlist and AML API
-
-Screens individuals against global sanctions, PEP, and warning lists via POST /omni/process/global-watchlist and POST /omni/watchlist-result, with ongoing monitoring through GET /omni/updated-watchlist-result.
-
-- **Human URL:** [https://developer.incode.com/docs/global-watchlist](https://developer.incode.com/docs/global-watchlist)
-- **Base URL:** `https://demo-api.incodesmile.com`
-
-#### Tags
-
-- Watchlist
-- AML
-- Sanctions
-- PEP
-
-#### Properties
-
-- [Documentation](https://developer.incode.com/docs/global-watchlist)
-- [OpenAPI](openapi/incode-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/incode.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/incode.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Incode Results API
-
-Retrieves onboarding results for a completed session by interview ID via GET /omni/get/score, GET /omni/get/ocr-data, and GET /omni/get/images.
-
-- **Human URL:** [https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data](https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data)
-- **Base URL:** `https://demo-api.incodesmile.com`
-
-#### Tags
-
-- Results
-- Scores
-- OCR
-
-#### Properties
-
-- [Documentation](https://developer.incode.com/docs/how-to-fetch-onboarding-results-and-data)
-- [API Reference](https://developer.incode.com/docs/fetch-scores)
-- [OpenAPI](openapi/incode-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/incode.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/incode.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Incode Webhooks API
-
-Pushes onboarding status changes to a configured back-end URL; the ONBOARDING_FINISHED event signals that scores and data are ready to fetch, with a one-time retry on non-200 responses.
-
-- **Human URL:** [https://developer.incode.com/docs/onboarding-status-webhook](https://developer.incode.com/docs/onboarding-status-webhook)
-- **Base URL:** `https://demo-api.incodesmile.com`
-
-#### Tags
-
-- Webhooks
-- Events
-- Notifications
-
-#### Properties
-
-- [Documentation](https://developer.incode.com/docs/onboarding-status-webhook)
-- [API Reference](https://developer.incode.com/docs/webhooks)
-- [OpenAPI](openapi/incode-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-
-## Common Properties
-
-- [GitHub Organization](https://github.com/Incode-Technologies-Example-Repos)
-- [LinkedIn](https://www.linkedin.com/company/incodetech)
 - [Website](https://incode.com)
 - [Documentation](https://developer.incode.com/docs)
-- [Plans](plans/incode-plans-pricing.yml)
-- [Rate Limits](rate-limits/incode-rate-limits.yml)
-- [Fin Ops](finops/incode-finops.yml)
+- [Blog](https://incode.com/blog)
+- [GitHub](https://github.com/Incode-Technologies-Example-Repos)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Kin Score 28.0** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.1 |
+| Contract quality | 47.8 |
+| Contract governance | 0.0 |
+| Operational transparency | 10.5 |
+| Developer ergonomics | 32.1 |
+| Access clarity | 13.2 |
+
+**Agent readiness 17.9** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | — |
+| OpenAPI Examples | — |
+| Rate Limit Signal | derived (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 16.0** — AI & Biometrics
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/incode/](https://apis.io/providers/incode/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Incode: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/incode/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
